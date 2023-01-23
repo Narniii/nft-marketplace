@@ -1,0 +1,43 @@
+.css-eygk0v-MuiButtonBase-root-MuiTab-root.Mui-selected {
+    background-color: green;
+    box-shadow: 0 4px 6px rgba(50, 50, 93, 0.11), 0 1px 3px rgba(0, 0, 0, 0.08);
+    padding: 0;
+    height: 14px;
+}
+
+.MuiButton-root:hover {
+    background-color: green;
+}
+
+.MuiButton-label {
+    color: #fff;
+}
+
+.css-1c5z3xy-MuiButtonBase-root-MuiTab-root.Mui-selected {
+    background-color: green;
+    box-shadow: 0 4px 6px rgba(50, 50, 93, 0.11), 0 1px 3px rgba(0, 0, 0, 0.08);
+    padding: 0;
+    height: 14px;
+
+}
+
+/* temporary ===========>> */
+
+.nav-pills .nav-link.active {
+    background-color: transparent !important;
+    border-bottom: 2px solid purple !important;
+    color: purple !important;
+    border-radius: 0 !important;
+    padding: 0 !important;
+}
+
+.nav-pills .nav-link {
+    color: inherit;
+    border-radius: 0;
+    padding: 0 50px;
+}
+
+
+.MuiPaper-root-MuiDrawer-paper{
+    border-radius: 24px !important;
+}
