@@ -2,10 +2,11 @@ import styled from "styled-components";
 import CollectionCard from "../Cards/CollectionListingCard";
 import { TestColls } from "../../utils/testCollections";
 import { useEffect, useState } from "react";
-import { CircularProgress, Tab, Tabs } from "@mui/material";
+import { CircularProgress } from "@mui/material";
 import { Colors } from "../design/Colors";
 import { ArrowDown2 } from "iconsax-react";
 import '../../styles.css'
+import { Tab, Tabs } from "react-bootstrap";
 const SectionContainer = styled.div`
     display:flex;
     flex-direction:column;
@@ -42,7 +43,6 @@ const Selection = styled.div`
     order: 1;
     flex-grow: 0;
 `;
-
 const Title = styled.div`
     color: ${({ theme }) => theme.trendingSectionTitles};
     cursor:pointer;
@@ -51,8 +51,6 @@ const Title = styled.div`
         // text-decoration:underline;
     }
 `;
-
-
 const conditionalStyles = {
     titles: {
         color: 'theme' == 'light' ? Colors.gray7 : Colors.gray1
@@ -79,7 +77,9 @@ const TrendingSection = ({ theme, classes }) => {
         }
     }, [trendingColls])
     return (
+
         <>
+            {console.log(theme)}
             {loading ?
                 <div className="row justify-content-center align-content-center align-items-center">
                     <CircularProgress />
@@ -94,51 +94,23 @@ const TrendingSection = ({ theme, classes }) => {
                         <div className="row col-12 col-sm-6 justify-content-start"
                         // style={{ color: {theme=='light'?Colors.gray7:Colors.gray1} }}
                         >
-                            {/* <Tabs
-                                sx={{ color: "inherit", height: "auto", padding: 0 }}
-                                value={value}
-                                onChange={handleChange}
-                                textColor="secondary"
-                                indicatorColor="secondary"
-                                aria-label="trending collections"
+                            <Tabs
+                                defaultActiveKey="Trending"
+                                // id="justify-tab-example"
+                                // justify
+                                className="m-0"
+                                style={{ borderBottom: "none", color: theme === 'light' ? "#5D3393" : "#DABDDF", borderColor: theme === 'light' ? "#5D3393" : "#DABDDF", }}
+
                             >
-                                <Tab
-                                    // classes={{ root: classes.tabRoot, selected: classes.tabSelected, labelContainer: classes.labelContainer }}
-                                    sx={{ color: "inherit", padding: 0, height: "20px" }}
-                                    value="trending"
-                                    label="Trending"
-                                    wrapped
-                                />
-                                <Tab
-                                    // classes={{ root: classes.tabRoot, selected: classes.tabSelected, labelContainer: classes.labelContainer }}
-                                    sx={{ color: "inherit", padding: 0, height: "20px" }}
-                                    value="top" label="Top" />
-                            </Tabs> */}
-
-
-
-                            {/* bootdtrap tab classes ====> */}
-
-                            <ul class="nav nav-pills" id="pills-tab" role="tablist">
-                                <li class="nav-item" role="presentation">
-                                    <button class="nav-link active" id="trending-collections" data-bs-toggle="pill" data-bs-target="#trending-collections" type="button" role="tab" aria-controls="trending-collections" aria-selected="true">Trending</button>
-                                </li>
-                                <li class="nav-item" role="presentation">
-                                    <button class="nav-link" id="top-collections" data-bs-toggle="pill" data-bs-target="#top-collections" type="button" role="tab" aria-controls="top-collections" aria-selected="false">Top</button>
-                                </li>
-                            </ul>
-                            {/* <div class="tab-content" id="pills-tabContent">
-                                <div class="tab-pane fade show active" id="pills-home" role="tabpanel" aria-labelledby="pills-home-tab">...</div>
-                                <div class="tab-pane fade" id="pills-profile" role="tabpanel" aria-labelledby="pills-profile-tab">...</div>
-                                <div class="tab-pane fade" id="pills-contact" role="tabpanel" aria-labelledby="pills-contact-tab">...</div>
-                            </div> */}
-
+                                <Tab eventKey="Trending" title="Trending">
+                                </Tab>
+                                <Tab eventKey="Top" title="Top">
+                                </Tab>
+                            </Tabs>
 
 
                         </div>
-                        <div className="row d-none d-sm-flex col-sm-6 justify-content-end"
-                        // style={{ border: "solid 1px red" }}
-                        >
+                        <div className="row d-none d-sm-flex col-sm-6 justify-content-end">
                             <Selection>
                                 24Hours
                                 <div style={{ width: "auto", padding: "0" }}><ArrowDown2 /></div>
@@ -217,6 +189,8 @@ const TrendingSection = ({ theme, classes }) => {
                             <CollectionCard theme={theme} index={9} collectionFloor={trendingColls[9].floor_price} collectionName={trendingColls[9].collection_name} collectionVolume={trendingColls[9].volume} collectionLogo={trendingColls[9].logo} />
                         </div>
                     </div>
+
+
                     <div style={{ cursor: "pointer" }} className="align-self-center text-center p-3"
                     // style={{ width: "100px", border: "solid 1px white" }}
                     >

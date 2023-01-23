@@ -79,7 +79,7 @@ const Header = ({ theme, themeToggler }) => {
             style={{ height: "80%" }}
           // style={{ padding: "50px 0" }}
           >
-            <div className="col-6 row align-items-center align-self-center">
+            <div className="pr-5 col-6 row align-items-center align-self-center">
               <Title>WELCOME TO DORTA CLUB</Title>
               <p>A membership NFT give you early access to future JRNY NFT sets.exclusive NFT videos ,early access to partner NFT projects and more A membership NFT give you early access to future JRNY NFT sets.exclusive NFT videos ,early access to partner NFT projects and more
               </p>

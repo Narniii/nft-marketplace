@@ -161,5 +161,6 @@ export const darkTheme = {
     profileBorder:`1px solid ${Colors.dark4}`,
     activeTab:Colors.dark4,
 
+    // selectionBorder:"1px solid #D9D9D9"
 
 }

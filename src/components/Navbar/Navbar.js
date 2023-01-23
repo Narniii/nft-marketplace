@@ -87,7 +87,7 @@ const Navbar = ({ theme, themeToggler }) => {
           <div className="row col-md-4 justify-content-around no-gutters">
             <Link style={{ width: "auto", padding: "0", textDecoration: "none", color: "inherit" }}><Wallet2 /></Link>
             <Link onClick={toggleDrawer('right', true)} style={{ width: "auto", padding: "0", textDecoration: "none", color: "inherit" }}><Bag2 /></Link>
-            <Link to="/profile" style={{ width: "auto", padding: "0", textDecoration: "none", color: "inherit" }}><Profile /></Link>
+            <Link to="/account/:username" style={{ width: "auto", padding: "0", textDecoration: "none", color: "inherit" }}><Profile /></Link>
           </div>
         </div>
         <Line />

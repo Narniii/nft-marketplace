@@ -38,7 +38,6 @@ const NotableCollections = ({ theme }) => {
                     <CircularProgress />
                 </div>
                 :
-
                 <SectionContainer>
                     <div className="row p-2 justify-content-between">
                         <div className="row col-sx-11 col-sm-9 col-md-6 justify-content-start align-items-center">
