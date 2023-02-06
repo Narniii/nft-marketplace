@@ -46,7 +46,7 @@ height: 100%;
 background: linear-gradient(357.7deg, #4C1593 1.45%, rgba(72, 15, 145, 0) 30.57%);`
 
 const InfoCard = ({ image }) => {
-    console.log(image)
+    // console.log(image)
     return (
         <Card className=" p-2 col-xs-12 col-sm-6 col-md-4 align-items-center align-self-center" >
             {/* <OuterDiv> */}

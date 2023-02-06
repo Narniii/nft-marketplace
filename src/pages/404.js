@@ -3,6 +3,7 @@ import Footer from "../components/Footer";
 import Navbar from "../components/Navbar/Navbar";
 import bg from '../assets/info-bg.svg'
 import errPic from '../assets/404err.svg'
+import '../styles.css'
 
 const SectionContainer = styled.div`
     background: ${({ theme }) => theme.errorPageGradient};
@@ -27,7 +28,7 @@ const Wrapper = styled.div`
 const NotFound = ({ theme, themeToggler }) => {
     return (
         <>
-            <div style={{ padding: "0 32px" }}>
+            <div className="pdng">
                 <Navbar theme={theme} themeToggler={themeToggler} />
                 <div className="py-5 px-0">
                     <SectionContainer >

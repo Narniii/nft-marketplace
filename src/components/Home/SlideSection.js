@@ -4,6 +4,7 @@ import ItemCard from "../Cards/ItemCard";
 import { TestColls } from "../../utils/testCollections";
 import { useEffect, useState } from "react";
 import { CircularProgress } from "@mui/material";
+import { Link } from "react-router-dom";
 
 const SectionContainer = styled.div`
     // height:50vh;
@@ -44,17 +45,16 @@ const SlideSection = ({ theme, themeToggler }) => {
                     <SectionContainer>
                         <div className="row p-2 justify-content-between">
                             <div className="row col-6 justify-content-start">NEW</div>
-                            <div className="row col-6 justify-content-end" style={{ cursor: "pointer" }}>
+                            <Link to='/explore' style={{ textDecoration: "none", color: "inherit" }} className="row col-6 justify-content-end">
                                 Show more
                                 <div style={{ width: "auto", padding: "0" }}><ArrowRight2 /></div>
-
-                            </div>
+                            </Link>
                         </div>
                         <div className="row justify-content-between">
-                            <ItemCard theme={theme} name={trendingColls[0].collection_name} price={trendingColls[0].floor_price} creator={trendingColls[0].creator}/>
-                            <ItemCard theme={theme} name={trendingColls[1].collection_name} price={trendingColls[1].floor_price} creator={trendingColls[1].creator}/>
-                            <ItemCard theme={theme} name={trendingColls[2].collection_name} price={trendingColls[2].floor_price} creator={trendingColls[2].creator}/>
-                            <ItemCard theme={theme} name={trendingColls[3].collection_name} price={trendingColls[3].floor_price} creator={trendingColls[3].creator}/>
+                            <ItemCard view={'l'} theme={theme} name={trendingColls[0].collection_name} price={trendingColls[0].floor_price} creator={trendingColls[0].creator}/>
+                            <ItemCard view={'l'} theme={theme} name={trendingColls[1].collection_name} price={trendingColls[1].floor_price} creator={trendingColls[1].creator}/>
+                            <ItemCard view={'l'} theme={theme} name={trendingColls[2].collection_name} price={trendingColls[2].floor_price} creator={trendingColls[2].creator}/>
+                            <ItemCard view={'l'} theme={theme} name={trendingColls[3].collection_name} price={trendingColls[3].floor_price} creator={trendingColls[3].creator}/>
                         </div>
                     </SectionContainer>
             }</>

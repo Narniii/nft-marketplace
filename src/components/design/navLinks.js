@@ -16,7 +16,7 @@ flex: none;
 order: 0;
 flex-grow: 0;
 &:hover{
-    color: ${({ theme }) => theme.primaryDark};
+    color: ${({ theme }) => theme.linkHover};
 }
 `
     ;

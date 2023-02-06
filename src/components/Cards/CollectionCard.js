@@ -1,4 +1,5 @@
 import { EthereumClassic, Profile, TicketDiscount } from "iconsax-react";
+import { Link } from "react-router-dom";
 import styled from "styled-components";
 import testNFT from '../../assets/testNFT.png'
 import { AddToCartButton } from "../design/Buttons";
@@ -70,21 +71,23 @@ color: ${({ theme }) => theme.collectionDetailsTitle};
 const CollectionCard = ({ theme, collectionName, collectionCreator, royalty, chain }) => {
     return (
         <Card className="p-2 col-xs-12 col-sm-6 col-md-4 align-items-center align-self-center" >
-            <InnerDiv>
-                <Banner className="position-relative" style={{ backgroundImage: `url(${testNFT})` }}>
-                    <Logo style={{ backgroundImage: `url(${testNFT})`, }} className="position-absolute start-50 translate-middle " />
-                    {console.log(testNFT)}
-                </Banner>
-                <div className="row p-1 w-100 align-self-center align-items-end justify-content-center" style={{ height: "50px", fontWeight: 600 }}>
-                    {collectionName}
-                </div>
-                <div className="row px-3 pb-2 w-100 align-self-center align-items-center justify-content-between" style={{ height: "50px" }}>
-                    <div className="p-0" style={{ width: "auto", height: "auto" }}><IconParent><Profile size="16" /></IconParent><DetailTitle>By</DetailTitle> <DetailAnswer>{collectionCreator}</DetailAnswer></div>
-                    <div className="p-0" style={{ width: "auto", height: "auto" }}><IconParent><TicketDiscount size="16" /></IconParent><DetailTitle> Creator Fee</DetailTitle> <DetailAnswer>{royalty}%</DetailAnswer></div>
-                    <div className="p-0" style={{ width: "auto", height: "auto" }}><IconParent><EthereumClassic size="16" /></IconParent><DetailTitle>Chain</DetailTitle> <DetailAnswer>Ethereum</DetailAnswer></div>
-                </div>
-            </InnerDiv>
-        </Card>
+            <Link style={{ textDecoration: "none", color: "inherit" }} to={'/' + 'collection/' + collectionName}>
+                <InnerDiv>
+                    <Banner className="position-relative" style={{ backgroundImage: `url(${testNFT})` }}>
+                        <Logo style={{ backgroundImage: `url(${testNFT})`, }} className="position-absolute start-50 translate-middle " />
+                        {/* {console.log(testNFT)} */}
+                    </Banner>
+                    <div className="row p-1 w-100 align-self-center align-items-end justify-content-center" style={{ height: "50px", fontWeight: 600 }}>
+                        {collectionName}
+                    </div>
+                    <div className="row px-3 pb-2 w-100 align-self-center align-items-center justify-content-between" style={{ height: "50px" }}>
+                        <div className="p-0" style={{ width: "auto", height: "auto" }}><IconParent><Profile size="16" /></IconParent><DetailTitle>By</DetailTitle> <DetailAnswer>{collectionCreator}</DetailAnswer></div>
+                        <div className="p-0" style={{ width: "auto", height: "auto" }}><IconParent><TicketDiscount size="16" /></IconParent><DetailTitle> Creator Fee</DetailTitle> <DetailAnswer>{royalty}%</DetailAnswer></div>
+                        <div className="p-0" style={{ width: "auto", height: "auto" }}><IconParent><EthereumClassic size="16" /></IconParent><DetailTitle>Chain</DetailTitle> <DetailAnswer>Ethereum</DetailAnswer></div>
+                    </div>
+                </InnerDiv>
+            </Link>
+        </Card >
 
     );
 }

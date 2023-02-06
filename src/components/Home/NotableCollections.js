@@ -5,6 +5,7 @@ import ItemCard from "../Cards/ItemCard";
 import { TestColls } from "../../utils/testCollections";
 import { useEffect, useState } from "react";
 import { CircularProgress } from "@mui/material";
+import { Link } from "react-router-dom";
 
 const SectionContainer = styled.div`
     // height:50vh;
@@ -20,7 +21,6 @@ const SectionContainer = styled.div`
 const NotableCollections = ({ theme }) => {
     const [trendingColls, setTrendingColls] = useState(undefined)
     const [loading, setLoading] = useState(true)
-
     useEffect(() => {
         setTrendingColls(TestColls.collections)
     }, [TestColls])
@@ -45,25 +45,22 @@ const NotableCollections = ({ theme }) => {
                                 Notable Collections
                             </h3>
                         </div>
-                        <div className="row d-none d-sm-flex col-sm-3 col-md-6 justify-content-end align-items-center" style={{ cursor: "pointer" }}>
+                        <Link to='/explore' style={{ textDecoration: "none", color: "inherit" }} className="row d-none d-sm-flex col-sm-3 col-md-6 justify-content-end align-items-center">
                             Show more
                             <div style={{ width: "auto", padding: "0" }}><ArrowRight2 /></div>
-                        </div>
-                        <div className="row d-sx-flex d-sm-none col-1 justify-content-end align-items-center" style={{ cursor: "pointer" }}>
+                        </Link>
+                        <Link to='/explore' style={{ textDecoration: "none", color: "inherit" }} className="row d-sx-flex d-sm-none col-1 justify-content-end align-items-center" >
                             <div style={{ width: "auto", padding: "0" }}><ArrowRight2 /></div>
-                        </div>
+                        </Link>
                     </div>
                     <div className="d-none d-md-flex row justify-content-between">
-                        <CollectionCard theme={theme} collectionName={trendingColls[0].collection_name} royalty={trendingColls[0].royalty} collectionCreator={trendingColls[0].creator} />
-                        <CollectionCard theme={theme} collectionName={trendingColls[1].collection_name} royalty={trendingColls[1].royalty} collectionCreator={trendingColls[1].creator} />
-                        <CollectionCard theme={theme} collectionName={trendingColls[2].collection_name} royalty={trendingColls[2].royalty} collectionCreator={trendingColls[2].creator} />
+                        {trendingColls.slice(0, 3).map((collection) => { return (<CollectionCard theme={theme} collectionName={collection.collection_name} royalty={collection.royalty} collectionCreator={collection.creator} />) })}
                     </div>
                     <div className="d-none d-sm-flex d-md-none row justify-content-between">
-                        <CollectionCard theme={theme} collectionName={trendingColls[0].collection_name} royalty={trendingColls[0].royalty} collectionCreator={trendingColls[0].creator} />
-                        <CollectionCard theme={theme} collectionName={trendingColls[1].collection_name} royalty={trendingColls[1].royalty} collectionCreator={trendingColls[1].creator} />
+                        {trendingColls.slice(0, 2).map((collection) => { return (<CollectionCard theme={theme} collectionName={collection.collection_name} royalty={collection.royalty} collectionCreator={collection.creator} />) })}
                     </div>
                     <div className="d-flex d-sm-none row justify-content-between">
-                        <CollectionCard theme={theme} collectionName={trendingColls[0].collection_name} royalty={trendingColls[0].royalty} collectionCreator={trendingColls[0].creator} />
+                        {trendingColls.slice(0, 1).map((collection) => { return (<CollectionCard theme={theme} collectionName={collection.collection_name} royalty={collection.royalty} collectionCreator={collection.creator} />) })}
                     </div>
                 </SectionContainer>
             }</>

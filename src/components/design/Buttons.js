@@ -9,6 +9,7 @@ align-items: center;
 padding: 16px 12px;
 gap: 8px;
 // width: 348px;
+width:100%;
 height: 56px;
 background: ${Colors.gradientPurpleStandard};
 mix-blend-mode: normal;
@@ -31,8 +32,9 @@ align-items: center;
 padding: 12px;
 // gap: 6px;
 border:none;
-width: 330px;
-height: 44px;
+// width: 330px;
+width:100%;
+// height: 44px;
 background: #9951F4;
 mix-blend-mode: normal;
 box-shadow: 0px 1px 6px rgba(0, 0, 0, 0.15);
@@ -73,8 +75,8 @@ border:none;
 width:100%;
 font-size:1rem;
 font-weight:600;
-height: 50px;
-padding:10px;
+height: 40px;
+// padding:10px;
 background: ${Colors.gradientPurpleStandard};
 mix-blend-mode: normal;
 box-shadow: 0px 1px 6px rgba(0, 0, 0, 0.15);
@@ -109,3 +111,18 @@ animation-duration: 1s;
 animation-iteration-count: 1;
 
 `;
+
+
+
+export const ButtonOutline = styled.button`
+color:#9951F4;
+border:solid 1px #9951F4;
+background-color:transparent;
+border-radius:24px;
+display: flex;
+flex-direction: row;
+justify-content: center;
+align-items: center;
+padding:10px 20px;
+
+`

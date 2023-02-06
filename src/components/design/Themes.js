@@ -19,6 +19,7 @@ export const lightTheme = {
     primaryLight: '#DABDFF',
     primaryDark: '#5D3393',
     primaryMain: "#9951F4",
+    linkHover:"#5D3393",
 
     secondaryLight: '#BADAFF',
     secondaryDark: '#000581',
@@ -51,8 +52,11 @@ export const lightTheme = {
 
     itemCardsBackground: '#FFFFFF',
     par: Colors.gray5,
+    info: Colors.gray8,
 
     boxShadow: '0px 3px 10px rgba(0, 0, 0, 0.07)',
+    deeperBoxShadow: '0px 0px 14px rgba(0, 0, 0, 0.1)',
+
 
     collectionCard: '#ffffff',
     collectionCardHover: Colors.gray0,
@@ -82,6 +86,21 @@ export const lightTheme = {
     profileBorder:`1px solid ${Colors.gray2}`,
 
     activeTab:Colors.gray1,
+    hoverIcon:"#d9d9d9",
+
+    nftActivityBG:'#f9f9f9',
+    nftActivityHover:Colors.gray1,
+
+    toggleBGLD: Colors.gradientOrange,
+
+    textSub:Colors.gray6,
+
+    addProPic:Colors.gray0,
+    addProPicBorder:`1px solid ${Colors.gray2}`,
+
+
+    noteBG:Colors.errorLight,
+    noteBoxShadow:'unset',
 
 }
 export const darkTheme = {
@@ -93,6 +112,7 @@ export const darkTheme = {
     primaryLight: '#DABDFF',
     primaryDark: '#5D3393',
     primaryMain: "#9951F4",
+    linkHover:"#DABDFF",
 
     secondaryLight: '#BADAFF',
     secondaryDark: '#000581',
@@ -125,9 +145,12 @@ export const darkTheme = {
 
     par: Colors.gray2,
     itemCardsBackground: Colors.dark3,
+    info: Colors.gray3,
 
     // boxShadow: '0px 3px 4px rgba(190, 138, 255, 0.32)',
     boxShadow: '0px 3px 10px rgba(0, 0, 0, 0.07)',
+    deeperBoxShadow: '0px 0px 14px rgba(190, 138, 255, 0.32)',
+
 
 
     collectionCard: Colors.dark1,
@@ -162,5 +185,20 @@ export const darkTheme = {
     activeTab:Colors.dark4,
 
     // selectionBorder:"1px solid #D9D9D9"
+    hoverIcon:"#332E5F",
+
+    nftActivityBG:Colors.dark2,
+    nftActivityHover:Colors.dark3,
+
+    toggleBGLD: Colors.dark3,
+
+    textSub:Colors.gray3,
+
+    addProPic:Colors.dark3,
+    addProPicBorder:`1px solid ${Colors.dark1}`,
+
+
+    noteBG:Colors.dark3,
+    noteBoxShadow:'0px 0px 13px rgba(0, 0, 0, 0.29)',
 
 }

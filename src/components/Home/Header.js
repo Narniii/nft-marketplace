@@ -2,6 +2,9 @@ import styled from "styled-components"
 import { ButtonLarge, ButtonSmall } from "../design/Buttons";
 import headerImage from '../../assets/header-image.png';
 import Navbar from "../Navbar/Navbar";
+import { useDispatch, useSelector } from "react-redux";
+import { addItem, logOutUser, removeItem } from "../../redux/actions";
+// import { addToCart } from "../../redux/cartReducer";
 
 const HeaderDiv = styled.div`
   // background: ${({ theme }) => theme.gradientPurple};
@@ -54,7 +57,6 @@ height:30vh;
 
 `;
 
-
 const HeaderImg = styled.div`
 background-image: url(${headerImage});
 height:100%;
@@ -64,6 +66,12 @@ background-position:right;
 `
 
 const Header = ({ theme, themeToggler }) => {
+  // const { globalUser } = useSelector(state => state.userReducer);
+  // console.log(globalUser)
+
+  const dispatch = useDispatch();
+  const add = (item) => dispatch(addItem(item));
+
   return (
     <>
       {/* desktop */}
@@ -81,7 +89,7 @@ const Header = ({ theme, themeToggler }) => {
           >
             <div className="pr-5 col-6 row align-items-center align-self-center">
               <Title>WELCOME TO DORTA CLUB</Title>
-              <p>A membership NFT give you early access to future JRNY NFT sets.exclusive NFT videos ,early access to partner NFT projects and more A membership NFT give you early access to future JRNY NFT sets.exclusive NFT videos ,early access to partner NFT projects and more
+              <p style={{ color: '#f9f9f9' }}>A membership NFT give you early access to future JRNY NFT sets.exclusive NFT videos ,early access to partner NFT projects and more A membership NFT give you early access to future JRNY NFT sets.exclusive NFT videos ,early access to partner NFT projects and more
               </p>
               <ButtonLarge>Connect Wallet</ButtonLarge>
             </div>
@@ -127,11 +135,11 @@ const Header = ({ theme, themeToggler }) => {
           >
             <div className="col-6 row align-items-center align-self-center">
               <Title>WELCOME TO DORTA CLUB</Title>
-              <p>A membership NFT give you early access to future JRNY NFT sets.exclusive NFT videos ,early access to partner NFT projects and more A membership NFT give you early access to future JRNY NFT sets.exclusive NFT videos ,early access to partner NFT projects and more
+              <p onClick={() => add({ price: '0.2', name: 'Number', id: '555' })}>A membership NFT give you early access to future JRNY NFT sets.exclusive NFT videos ,early access to partner NFT projects and more A membership NFT give you early access to future JRNY NFT sets.exclusive NFT videos ,early access to partner NFT projects and more
               </p>
-              <ButtonLarge>Connect Wallet</ButtonLarge>
+              <ButtonLarge onClick={() => add({ price: '0.4', name: 'new nft', id: '234' })}>Connect Wallet</ButtonLarge>
             </div>
-            <div className="col-6  p-0">
+            <div className="col-6 p-0">
               <HeaderImg />
             </div>
           </div>

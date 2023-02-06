@@ -42,7 +42,7 @@ const IconParent = styled.span`
 
 
 const CategoryCard = () => {
-    console.log(window.location.pathname)
+    // console.log(window.location.pathname)
     return (
         <Card className="p-2 col-xs-12 col-sm-6 col-md-4 align-items-center justify-content-center align-self-center" >
             <InnerDiv className="d-flex p-3 justify-content-between">

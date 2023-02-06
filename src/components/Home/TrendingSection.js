@@ -2,7 +2,7 @@ import styled from "styled-components";
 import CollectionCard from "../Cards/CollectionListingCard";
 import { TestColls } from "../../utils/testCollections";
 import { useEffect, useState } from "react";
-import { CircularProgress } from "@mui/material";
+import { CircularProgress, FormControl, FormHelperText, Menu, MenuItem, Select } from "@mui/material";
 import { Colors } from "../design/Colors";
 import { ArrowDown2 } from "iconsax-react";
 import '../../styles.css'
@@ -56,12 +56,25 @@ const conditionalStyles = {
         color: 'theme' == 'light' ? Colors.gray7 : Colors.gray1
     }
 };
+// const useStyles = makeStyles({
+//     select: {
+//         border: '1px solid #D9D9D9',
+//         borderRadius: '24px !important',
+
+//         "& ul": {
+//             borderRadius: '24px !important',
+//         },
+//         "& li": {
+//         },
+//     },
+// });
 
 
-const TrendingSection = ({ theme, classes }) => {
+const TrendingSection = ({ theme }) => {
     const [trendingColls, setTrendingColls] = useState(undefined)
     const [loading, setLoading] = useState(true)
     const [value, setValue] = useState('trending');
+    // const classes = useStyles();
 
     const handleChange = (event, newValue) => {
         setValue(newValue);
@@ -91,7 +104,7 @@ const TrendingSection = ({ theme, classes }) => {
                     <div className="row p-2 justify-content-between align-items-center"
                     // style={{ border: "solid 1px white" }}
                     >
-                        <div className="row col-12 col-sm-6 justify-content-start"
+                        <div className="row col-12 col-sm-6 justify-content-start "
                         // style={{ color: {theme=='light'?Colors.gray7:Colors.gray1} }}
                         >
                             <Tabs
@@ -99,7 +112,7 @@ const TrendingSection = ({ theme, classes }) => {
                                 // id="justify-tab-example"
                                 // justify
                                 className="m-0"
-                                style={{ borderBottom: "none", color: theme === 'light' ? "#5D3393" : "#DABDDF", borderColor: theme === 'light' ? "#5D3393" : "#DABDDF", }}
+                                style={{ borderBottom: "none", color: theme === 'light' ? "#5D3393" : "#DABDDF", borderColor: theme === 'light' ? "#5D3393" : "#DABDDF" }}
 
                             >
                                 <Tab eventKey="Trending" title="Trending">
@@ -111,10 +124,31 @@ const TrendingSection = ({ theme, classes }) => {
 
                         </div>
                         <div className="row d-none d-sm-flex col-sm-6 justify-content-end">
-                            <Selection>
+                            <FormControl sx={{ width: '160px', bgcolor: theme == 'light' ? "#ffffff" : "#272448", borderRadius: "24px", overflow: "hidden", border: "1px solid #d9d9d9" }}>
+                                <Select
+                                    value={10}
+                                    BackdropProps={{ invisible: true }}
+                                    onChange={handleChange}
+                                    displayEmpty
+                                    inputProps={{ MenuProps: { disableScrollLock: true } }}
+                                    // MenuProps={{ classes: { paper: classes.select } }}
+                                    sx={{ bgcolor: theme == 'light' ? "#ffffff" : "#272448", color: theme == 'light' ? "#808080" : "#B3B3B3" }}
+                                >
+                                    <MenuItem
+                                        sx={{ bgcolor: theme == 'light' ? "#ffffff" : "#272448" }}
+                                        value="">
+                                        <em>None</em>
+                                    </MenuItem>
+                                    <MenuItem sx={{ bgcolor: theme == 'light' ? "#ffffff" : "#272448" }} value={10}>24h</MenuItem>
+                                    <MenuItem sx={{ bgcolor: theme == 'light' ? "#ffffff" : "#272448" }} value={20}>12h</MenuItem>
+                                    <MenuItem sx={{ bgcolor: theme == 'light' ? "#ffffff" : "#272448" }} value={30}>6h</MenuItem>
+                                </Select>
+                            </FormControl>
+
+                            {/* <Selection>
                                 24Hours
                                 <div style={{ width: "auto", padding: "0" }}><ArrowDown2 /></div>
-                            </Selection>
+                            </Selection> */}
                         </div>
                     </div>
                     <div className="row justify-content-around"

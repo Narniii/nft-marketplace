@@ -71,7 +71,8 @@ align-items:center;
 color:#E6E6E6;
 @media screen and (max-width: 500px) {
   height:50px;
-  width:50px;}
+  width:50px;
+}
 `
 
 

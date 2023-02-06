@@ -6,8 +6,17 @@ import Footer from "../components/Footer";
 import NotableCollections from "../components/Home/NotableCollections";
 import BasicsSection from "../components/Home/BasicsSection";
 import CategorySection from "../components/Home/BrowseCategory";
+import { useEffect } from "react";
+import { useNavigate } from "react-router";
 
 const Home = ({ theme, themeToggler }) => {
+    const navigate = useNavigate();
+    const refresh = () => window.location.reload(true)
+
+    useEffect(()=>{
+        // window.location.reload()
+        // refresh()
+    },[])
     return (
         <div className="container-fluid p-0 position-relative">
             <Header theme={theme} themeToggler={themeToggler} />
