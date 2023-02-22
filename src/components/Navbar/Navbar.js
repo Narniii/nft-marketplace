@@ -12,7 +12,7 @@ import { useState } from "react";
 import { Box, Divider, Drawer, List, ListItem, ListItemButton, ListItemIcon, ListItemText } from "@mui/material";
 import { Cart } from "./ShoppingCart";
 import WalletConnect from "./WalletConnect";
-import { getuser } from "../../redux/actions";
+import { getuser, logOutUser } from "../../redux/actions";
 import NavMenu from "./navMenu";
 import { useWeb3React } from "@web3-react/core";
 const Nav = styled.div`
@@ -46,6 +46,8 @@ const Line = styled.div`
 const Navbar = ({ theme, themeToggler }) => {
   const [menuOpen, setMenuOpen] = useState(false)
   const [desOpen, setDesOpen] = useState(false)
+  const [walletDesOpen, setWalletDesOpen] = useState(false)
+  const [cartDesOpen, setCartDesOpen] = useState(false)
   const [state, setState] = useState({
     top: false,
     left: false,
@@ -69,7 +71,9 @@ const Navbar = ({ theme, themeToggler }) => {
     if (event.type === 'keydown' && (event.key === 'Tab' || event.key === 'Shift')) {
       return;
     }
-
+    // setAnchorEl(event.currentTarget);
+    setAnchorEl(document.getElementById("profile-tab"));
+    setCartDesOpen(!cartDesOpen);
     setState({ ...state, [anchor]: open });
   };
 
@@ -77,7 +81,9 @@ const Navbar = ({ theme, themeToggler }) => {
     if (event.type === 'keydown' && (event.key === 'Tab' || event.key === 'Shift')) {
       return;
     }
-
+    // setAnchorEl(event.currentTarget);
+    setAnchorEl(document.getElementById("profile-tab"))
+    setWalletDesOpen(!walletDesOpen);
     setWalletMenu({ ...walletMenu, [anchor]: open });
   };
 
@@ -93,57 +99,65 @@ const Navbar = ({ theme, themeToggler }) => {
   const { active, account, library, connector, activate, deactivate } = useWeb3React()
   const dispatch = useDispatch();
   const fetchUser = (walletAddress) => dispatch(getuser(walletAddress));
+  const logOut = () => dispatch(logOutUser());
+
   useEffect(() => {
     if (active) {
       // if (account) {
-        console.log('accccounttttt', account)
-        console.log('act', active)
-        fetchUser(account)
+      // console.log('accccounttttt', account)
+      // console.log('act', active)
+      console.log('im active')
+      fetchUser(account)
       // }
     }
     else {
-      localStorage.removeItem('account')
+      // localStorage.removeItem('account')
       // localStorage.removeItem("lastActive")
-      fetchUser()
+      // console.log('im not active')
+      // logOut()
     }
   }, [active, account]);
+  console.log(window.location.pathname)
 
   const [anchorEl, setAnchorEl] = useState(null);
   const [placement, setPlacement] = useState();
   const handlePopper = (newPlacement) => (event) => {
-    setAnchorEl(event.currentTarget);
+    setAnchorEl(document.getElementById("profile-tab"));
     setDesOpen((prev) => placement !== newPlacement || !prev);
     setPlacement(newPlacement);
   };
 
   const handleClose = () => {
     setMenuOpen(false)
+    setDesOpen(false)
+    setWalletDesOpen(false)
+    setCartDesOpen(false)
   }
 
 
   return (
     <>
       {/* desktop navbar */}
-      <Nav className="d-none d-md-flex justify-content-between no-gutters">
-        <div className="row col-md-6 col-xl-5 row align-items-center justify-content-between">
-          <div className="col-md-1 col-lg-2 align-items-center">
+      <Nav className="d-none d-lg-flex justify-content-between no-gutters">
+        <div className="d-flex col-lg-5 col-xl-5 align-items-center justify-content-between">
+          <div className="col-lg-1 col-lg-2 align-items-center">
             <Toggle theme={theme} toggleTheme={themeToggler} />
           </div>
-          <div className="row flex-nowrap col-md-11 col-lg-10 justify-content-between no-gutters">
-            <NavLink linkText={"Explore"} linkSize={"medium"} link={"/explore"} />
-            <NavLink linkText={"Stats"} linkSize={"medium"} link={"/stats"} />
-            <NavLink linkText={"Create"} linkSize={"medium"} link={"/asset/create"} />
-            <NavLink linkText={"Resources"} linkSize={"medium"} link={"/"} />
+          <div className="d-flex flex-nowrap col-lg-10 justify-content-between no-gutters">
+            <NavLink theme={theme} linkText={"Explore"} linkSize={"medium"} link={"/explore"} />
+            <NavLink theme={theme} linkText={"Stats"} linkSize={"medium"} link={"/stats"} />
+            <NavLink theme={theme} linkText={"Create"} linkSize={"medium"} link={"/asset/create"} />
+            <NavLink theme={theme} linkText={"Resources"} linkSize={"medium"} link={"/"} />
           </div>
         </div>
-        <div className="row col-md-6 col-xl-5 row align-items-center justify-content-between no-gutters">
-          <div className="col-md-7 align-items-center justify-content-center">
-            <SearchBox theme={theme} />
+        <div className="d-flex col-lg-6 col-xl-5 align-items-center justify-content-between no-gutters">
+          <div className="col-lg-7 align-items-center justify-content-center">
+            <SearchBox theme={theme} id={'navSearch'} />
           </div>
-          <div className="row col-md-4 justify-content-around no-gutters">
-            <Link onClick={walletDrawer('right', true)} style={{ width: "auto", padding: "0", textDecoration: "none", color: "inherit" }}><Wallet2 /></Link>
-            <Link onClick={toggleDrawer('right', true)} style={{ width: "auto", padding: "0", textDecoration: "none", color: "inherit" }}><Bag2 /></Link>
-            <Link style={{ width: "auto", padding: "0", textDecoration: "none", color: "inherit" }} onClick={handlePopper('top-end')}><Profile /></Link>
+          <div className="d-flex col-lg-4 justify-content-around no-gutters">
+            <Link onClick={walletDrawer('right', true)} style={{ width: "auto", padding: "0", textDecoration: "none", color: theme == 'light' && window.location.pathname !== '/' ? `${Colors.gray6}` : "white" }}>{walletDesOpen ? <Wallet2 variant="Bold" /> : <Wallet2 />}</Link>
+            <Link onClick={toggleDrawer('right', true)} style={{ width: "auto", padding: "0", textDecoration: "none", color: theme == 'light' && window.location.pathname !== '/' ? `${Colors.gray6}` : "white" }}>{cartDesOpen ? <Bag2 variant="Bold" /> : <Bag2 />}</Link>
+            <Link id="profile-tab" style={{ width: "auto", padding: "0", textDecoration: "none", color: theme == 'light' && window.location.pathname !== '/' ? `${Colors.gray6}` : "white" }} onClick={handlePopper('top-end')}>{desOpen ? <Profile variant="Bold" /> : <Profile />}</Link>
           </div>
         </div>
         <Line />
@@ -151,18 +165,17 @@ const Navbar = ({ theme, themeToggler }) => {
 
 
       {/* tablet navbar */}
-      <Nav className="d-none d-sm-flex d-md-none justify-content-between no-gutters align-items-center">
+      <Nav className="d-none d-sm-flex d-lg-none justify-content-between no-gutters align-items-center">
         <div className="col-1 align-items-center">
           <Toggle theme={theme} toggleTheme={themeToggler} />
         </div>
         <div className="col-7 align-items-center justify-content-center">
-          <SearchBox>
-          </SearchBox>
+          <SearchBox theme={theme} id={'navSearchTablet'} />
         </div>
-        <div className="row col-3 justify-content-around no-gutters">
-          <Link onClick={walletDrawer('bottom', true)} style={{ width: "auto", padding: "0", textDecoration: "none", color: "inherit" }}><Wallet2 /></Link>
-          <Link onClick={toggleDrawer('bottom', true)} style={{ width: "auto", padding: "0", textDecoration: "none", color: "inherit" }}><Bag2 /></Link>
-          <Link style={{ width: "auto", padding: "0", textDecoration: "none", color: "inherit" }} onClick={TabletMenuDrawer('right', true)}><HambergerMenu /></Link>
+        <div className="d-flex col-3 justify-content-around no-gutters">
+          <Link onClick={walletDrawer('bottom', true)} style={{ width: "auto", padding: "0", textDecoration: "none", color: theme == 'light' && window.location.pathname !== '/' ? `${Colors.gray6}` : "white" }}>{walletDesOpen ? <Wallet2 variant="Bold" /> : <Wallet2 />}</Link>
+          <Link onClick={toggleDrawer('bottom', true)} style={{ width: "auto", padding: "0", textDecoration: "none", color: theme == 'light' && window.location.pathname !== '/' ? `${Colors.gray6}` : "white" }}>{cartDesOpen ? <Bag2 variant="Bold" /> : <Bag2 />}</Link>
+          <Link style={{ width: "auto", padding: "0", textDecoration: "none", color: theme == 'light' && window.location.pathname !== '/' ? `${Colors.gray6}` : "white" }} onClick={TabletMenuDrawer('right', true)}><HambergerMenu /></Link>
         </div>
         <Line />
       </Nav>
@@ -175,10 +188,10 @@ const Navbar = ({ theme, themeToggler }) => {
         <div className="col-1 align-items-center">
           <Toggle theme={theme} toggleTheme={themeToggler} />
         </div>
-        <div className="row col-5 justify-content-around no-gutters">
-          <Link style={{ width: "auto", padding: "0", textDecoration: "none", color: "inherit" }}><SearchNormal1 /></Link>
-          <Link onClick={toggleDrawer('bottom', true)} style={{ width: "auto", padding: "0", textDecoration: "none", color: "inherit" }}><Bag2 /></Link>
-          <Link style={{ width: "auto", padding: "0", textDecoration: "none", color: "inherit" }} onClick={() => setMenuOpen(true)}><HambergerMenu /></Link>
+        <div className="d-flex col-5 justify-content-around no-gutters">
+          <Link style={{ width: "auto", padding: "0", textDecoration: "none", color: theme == 'light' && window.location.pathname !== '/' ? `${Colors.gray6}` : "white" }}><SearchNormal1 /></Link>
+          <Link onClick={toggleDrawer('bottom', true)} style={{ width: "auto", padding: "0", textDecoration: "none", color: theme == 'light' && window.location.pathname !== '/' ? `${Colors.gray6}` : "white" }}>{cartDesOpen ? <Bag2 variant="Bold" /> : <Bag2 />}</Link>
+          <Link style={{ width: "auto", padding: "0", textDecoration: "none", color: theme == 'light' && window.location.pathname !== '/' ? `${Colors.gray6}` : "white" }} onClick={() => setMenuOpen(true)}><HambergerMenu /></Link>
         </div>
         <Line />
       </Nav>
@@ -186,8 +199,8 @@ const Navbar = ({ theme, themeToggler }) => {
 
 
 
-      <Cart toggleDrawer={toggleDrawer} state={state} theme={theme} />
-      <WalletConnect toggleDrawer={walletDrawer} state={walletMenu} theme={theme} />
+      <Cart handleClose={handleClose} toggleDrawer={toggleDrawer} state={state} theme={theme} cartDesOpen={cartDesOpen} anchorEl={anchorEl} />
+      <WalletConnect handleClose={handleClose} toggleDrawer={walletDrawer} state={walletMenu} theme={theme} walletDesOpen={walletDesOpen} anchorEl={anchorEl} />
       <NavMenu handleClose={handleClose} desOpen={desOpen} mobOpen={menuOpen} anchorEl={anchorEl} theme={theme} toggleDrawer={TabletMenuDrawer} state={tabletMenu} themeToggler={themeToggler} />
 
     </>

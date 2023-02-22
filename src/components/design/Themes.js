@@ -11,15 +11,16 @@ import { Colors } from './Colors';
 
 
 export const lightTheme = {
+
     body: '#ffffff',
     text: Colors.gray7,
     navIcons: window.location.pathname == "/" ? "#ffffff" : Colors.gray7,
     errorPageGradient: 'linear-gradient(304.23deg, #F9F9F9 2.18%, rgba(249, 249, 249, 0) 49.47%, rgba(249, 249, 249, 0.5) 100.31%)',
-    profilePageGradient:'linear-gradient(304.23deg, #F9F9F9 2.18%, rgba(249, 249, 249, 0) 49.47%, rgba(249, 249, 249, 0.5) 100.31%)',
+    profilePageGradient: 'linear-gradient(304.23deg, #F9F9F9 2.18%, rgba(249, 249, 249, 0) 49.47%, rgba(249, 249, 249, 0.5) 100.31%)',
     primaryLight: '#DABDFF',
     primaryDark: '#5D3393',
     primaryMain: "#9951F4",
-    linkHover:"#5D3393",
+    linkHover: "#5D3393",
 
     secondaryLight: '#BADAFF',
     secondaryDark: '#000581',
@@ -56,7 +57,7 @@ export const lightTheme = {
 
     boxShadow: '0px 3px 10px rgba(0, 0, 0, 0.07)',
     deeperBoxShadow: '0px 0px 14px rgba(0, 0, 0, 0.1)',
-
+    hoverBoxShadow:"0px 6px 20px rgba(0, 0, 0, 0.12)",
 
     collectionCard: '#ffffff',
     collectionCardHover: Colors.gray0,
@@ -77,30 +78,36 @@ export const lightTheme = {
     collectionDetailsAnswer: Colors.gray8,
 
     searchBoxBorder: window.location.pathname == "/" ? "1px solid white" : "none",
+    // searchBoxShadow: window.location.pathname !== '/' ? 'inset 0px 0px 4px rgba(0, 0, 0, 0.2)' : "unset",
     searchBoxShadow: 'inset 0px 0px 4px rgba(0, 0, 0, 0.2)',
     inputBox: Colors.gray1,
-    navLinkText: window.location.pathname == "/" ? "white" : Colors.gray6,
+    navLinkText: window.location.pathname === "/" ? "white" : Colors.gray6,
     categoryDet: Colors.gray5,
     categoryDetNum: Colors.gray8,
 
-    profileBorder:`1px solid ${Colors.gray2}`,
+    profileBorder: `1px solid ${Colors.gray2}`,
 
-    activeTab:Colors.gray1,
-    hoverIcon:"#d9d9d9",
+    activeTab: Colors.gray1,
+    hoverIcon: "#d9d9d9",
 
-    nftActivityBG:'#f9f9f9',
-    nftActivityHover:Colors.gray1,
+    nftActivityBG: '#f9f9f9',
+    nftActivityHover: Colors.gray1,
 
     toggleBGLD: Colors.gradientOrange,
 
-    textSub:Colors.gray6,
+    textSub: Colors.gray6,
 
-    addProPic:Colors.gray0,
-    addProPicBorder:`1px solid ${Colors.gray2}`,
+    addProPic: Colors.gray0,
+    addProPicBorder: `1px solid ${Colors.gray2}`,
 
 
-    noteBG:Colors.errorLight,
-    noteBoxShadow:'unset',
+    noteBG: Colors.errorLight,
+    noteBoxShadow: 'unset',
+
+    polyBG: '#ffffff',
+    polyBX: ' inset 0px 4px 9px rgba(0, 0, 0, 0.12), inset 0px 0px 27px rgba(72, 72, 72, 0.17)',
+
+
 
 }
 export const darkTheme = {
@@ -108,11 +115,11 @@ export const darkTheme = {
     text: Colors.gray1,
     navIcons: Colors.gray1,
     errorPageGradient: 'linear-gradient(304.23deg, #2A0D55 2.18%, rgba(30, 14, 54, 0) 49.47%, #2A0D55 100.31%)',
-    profilePageGradient:'linear-gradient(304.23deg, #2A0D55 2.18%, rgba(30, 14, 54, 0) 49.47%, #2A0D55 100.31%)',
+    profilePageGradient: 'linear-gradient(304.23deg, #2A0D55 2.18%, rgba(30, 14, 54, 0) 49.47%, #2A0D55 100.31%)',
     primaryLight: '#DABDFF',
     primaryDark: '#5D3393',
     primaryMain: "#9951F4",
-    linkHover:"#DABDFF",
+    linkHover: "#DABDFF",
 
     secondaryLight: '#BADAFF',
     secondaryDark: '#000581',
@@ -150,12 +157,13 @@ export const darkTheme = {
     // boxShadow: '0px 3px 4px rgba(190, 138, 255, 0.32)',
     boxShadow: '0px 3px 10px rgba(0, 0, 0, 0.07)',
     deeperBoxShadow: '0px 0px 14px rgba(190, 138, 255, 0.32)',
+    hoverBoxShadow:"0px 3px 4px rgba(190, 138, 255, 0.32)",
 
 
 
     collectionCard: Colors.dark1,
     collectionCardHover: Colors.dark2,
-    collectionCardActive: Colors.gray1,
+    collectionCardActive: Colors.dark3,
 
     trendingSectionTitles: Colors.gray1,
     trendingSectionTitlesActive: Colors.primaryLight,
@@ -181,24 +189,28 @@ export const darkTheme = {
     categoryDet: Colors.gray3,
     categoryDetNum: '#F9F9F9',
 
-    profileBorder:`1px solid ${Colors.dark4}`,
-    activeTab:Colors.dark4,
+    profileBorder: `1px solid ${Colors.dark4}`,
+    activeTab: Colors.dark4,
 
     // selectionBorder:"1px solid #D9D9D9"
-    hoverIcon:"#332E5F",
+    hoverIcon: "#332E5F",
 
-    nftActivityBG:Colors.dark2,
-    nftActivityHover:Colors.dark3,
+    nftActivityBG: Colors.dark2,
+    nftActivityHover: Colors.dark3,
 
     toggleBGLD: Colors.dark3,
 
-    textSub:Colors.gray3,
+    textSub: Colors.gray3,
 
-    addProPic:Colors.dark3,
-    addProPicBorder:`1px solid ${Colors.dark1}`,
+    addProPic: Colors.dark3,
+    addProPicBorder: `1px solid ${Colors.dark1}`,
 
 
-    noteBG:Colors.dark3,
-    noteBoxShadow:'0px 0px 13px rgba(0, 0, 0, 0.29)',
+    noteBG: Colors.dark3,
+    noteBoxShadow: '0px 0px 13px rgba(0, 0, 0, 0.29)',
+
+
+    polyBG: Colors.dark2,
+    polyBX: '0px 0px 4px rgba(190, 138, 255, 0.32)',
 
 }

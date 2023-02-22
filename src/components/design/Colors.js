@@ -42,4 +42,8 @@ export const Colors = {
     recommendedDark: '#1F84FF',
 
 
+    bodyFont: 'unset',
+    subtitleFont: 'capitalize',
+
+
 }

@@ -1,9 +1,13 @@
-import { Accordion, AccordionDetails, AccordionSummary, Box, Modal, Typography } from "@mui/material";
+import { Accordion, AccordionDetails, AccordionSummary, Box, Modal, Skeleton, Typography } from "@mui/material";
 import { ArrowDown2, ArrowSwapVertical, CloseSquare, FilterSearch, Grid1, Grid2, Grid5, HambergerMenu } from "iconsax-react";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import styled from "styled-components";
+import { MARKET_API } from "../../utils/data/market_api";
 import ItemCard from "../Cards/ItemCard";
+import { Colors } from "../design/Colors";
+import { Filtering } from "../Filtering";
 import SearchBox from "../Navbar/SearchBox";
+import SSelection from "../Selection";
 const Selection = styled.div`
 display: flex;
 flex-direction: row;
@@ -43,7 +47,7 @@ flex-direction: column;
 // width:100%;
 overflow:hidden;
 `;
-const Collected = ({ theme }) => {
+const Collected = ({ theme, userWallet }) => {
     const [view, setView] = useState('m')
     const [openFilter, setOpenFilter] = useState(false)
     const handleFilter = () => {
@@ -58,51 +62,89 @@ const Collected = ({ theme }) => {
     const handleViewChange = (v) => {
         setView(v)
     }
+    const apiCall = useRef(undefined)
+    const [items, setItems] = useState(undefined)
+    const [err, setErr] = useState(undefined)
+    useEffect(() => {
+        fetchItems()
+        // return () => {
+        //     if (apiCall.current != undefined)
+        //         apiCall.current.cancel();
 
-    return (<div className="d-flex flex-column ">
-        <div className="row w-100 align-self-center p-0 justify-content-between align-items-center mb-1">
-            <div className="col-8 col-sm-4 col-md-5"><SearchBox /></div>
-            <div className="d-none d-sm-block col-4 col-md-3">
-                <Selection className="row p-2" >
-                    price low to high
-                    <div style={{ width: "auto", padding: "4px 0 5px" }}><ArrowDown2 /></div>
-                </Selection>
-            </div>
-            <div className="d-none d-sm-block col-3">
-                <Selection className="row">
-                    <IconContainer className="col-3 text-center d-flex justify-content-center align-items-center" onClick={() => handleViewChange('xs')}><HambergerMenu size="20" /></IconContainer>
-                    <IconContainer className="col-3 text-center d-flex justify-content-center align-items-center" onClick={() => handleViewChange('s')}><Grid1 size="20" /></IconContainer>
-                    <IconContainer className="col-3 text-center d-flex justify-content-center align-items-center" onClick={() => handleViewChange('m')}><Grid2 size="20" /></IconContainer>
-                    <IconContainer className="col-3 text-center d-flex justify-content-center align-items-center" onClick={() => handleViewChange('l')}><Grid5 size="20" /></IconContainer>
-                </Selection>
-            </div>
-            <div className="d-block d-sm-none col-2 col-sm-1">
-                <Selection className="row p-2 d-flex justify-content-center">
-                    <div style={{ width: "auto", padding: "4px 0 5px" }}><ArrowSwapVertical /></div>
-                </Selection>
-            </div>
-            <div className="col-2 col-sm-1">
-                <Selection className="row p-2 d-flex justify-content-center">
-                    <div style={{ width: "auto", padding: "4px 0 5px" }} onClick={handleFilter}><FilterSearch /></div>
-                </Selection>
-            </div>
-        </div>
+        // }
+    }, [])
+
+    const fetchItems = async () => {
+        try {
+            apiCall.current = MARKET_API.request({
+                path: `/nft/user/`,
+                method: "post",
+                body: {
+                    wallet_address: userWallet
+                }
+            })
+            const response = await apiCall.current.promise;
+            console.log('user items', response)
+            if (!response.isSuccess)
+                throw response
+            setItems(response.data)
+            // setLoading(false)
+        }
+        catch (err) {
+            console.log(err)
+            if (err.data.message == "No NFTs Found For This Wallet Address") {
+                setItems([])
+            }
+            else {
+                setErr("Internal server error")
+            }
+            // setLoading(false)
+        }
+    }
+
+    useEffect(() => {
+        if (items)
+            setLoading(false)
+    }, [items])
+
+    return (<div className="d-flex flex-column">
+
+        <Filtering id={'profileCollectedSearch'} theme={theme} handleFilter={handleFilter} handleViewChange={handleViewChange} selectOptions={['price low to high', 'price high to low']} />
+
         <div className="d-flex justify-content-between">
             <div className="d-flex flex-wrap" style={{ width: !openFilter ? "100%" : "70%", transition: "500ms ease" }}>
-                <ItemCard view={view} itemID={'1'}/>
-                <ItemCard view={view} itemID={'2'}/>
-                <ItemCard view={view} itemID={'3'}/>
-                <ItemCard view={view} itemID={'4'}/>
-                <ItemCard view={view} itemID={'5'}/>
-                <ItemCard view={view} itemID={'6'}/>
-                <ItemCard view={view} itemID={'7'}/>
-                <ItemCard view={view} itemID={'8'}/>
-                <ItemCard view={view} itemID={'9'}/>
-                <ItemCard view={view} itemID={'10'}/>
-                <ItemCard view={view} itemID={'11'}/>
-                <ItemCard view={view} itemID={'12'}/>
+                {loading ?
+                    <div className="d-flex w-100 justify-content-between">
+                        <Box className="d-flex flex-wrap my-3" sx={{ width: !openFilter ? "100%" : "70%", transition: { xs: '0ms', md: '500ms ease' } }}>
+                            <div className="col-12 col-sm-6 col-md-3 p-1">
+                                <Skeleton variant="rounded" height={300} sx={{ width: "100%", borderRadius: "24px" }} />
+                            </div>
+                            <div className="d-none d-sm-block col-12 col-sm-6 col-md-3 p-1">
+                                <Skeleton variant="rounded" height={300} sx={{ width: "100%", borderRadius: "24px" }} />
+                            </div>
+                            <div className="d-none d-md-block col-12 col-sm-6 col-md-3 p-1">
+                                <Skeleton variant="rounded" height={300} sx={{ width: "100%", borderRadius: "24px" }} />
+                            </div>
+                            <div className="d-none d-md-block col-12 col-sm-6 col-md-3 p-1">
+                                <Skeleton variant="rounded" height={300} sx={{ width: "100%", borderRadius: "24px" }} />
+                            </div>
+                        </Box>
+                    </div>
+                    :
+                    <>
+                        {items.length == 0 ?
+                            <Typography sx={{ color: `${Colors.primaryMain}`, textAlign: 'center' }}>No item found.</Typography>
+                            :
+                            <>
+                                {items.map((item) => {
+                                    return <ItemCard slider={false} view={view} itemImage={item.nft_image_path} itemID={item._id.$oid} theme={theme} name={item.title} price={item.price} creator={item.creator} />
+                                })}
+                            </>
+                        }
+                    </>
+                }
             </div>
-            {openFilter ? <FilterContainer style={{ width: "28%" }} className="my-2 d-none d-md-flex">
+            {openFilter ? <FilterContainer style={{ width: "28%" }} className="my-2 d-none d-lg-flex">
             </FilterContainer>
                 : undefined}
         </div>
@@ -112,7 +154,7 @@ const Collected = ({ theme }) => {
             onClose={handleClose}
             aria-labelledby="modal-modal-title"
             aria-describedby="modal-modal-description"
-            className="d-md-none"
+            className="d-lg-none"
             // inputProps={{MenuProps: {disableScrollLock: true}}}
             disableScrollLock={true}
         >

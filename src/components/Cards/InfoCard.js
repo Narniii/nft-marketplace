@@ -6,7 +6,7 @@ import { Colors } from "../design/Colors";
 const Card = styled.div`
 // border:1px solid white;
 height: 200px;
-
+width:100%;
 `
 const OuterDiv = styled.div`
 background: ${Colors.gradientPurpleStandard};
@@ -26,7 +26,7 @@ overflow:hidden;
 z-index:0;
 // position:relative;
 border-radius: 24px;
-
+text-transform:${Colors.subtitleFont};
 `
 
 const Imagebg = styled.div`
@@ -45,32 +45,58 @@ width:100%;
 height: 100%;
 background: linear-gradient(357.7deg, #4C1593 1.45%, rgba(72, 15, 145, 0) 30.57%);`
 
-const InfoCard = ({ image }) => {
+const InfoCard = ({ image, slider, title, id }) => {
     // console.log(image)
     return (
-        <Card className=" p-2 col-xs-12 col-sm-6 col-md-4 align-items-center align-self-center" >
-            {/* <OuterDiv> */}
-            <Link  to="/info/9898" style={{ textDecoration: "none", width: "auto", height: "auto" }}>
-                <InnerDiv>
-                    <Imagebg style={{ backgroundImage: `url(${image})` }}>
-                        <ShadowedDiv className="position-relative" >
-                            <div
-                                style={{
-                                    width: "100%",
-                                    // height:"50px"
-                                    // border: "1px solid blue"
-                                }}
-                                className="position-absolute bottom-0 p-3"
-                            >
-                                <h5 style={{ margin: 0, color: "white", fontWeight: "600" }}>What is Web3is Web3?</h5>
-                            </div>
-                        </ShadowedDiv>
-                    </Imagebg>
-                </InnerDiv>
-            </Link>
-            {/* </OuterDiv> */}
-        </Card>
-
+        <>{slider ?
+            <Card className="p-1 col-xs-12 col-sm-6 col-md-4 align-items-center align-self-center" >
+                {/* <OuterDiv> */}
+                <Link to={'/' + 'info/' + id} style={{ textDecoration: "none", width: "auto", height: "auto" }}>
+                    <InnerDiv>
+                        <Imagebg style={{ backgroundImage: `url(${image})` }}>
+                            <ShadowedDiv className="position-relative" >
+                                <div
+                                    style={{
+                                        width: "100%",
+                                        // height:"50px"
+                                        // border: "1px solid blue"
+                                    }}
+                                    className="position-absolute bottom-0 p-3"
+                                >
+                                    <h5 style={{ margin: 0, color: "white", fontWeight: "600" }}>{title}</h5>
+                                </div>
+                            </ShadowedDiv>
+                        </Imagebg>
+                    </InnerDiv>
+                </Link>
+                {/* </OuterDiv> */}
+            </Card>
+            :
+            <div className="col-xs-12 col-sm-6 col-md-4 p-0">
+                <Card className="p-1 align-items-center align-self-center" >
+                    {/* <OuterDiv> */}
+                    <Link to={'/' + 'info/' + id} style={{ textDecoration: "none", width: "auto", height: "auto" }}>
+                        <InnerDiv>
+                            <Imagebg style={{ backgroundImage: `url(${image})` }}>
+                                <ShadowedDiv className="position-relative" >
+                                    <div
+                                        style={{
+                                            width: "100%",
+                                            // height:"50px"
+                                            // border: "1px solid blue"
+                                        }}
+                                        className="position-absolute bottom-0 p-3"
+                                    >
+                                        <h5 style={{ margin: 0, color: "white", fontWeight: "600" }}>{title}</h5>
+                                    </div>
+                                </ShadowedDiv>
+                            </Imagebg>
+                        </InnerDiv>
+                    </Link>
+                    {/* </OuterDiv> */}
+                </Card>
+            </div>}
+        </>
     );
 }
 

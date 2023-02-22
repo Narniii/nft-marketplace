@@ -180,7 +180,7 @@ const AccStyle = {
 
 
 
-const ActivityTab = ({ theme }) => {
+const ActivityTab = ({ theme , userWallet}) => {
     const handleOpen = () => setOpenFilter(true);
     const handleClose = () => setOpenFilter(false);
 
@@ -222,7 +222,7 @@ const ActivityTab = ({ theme }) => {
                 onClose={handleClose}
                 aria-labelledby="modal-modal-title"
                 aria-describedby="modal-modal-description"
-                className="d-md-none"
+                className="d-lg-none"
                 // inputProps={{MenuProps: {disableScrollLock: true}}}
                 disableScrollLock={true}
             >
@@ -459,7 +459,7 @@ const ActivityTab = ({ theme }) => {
 
                 {/* item activity on desktop ==========> */}
                 <div className="d-flex justify-content-between">
-                    <ItemsContainerDesktop style={{ width: !openFilter ? "100%" : "70%" }} className="my-2 d-none d-md-flex">
+                    <ItemsContainerDesktop style={{ width: !openFilter ? "100%" : "70%" , transition: '500ms ease' }} className="my-2 d-none d-lg-flex">
                         <div style={{ padding: "20px" }} className="d-flex my-1"><ArrowSwapVertical /> Item Activity</div>
                         <VisibleLine />
                         <div style={{ padding: "20px" }} className="my-1 d-flex justify-content-between">
@@ -543,7 +543,7 @@ const ActivityTab = ({ theme }) => {
 
                     </ItemsContainerDesktop>
 
-                    {openFilter ? <FilterContainer style={{ width: "28%" }} className="my-2 d-none d-md-flex">
+                    {openFilter ? <FilterContainer style={{ width: "28%" }} className="my-2 d-none d-lg-flex">
                         {/* <Accordion sx={{
                         width: '100%',
                         bgcolor: theme == 'light' ? "#F9F9F9" : "#272448",

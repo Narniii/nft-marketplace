@@ -2,7 +2,7 @@ export const TestColls = {
     collections:
         [
             {
-                collection_name: 'pigs',
+                title: 'pigs',
                 collection_id: '873649273hd982374hd0',
                 creator: "narni",
                 floor_price: '34',
@@ -12,9 +12,10 @@ export const TestColls = {
                 category: 'animal',
                 created_at: '',
                 royalty: 8,
+                logo_path:"/root/NFTMarketplace-Backend/market/media/logo_1676799651.729938MetaMask_Fox.svg.png",
             },
             {
-                collection_name: 'cats',
+                title: 'cats',
                 collection_id: '873634273hd982374hf0',
                 creator: "erfan",
                 floor_price: '4',
@@ -24,9 +25,10 @@ export const TestColls = {
                 category: 'animal',
                 created_at: '',
                 royalty: 15,
+                logo_path:"/root/NFTMarketplace-Backend/market/media/logo_1676799651.729938MetaMask_Fox.svg.png",
             },
             {
-                collection_name: 'airplanes',
+                title: 'airplanes',
                 collection_id: '873649273d482374h890',
                 creator: "narni",
                 floor_price: '50',
@@ -36,9 +38,10 @@ export const TestColls = {
                 category: 'utilities',
                 created_at: '',
                 royalty: 10,
+                logo_path:"/root/NFTMarketplace-Backend/market/media/logo_1676799651.729938MetaMask_Fox.svg.png",
             },
             {
-                collection_name: 'flowers',
+                title: 'flowers',
                 collection_id: '85555246hd98245930h',
                 creator: "mehdi",
                 floor_price: '12',
@@ -48,9 +51,10 @@ export const TestColls = {
                 category: 'nature',
                 created_at: '',
                 royalty: 5,
+                logo_path:"/root/NFTMarketplace-Backend/market/media/logo_1676799651.729938MetaMask_Fox.svg.png",
             },
             {
-                collection_name: 'designs',
+                title: 'designs',
                 collection_id: '855555d2gc66d23c0h',
                 creator: "mahsa",
                 floor_price: '5',
@@ -60,9 +64,10 @@ export const TestColls = {
                 category: 'art',
                 created_at: '',
                 royalty: 7,
+                logo_path:"/root/NFTMarketplace-Backend/market/media/logo_1676799651.729938MetaMask_Fox.svg.png",
             },
             {
-                collection_name: 'airplanes',
+                title: 'airplanes',
                 collection_id: '873649273d482374h890',
                 creator: "narni",
                 floor_price: '50',
@@ -72,9 +77,10 @@ export const TestColls = {
                 category: 'utilities',
                 created_at: '',
                 royalty: 9,
+                logo_path:"/root/NFTMarketplace-Backend/market/media/logo_1676799651.729938MetaMask_Fox.svg.png",
             },
             {
-                collection_name: 'flowers',
+                title: 'flowers',
                 collection_id: '85555246hd98245930h',
                 creator: "mehdi",
                 floor_price: '12',
@@ -84,9 +90,10 @@ export const TestColls = {
                 category: 'nature',
                 created_at: '',
                 royalty: 2,
+                logo_path:"/root/NFTMarketplace-Backend/market/media/logo_1676799651.729938MetaMask_Fox.svg.png",
             },
             {
-                collection_name: 'designs',
+                title: 'designs',
                 collection_id: '855555d2gc66d23c0h',
                 creator: "mahsa",
                 floor_price: '5',
@@ -96,9 +103,10 @@ export const TestColls = {
                 category: 'art',
                 created_at: '',
                 royalty: 6,
+                logo_path:"/root/NFTMarketplace-Backend/market/media/logo_1676799651.729938MetaMask_Fox.svg.png",
             },
             {
-                collection_name: 'cats',
+                title: 'cats',
                 collection_id: '873634273hd982374hf0',
                 creator: "erfan",
                 floor_price: '4',
@@ -108,9 +116,10 @@ export const TestColls = {
                 category: 'animal',
                 created_at: '',
                 royalty: 4,
+                logo_path:"/root/NFTMarketplace-Backend/market/media/logo_1676799651.729938MetaMask_Fox.svg.png",
             },
             {
-                collection_name: 'airplanes',
+                title: 'airplanes',
                 collection_id: '873649273d482374h890',
                 creator: "narni",
                 floor_price: '50',
@@ -120,6 +129,7 @@ export const TestColls = {
                 category: 'utilities',
                 created_at: '',
                 royalty: 5,
+                logo_path:"/root/NFTMarketplace-Backend/market/media/logo_1676799651.729938MetaMask_Fox.svg.png",
             },
 
         ]

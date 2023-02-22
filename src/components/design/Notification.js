@@ -11,6 +11,12 @@ width:max-content;
 color:${Colors.errorDark};
 font-size:12px;
 align-items:center;
+&:hover{
+    box-shadow:${({ theme }) => theme.hoverBoxShadow}
+}
+@media screen and (max-width: 768px) {
+    font-size:10px;
+}
 `;
 const Notification = ({ onClick }) => {
     return (

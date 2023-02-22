@@ -4,7 +4,6 @@ const initialState = {
     userId: '',
     walletAddress: '',
     isLoggedIn: false,
-    wallet: undefined,
     // cart: []
     // marketContract: undefined,
     // nftContract: undefined,
@@ -23,6 +22,8 @@ function userReducer(state = initialState, action) {
                 isLoggedIn: action.payload.isLoggedIn,
             };
         case LOGOUT_USER:
+            localStorage.removeItem('account')
+            localStorage.removeItem('lastActive')
             return {
                 ...state,
                 username: action.payload.username,

@@ -1,11 +1,15 @@
-import { Accordion, AccordionDetails, AccordionSummary, Box, Modal, Typography } from "@mui/material";
-import { Refresh2,ArrowDown2, ArrowSwapVertical, CloseSquare, FilterSearch, Grid1, Grid2, Grid5, HambergerMenu } from "iconsax-react";
+import { Accordion, AccordionDetails, AccordionSummary, Box, Modal, Skeleton, Typography } from "@mui/material";
+import { Refresh2, ArrowDown2, ArrowSwapVertical, CloseSquare, FilterSearch, Grid1, Grid2, Grid5, HambergerMenu } from "iconsax-react";
 import styled from "styled-components";
 import SearchBox from "../Navbar/SearchBox";
 import { TestColls } from "../../utils/testCollections";
 import { CircularProgress } from "@mui/material";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import ItemCard from "../Cards/ItemCard";
+import SSelection from "../Selection";
+import { Filtering } from "../Filtering";
+import { MARKET_API } from "../../utils/data/market_api";
+import { Colors } from "../design/Colors";
 
 const Selection = styled.div`
     display: flex;
@@ -48,8 +52,9 @@ overflow:hidden;
 const Updated = styled.div`
 color: ${({ theme }) => theme.trendingSectionSubTitles};
 display:flex;
+// cursor:pointer;
 `
-const ItemsTab = ({ theme }) => {
+const ItemsTab = ({ theme, collectionID, updatedAt, nfts }) => {
     const [view, setView] = useState('m')
     const handleViewChange = (v) => {
         setView(v)
@@ -64,83 +69,147 @@ const ItemsTab = ({ theme }) => {
     }
     const handleOpen = () => setOpenFilter(true);
     const handleClose = () => setOpenFilter(false);
+    const [lastUpdated, setLastUpdated] = useState(undefined)
+    const apiCall = useRef(undefined)
+    const [items, setItems] = useState(nfts)
+    const [err, setErr] = useState(undefined)
+    const [last_time, setLast_time] = useState(new Date().getTime())
 
     useEffect(() => {
-        setTrendingColls(TestColls.collections)
-    }, [TestColls])
+        let updatedAgo;
+        // let last_time = new Date().getTime()
+        updatedAgo = setInterval(() => {
+            let this_time = new Date().getTime()
+            let difference = Math.abs(this_time - last_time) / 1000
+            let hours = Math.floor(difference / 3600) % 24;
+            let minutes = Math.floor(difference / 60) % 60;
+            let seconds = Math.floor(difference % 60);
+
+            // setLastUpdated(<span>{hours} hrs {minutes} mins {seconds} secs</span>)
+            // setLastUpdated(<span>{minutes} mins {seconds} secs</span>)
+            setLastUpdated(<span>{minutes} mins</span>)
+        }, 300);
+        console.log(updatedAgo);
+
+        return function cleanup() {
+            console.log(`Clearing ${updatedAgo}`);
+            clearInterval(updatedAgo);
+        };
+    }, [last_time]);
+    // useEffect(() => {
+    //     if (collectionID) {
+    //         fetchItems()
+    //     }
+    // }, [collectionID])
     useEffect(() => {
-        if (trendingColls) {
-            console.log(trendingColls)
-            setLoading(false)
+        return () => {
+            if (apiCall.current != undefined)
+                apiCall.current.cancel();
+
         }
-    }, [trendingColls])
+    }, [])
+    const handleUpdate = () => {
+        if (collectionID) {
+            console.log(collectionID)
+            fetchItems()
+        }
+    }
+    const fetchItems = async () => {
+        console.log(collectionID)
+        try {
+            apiCall.current = MARKET_API.request({
+                path: `/collection/nfts/`,
+                method: "post",
+                body: {
+                    collection_id: collectionID,
+                    from: 0,
+                    to: 10
+                },
+
+            })
+            const response = await apiCall.current.promise;
+            if (!response.isSuccess)
+                throw response
+            setItems(response.data)
+            console.log(response)
+            let new_time = new Date().getTime()
+            setLast_time(new_time)
+
+            // setLoading(false)
+        }
+        catch (err) {
+            console.log(err)
+            if (err.status == 404) {
+                setItems([])
+            }
+            else {
+                setErr("Internal server error")
+            }
+            // setLoading(false)
+        }
+    }
+    useEffect(() => {
+        if (items)
+            setLoading(false)
+    }, [items])
 
 
     return (
         <div className="d-flex flex-column p-0 justify-content-between align-items-center">
             {/* top section */}
-            <div className="row w-100 p-0 justify-content-between"
-            >
-                <div className="col-8 col-sm-4 col-md-5"><SearchBox /></div>
-                <div className="d-none d-sm-block col-4 col-md-3">
-                    <Selection className="row p-2" >
-                        price low to high
-                        <div style={{ width: "auto", padding: "4px 0 5px" }}><ArrowDown2 /></div>
-                    </Selection>
-                </div>
-                <div className="d-none d-sm-block col-3">
-                    <Selection className="row ">
-                        <IconContainer className="col-3 text-center d-flex justify-content-center align-items-center" onClick={() => handleViewChange('xs')}><HambergerMenu /></IconContainer>
-                        <IconContainer className="col-3 text-center d-flex justify-content-center align-items-center" onClick={() => handleViewChange('s')}><Grid1 /></IconContainer>
-                        <IconContainer className="col-3 text-center d-flex justify-content-center align-items-center" onClick={() => handleViewChange('m')}><Grid2 /></IconContainer>
-                        <IconContainer className="col-3 text-center d-flex justify-content-center align-items-center" onClick={() => handleViewChange('l')}><Grid5 /></IconContainer>
-                    </Selection>
-                </div>
-                <div className="d-block d-sm-none col-2 col-sm-1">
-                    <Selection className="row p-2 d-flex justify-content-center">
-                        <div style={{ width: "auto", padding: "4px 0 5px" }}><ArrowSwapVertical /></div>
-                    </Selection>
-                </div>
-                <div className="col-2 col-sm-1">
-                    <Selection className="row p-2 d-flex justify-content-center">
-                        <div style={{ width: "auto", padding: "4px 0 5px" }} onClick={handleFilter}><FilterSearch /></div>
-                    </Selection>
-                </div>
 
+            <Filtering id={'colItemsSearch'} theme={theme} handleFilter={handleFilter} handleViewChange={handleViewChange} selectOptions={['price low to high', 'price high to low']} />
 
-            </div>
 
 
             {/* items section */}
             {/*outer div for when status modal is opened */}
             <div className="d-flex  w-100 justify-content-between">
                 <div className="d-flex  w-100 flex-column p-0 justify-content-between">
-                    {loading ? <CircularProgress /> :
+                    {loading ?
+                        <div className="d-flex flex-column w-100 justify-content-between">
+                            <Skeleton variant="rounded" height={50} sx={{ width: "100%", borderRadius: "24px", my: 3 }} />
+                            <div className="d-flex flex-wrap my-3" style={{ width: !openFilter ? "100%" : "70%", transition: "500ms ease" }}>
+                                <div className="col-12 col-sm-6 col-md-3 p-1">
+                                    <Skeleton variant="rounded" height={300} sx={{ width: "100%", borderRadius: "24px" }} />
+                                </div>
+                                <div className="d-none d-sm-block col-12 col-sm-6 col-md-3 p-1">
+                                    <Skeleton variant="rounded" height={300} sx={{ width: "100%", borderRadius: "24px" }} />
+                                </div>
+                                <div className="d-none d-md-block col-12 col-sm-6 col-md-3 p-1">
+                                    <Skeleton variant="rounded" height={300} sx={{ width: "100%", borderRadius: "24px" }} />
+                                </div>
+                                <div className="d-none d-md-block col-12 col-sm-6 col-md-3 p-1">
+                                    <Skeleton variant="rounded" height={300} sx={{ width: "100%", borderRadius: "24px" }} />
+                                </div>
+                            </div>
+                        </div>
+                        :
                         <>
                             <div className="d-flex w-100 mt-3 p-0 justify-content-between">
-                                <Updated><Refresh2 size="20" />&nbsp;Updated 20m ago</Updated>
-                                <div>22 items</div>
+                                <Updated ><Refresh2 style={{ cursor: "pointer" }} size="20" onClick={handleUpdate} />&nbsp;{lastUpdated ? <>updated&nbsp;{lastUpdated}&nbsp;ago</> : undefined}</Updated>
+                                <div>{items.length} items</div>
                             </div>
                             <div className="d-flex justify-content-between">
-                                <div className="d-flex flex-wrap justify-content-between" style={{ width: !openFilter ? "100%" : "70%", transition: "500ms ease" }}>
-                                    <ItemCard view={view} theme={theme} name={trendingColls[0].collection_name} price={trendingColls[0].floor_price} creator={trendingColls[0].creator} />
-                                    <ItemCard view={view} theme={theme} name={trendingColls[1].collection_name} price={trendingColls[1].floor_price} creator={trendingColls[1].creator} />
-                                    <ItemCard view={view} theme={theme} name={trendingColls[2].collection_name} price={trendingColls[2].floor_price} creator={trendingColls[2].creator} />
-                                    <ItemCard view={view} theme={theme} name={trendingColls[3].collection_name} price={trendingColls[3].floor_price} creator={trendingColls[3].creator} />
-                                    <ItemCard view={view} theme={theme} name={trendingColls[0].collection_name} price={trendingColls[0].floor_price} creator={trendingColls[0].creator} />
-                                    <ItemCard view={view} theme={theme} name={trendingColls[1].collection_name} price={trendingColls[1].floor_price} creator={trendingColls[1].creator} />
-                                    <ItemCard view={view} theme={theme} name={trendingColls[2].collection_name} price={trendingColls[2].floor_price} creator={trendingColls[2].creator} />
-                                    <ItemCard view={view} theme={theme} name={trendingColls[3].collection_name} price={trendingColls[3].floor_price} creator={trendingColls[3].creator} />
-                                    <ItemCard view={view} theme={theme} name={trendingColls[0].collection_name} price={trendingColls[0].floor_price} creator={trendingColls[0].creator} />
-                                    <ItemCard view={view} theme={theme} name={trendingColls[1].collection_name} price={trendingColls[1].floor_price} creator={trendingColls[1].creator} />
-                                    <ItemCard view={view} theme={theme} name={trendingColls[2].collection_name} price={trendingColls[2].floor_price} creator={trendingColls[2].creator} />
-                                    <ItemCard view={view} theme={theme} name={trendingColls[3].collection_name} price={trendingColls[3].floor_price} creator={trendingColls[3].creator} />
-                                </div>
-                                {openFilter ? <FilterContainer style={{ width: "28%" }} className="my-2 d-none d-md-flex">
+                                <Box className="d-flex flex-wrap" style={{ width: !openFilter ? "100%" : "70%", transition: { xs: '0ms', md: '500ms ease' } }}>
+                                    {items.length == 0 ?
+                                        <div className="w-100 d-flex justify-content-center align-items-center">
+                                            <Typography sx={{ color: `${Colors.primaryMain}`, textAlign: 'center', my: 7, mx: 3 }}>No item found.</Typography>
+                                        </div>
+                                        :
+                                        <>
+                                            {items.map((item) => {
+                                                return <ItemCard slider={false} view={view} itemImage={item.nft_image_path} itemID={item._id.$oid} theme={theme} name={item.title} price={item.price} creator={item.creator} />
+                                            })}
+                                        </>
+                                    }
+                                </Box>
+                                {openFilter ? <FilterContainer style={{ width: "28%" }} className="my-2 d-none d-lg-flex">
                                 </FilterContainer>
                                     : undefined}
                             </div>
-                        </>}
+                        </>
+                    }
                 </div>
 
 
@@ -149,7 +218,7 @@ const ItemsTab = ({ theme }) => {
                     onClose={handleClose}
                     aria-labelledby="modal-modal-title"
                     aria-describedby="modal-modal-description"
-                    className="d-md-none"
+                    className="d-lg-none"
                     // inputProps={{MenuProps: {disableScrollLock: true}}}
                     disableScrollLock={true}
                 >

@@ -6,6 +6,7 @@ import testnft from '../../assets/test1.png'
 import SearchBox from "../Navbar/SearchBox";
 import { useState } from "react";
 import { SelectionB } from "../test";
+import SSelection from "../Selection";
 
 
 const ItemRow = styled.div`
@@ -149,27 +150,7 @@ const OfferModal = ({ open, handleClose, theme }) => {
                     </div>
                     <div className="d-flex flex-column mb-3"><p className="mb-1">Duration</p>
                         <div className="d-flex align-items-center justify-content-between">
-                            <FormControl sx={{ width: '80%', bgcolor: theme == 'light' ? "#ffffff" : "#272448", color: theme == 'light' ? "#808080" : "#B3B3B3", borderRadius: "24px", overflow: "hidden", border: "1px solid #d9d9d9" }}>
-                                <Select
-                                    value={10}
-                                    BackdropProps={{ invisible: true }}
-                                    onChange={handleChange}
-                                    displayEmpty
-                                    inputProps={{ MenuProps: { disableScrollLock: true } }}
-                                    IconComponent={ArrowDown2}
-                                    // MenuProps={{ classes: { paper: classes.select } }}
-                                    sx={{ bgcolor: theme == 'light' ? "#ffffff" : "#272448", color: theme == 'light' ? "#808080" : "#B3B3B3", fontWeight: 600 }}
-                                >
-                                    <MenuItem
-                                        sx={{ bgcolor: theme == 'light' ? "#ffffff" : "#272448" }}
-                                        value="">
-                                        <em>None</em>
-                                    </MenuItem>
-                                    <MenuItem sx={{ bgcolor: theme == 'light' ? "#ffffff" : "#272448", fontWeight: 600 }} value={10}>24h</MenuItem>
-                                    <MenuItem sx={{ bgcolor: theme == 'light' ? "#ffffff" : "#272448", fontWeight: 600 }} value={20}>12h</MenuItem>
-                                    <MenuItem sx={{ bgcolor: theme == 'light' ? "#ffffff" : "#272448", fontWeight: 600 }} value={30}>6h</MenuItem>
-                                </Select>
-                            </FormControl>
+                            <SSelection width={'100%'} theme={theme} tabs={['24H', '12H', '6H']} />
                             <div className="d-flex flex-column align-items-end ms-1">
                                 <Subtitle>jan17,2023</Subtitle>
                                 <Subtitle>10:34 AM</Subtitle>

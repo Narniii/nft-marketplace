@@ -1,18 +1,26 @@
-import { InputBase, useScrollTrigger } from "@mui/material";
+import { InputBase, LinearProgress, useScrollTrigger } from "@mui/material";
 import { Add, Additem, Notification, NotificationBing, PercentageCircle, Profile, SecuritySafe, UsdCoin } from "iconsax-react";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { useSelector } from "react-redux";
 import styled from "styled-components";
+import { ButtonLarge, ButtonOutline } from "../components/design/Buttons";
 import { Colors } from "../components/design/Colors";
 import Footer from "../components/Footer";
 import Navbar from "../components/Navbar/Navbar";
+import WalletConnect from "../components/Navbar/WalletConnect";
 import AccountSupport from "../components/Profile/AccountSupportTab";
+import Earnings from "../components/Profile/EarningsTab";
 import FeaturedItems from "../components/Profile/FeaturedItems";
 import NotificationSettings from "../components/Profile/NotificationsTab";
 import OffersTab from "../components/Profile/OffersTab";
 import ProfileDetails from "../components/Profile/ProfileDetailsTab";
+import { API_CONFIG } from "../config";
 import '../styles.css'
+import { AUTH_API } from "../utils/data/auth_api";
+import { BG_URL, PUBLIC_URL } from "../utils/utils";
 
 const SectionContainer = styled.div`
+// border:1px solid red;
 
 `;
 const ProfileMenuTabs = styled.div`
@@ -22,14 +30,18 @@ border-right: ${({ theme }) => theme.profileBorder};
 const InfoContainer = styled.div`
 
 `;
-const BannerContainer = styled.div`
+const BannerContainer = styled.label`
 height:150px;
 background:${Colors.gradientPurpleStandard};
 border-radius:12px;
 margin-bottom:60px;
 position:relative;
+background-size:cover;
+background-repeat:no-repeat;
+background-position:center;
+
 `;
-const LogoContainer = styled.div`
+const LogoContainer = styled.label`
 background:${Colors.gradientPurpleStandard};
 border:1px solid;
 border-color:${({ theme }) => theme.body};
@@ -37,6 +49,9 @@ border-radius:50%;
 width:100px;
 height:100px;
 // overflow:hidden;
+background-size:cover;
+background-repeat:no-repeat;
+background-position:center;
 position:absolute;
 left:5%;
 bottom:-30%;
@@ -54,6 +69,21 @@ border: ${({ theme }) => theme.addProPicBorder};
 position:absolute;
 right:-3%;
 bottom:-3%;
+height:38px;
+width:38px;
+// z-index:2;
+display:flex;
+justify-content:center;
+align-items:center;
+cursor:pointer;
+`
+const AddBannerButt = styled.div`
+border-radius: 12px;
+background: ${({ theme }) => theme.addProPic};
+border: ${({ theme }) => theme.addProPicBorder};
+position:absolute;
+right:8px;
+bottom:8px;
 height:38px;
 width:38px;
 // z-index:2;
@@ -91,8 +121,121 @@ display:flex;
 }
 `
 const Account = ({ theme, themeToggler }) => {
-    const [value, setValue] = useState("profile")
+    const globalUser = useSelector(state => state.userReducer);
+    const [value, setValue] = useState(window.location.hash ? window.location.hash.replace('#', '') : "profile")
     const [title, setTitle] = useState("Profile Details")
+    const [loadErr, setLoadErr] = useState(undefined)
+    const [walletMenu, setWalletMenu] = useState({
+        top: false,
+        left: false,
+        bottom: false,
+        right: false,
+    });
+    const [avatar, setAvatar] = useState(undefined)
+    const [banner, setBanner] = useState(undefined)
+    const [avatarError, setAvatarError] = useState(undefined)
+    const [bannerError, setBannerError] = useState(undefined)
+    const [user, setUser] = useState(undefined)
+    const [loading, setLoading] = useState(true)
+    const [apiLoading, setApiLoading] = useState(false)
+    const apiCall = useRef(undefined)
+
+    useEffect(() => {
+        getUser()
+        return () => {
+            if (apiCall.current != undefined)
+                apiCall.current.cancel();
+
+        }
+    }, [])
+    useEffect(() => {
+        if (user)
+            setLoading(false)
+    }, [user])
+
+    const getUser = async () => {
+        try {
+            apiCall.current = AUTH_API.request({
+                path: `/user/get/`,
+                method: "post",
+                body: { username: globalUser.username },
+            });
+            let response = await apiCall.current.promise;
+            console.log('uuuuseeeeeer', response)
+            if (!response.isSuccess)
+                throw response
+            setUser(response.data)
+            var AVATAR_PATH = response.data.avatar_path ? response.data.avatar_path.replace('root/NFTMarketplace-Backend/auth/media/', '') : undefined;
+            var BANNER_PATH = response.data.banner_path ? response.data.banner_path.replace('root/NFTMarketplace-Backend/auth/media/', '') : undefined;
+            var bg_AVATAR = BG_URL(PUBLIC_URL(`${API_CONFIG.AUTH_MEDIA_API_URL}${AVATAR_PATH}`))
+            var bg_BANNER = BG_URL(PUBLIC_URL(`${API_CONFIG.AUTH_MEDIA_API_URL}${BANNER_PATH}`))
+            console.log(BANNER_PATH)
+            setAvatar(bg_AVATAR)
+            setBanner(bg_BANNER)
+        }
+        catch (err) {
+            if (err.status == 404)
+                setLoadErr("No user found.")
+            else if (err.status == 500) {
+                setLoadErr("Internal server error occured, please try again later.")
+            }
+            else {
+                setLoadErr('something went wrong , please try again later')
+            }
+            setLoading(false)
+        }
+    }
+
+    const walletDrawer = (anchor, open) => (event) => {
+        if (event.type === 'keydown' && (event.key === 'Tab' || event.key === 'Shift')) {
+            return;
+        }
+
+        setWalletMenu({ ...walletMenu, [anchor]: open });
+    };
+    const onLogoChange = (e) => {
+        e.preventDefault()
+
+        var u = { ...user };
+
+        if (e.target.files && e.target.files[0] && e.target.files[0].type.indexOf("image") !== -1) {
+            setAvatarError(undefined)
+            u.avatar = e.target.files[0];
+            const [file] = e.target.files;
+            // setAvatarChanged(true)
+            let avtTemp = URL.createObjectURL(file)
+            // setAvatar();
+            setAvatar(`url(${avtTemp})`)
+            setUser(u)
+        }
+        else {
+            u[e.target.name] = undefined;
+            setUser(u)
+            setAvatar(undefined)
+            setAvatarError("Selected file is not an image")
+        }
+    }
+
+    const onBannerChange = (e) => {
+        e.preventDefault()
+        var u = { ...user };
+        if (e.target.files && e.target.files[0] && e.target.files[0].type.indexOf("image") !== -1) {
+            setBannerError(undefined)
+            u.banner = e.target.files[0];
+            const [file] = e.target.files;
+            let bnTemp = URL.createObjectURL(file)
+            setBanner(`url(${bnTemp})`)
+            setUser(u)
+        }
+        else {
+            u[e.target.name] = undefined;
+            setUser(u)
+            setBanner(undefined)
+            setBannerError("Selected file is not an image")
+        }
+    }
+
+
     useEffect(() => {
         if (value == "profile") {
             setTitle("Profile Details")
@@ -117,35 +260,57 @@ const Account = ({ theme, themeToggler }) => {
         e.preventDefault()
         setValue(e.target.id)
     }
+
+
     return (
         <>
             <div className="pdng">
                 <Navbar theme={theme} themeToggler={themeToggler} />
-                <SectionContainer className="row my-4">
-                    <ProfileMenuTabs className="d-none d-md-flex flex-column col-md-3 p-0">
-                        <ReadingTitle className="menutab" onClick={handleSelect} id="profile" style={{ background: value == 'profile' && theme == 'light' ? `${Colors.gray1}` : value == 'profile' && theme == 'dark' ? `${Colors.dark4}` : 'inherit' }}><Profile />&nbsp;Profile</ReadingTitle>
-                        <ReadingTitle className="menutab" onClick={handleSelect} id="featured" style={{ background: value == 'featured' && theme == 'light' ? `${Colors.gray1}` : value == 'featured' && theme == 'dark' ? `${Colors.dark4}` : 'inherit' }}><Additem />&nbsp;Featured Items</ReadingTitle>
-                        <ReadingTitle className="menutab" onClick={handleSelect} id="notifications" style={{ background: value == 'notifications' && theme == 'light' ? `${Colors.gray1}` : value == 'notifications' && theme == 'dark' ? `${Colors.dark4}` : 'inherit' }}><Notification />&nbsp;Notifications</ReadingTitle>
-                        <ReadingTitle className="menutab" onClick={handleSelect} id="offers" style={{ background: value == 'offers' && theme == 'light' ? `${Colors.gray1}` : value == 'offers' && theme == 'dark' ? `${Colors.dark4}` : 'inherit' }}><PercentageCircle />&nbsp;Offers</ReadingTitle>
-                        <ReadingTitle className="menutab" onClick={handleSelect} id="support" style={{ background: value == 'support' && theme == 'light' ? `${Colors.gray1}` : value == 'support' && theme == 'dark' ? `${Colors.dark4}` : 'inherit' }}><SecuritySafe />&nbsp;Account Support</ReadingTitle>
-                        <ReadingTitle className="menutab" onClick={handleSelect} id="earning" style={{ background: value == 'earning' && theme == 'light' ? `${Colors.gray1}` : value == 'earning' && theme == 'dark' ? `${Colors.dark4}` : 'inherit' }}><UsdCoin />&nbsp;Earnings</ReadingTitle>
-                    </ProfileMenuTabs>
 
+                {globalUser.isLoggedIn ?
+                    <>
+                        {loading ?
+                            <div className="my-5">
+                                <LinearProgress color="secondary" />
+                            </div>
+                            :
+                            <>
+                                <SectionContainer className="row my-4">
+                                    <ProfileMenuTabs className="d-none d-lg-flex flex-column col-lg-3 p-0">
+                                        <ReadingTitle className="menutab" onClick={handleSelect} id="profile" style={{ background: value == 'profile' && theme == 'light' ? `${Colors.gray1}` : value == 'profile' && theme == 'dark' ? `${Colors.dark4}` : 'inherit' }}><Profile />&nbsp;Profile</ReadingTitle>
+                                        <ReadingTitle className="menutab" onClick={handleSelect} id="featured" style={{ background: value == 'featured' && theme == 'light' ? `${Colors.gray1}` : value == 'featured' && theme == 'dark' ? `${Colors.dark4}` : 'inherit' }}><Additem />&nbsp;Featured Items</ReadingTitle>
+                                        <ReadingTitle className="menutab" onClick={handleSelect} id="notifications" style={{ background: value == 'notifications' && theme == 'light' ? `${Colors.gray1}` : value == 'notifications' && theme == 'dark' ? `${Colors.dark4}` : 'inherit' }}><Notification />&nbsp;Notifications</ReadingTitle>
+                                        <ReadingTitle className="menutab" onClick={handleSelect} id="offers" style={{ background: value == 'offers' && theme == 'light' ? `${Colors.gray1}` : value == 'offers' && theme == 'dark' ? `${Colors.dark4}` : 'inherit' }}><PercentageCircle />&nbsp;Offers</ReadingTitle>
+                                        <ReadingTitle className="menutab" onClick={handleSelect} id="support" style={{ background: value == 'support' && theme == 'light' ? `${Colors.gray1}` : value == 'support' && theme == 'dark' ? `${Colors.dark4}` : 'inherit' }}><SecuritySafe />&nbsp;Account Support</ReadingTitle>
+                                        <ReadingTitle className="menutab" onClick={handleSelect} id="earning" style={{ background: value == 'earning' && theme == 'light' ? `${Colors.gray1}` : value == 'earning' && theme == 'dark' ? `${Colors.dark4}` : 'inherit' }}><UsdCoin />&nbsp;Earnings</ReadingTitle>
+                                    </ProfileMenuTabs>
+                                    <InfoContainer className="d-flex flex-column col-12 col-lg-9">
+                                        <h2 style={{ fontWeight: 600 }}>{title}</h2>
+                                        {value == "profile" ?
+                                            <BannerContainer onChange={onBannerChange} style={{ backgroundImage: banner ? banner : `${Colors.gradientPurpleStandard}` }}>
+                                                <input type="file" name="banner" id="banner" hidden />
 
-
-                    <InfoContainer className="d-flex flex-column col-12 col-md-9">
-                        <h2 style={{ fontWeight: 600 }}>{title}</h2>
-                        {value == "profile" ?
-                            <BannerContainer><LogoContainer>
-                                <Logo>
-                                    <AddPicButt><Add /></AddPicButt>
-                                </Logo>
-                            </LogoContainer></BannerContainer> : undefined}
-                        <DetailsContainer className="p-3">
-                            {value == "profile" ? <ProfileDetails /> : value == "support" ? <AccountSupport theme={theme} /> : value == "featured" ? <FeaturedItems /> : value == "offers" ? <OffersTab /> : value == "notifications" ? <NotificationSettings theme={theme} /> : undefined}
-                        </DetailsContainer>
-                    </InfoContainer>
-                </SectionContainer>
+                                                <LogoContainer onChange={onLogoChange} style={{ backgroundImage: avatar ? avatar : `${Colors.gradientPurpleStandard}` }}>
+                                                    <input type="file" name="avatar" id="avatar" hidden />
+                                                    <Logo>
+                                                        <AddPicButt><Add /></AddPicButt>
+                                                    </Logo>
+                                                </LogoContainer>
+                                                <AddBannerButt><Add /></AddBannerButt>
+                                            </BannerContainer> : undefined}
+                                        <DetailsContainer className="p-3">
+                                            {value == "profile" ? <ProfileDetails globalUser={globalUser} user={user} setUser={setUser} avatar={avatar} banner={banner} /> : value == "support" ? <AccountSupport theme={theme} /> : value == "featured" ? <FeaturedItems /> : value == "offers" ? <OffersTab /> : value == "notifications" ? <NotificationSettings theme={theme} /> : value == "earning" ? <Earnings theme={theme} /> : undefined}
+                                        </DetailsContainer>
+                                    </InfoContainer>
+                                </SectionContainer>
+                            </>
+                        }</>
+                    :
+                    <SectionContainer className="d-flex my-5 justify-content-center align-items-center">
+                        <ButtonLarge onClick={walletDrawer('bottom', true)}>connect wallet</ButtonLarge>
+                        <WalletConnect toggleDrawer={walletDrawer} state={walletMenu} theme={theme} />
+                    </SectionContainer>
+                }
             </div>
             {/* <Footer /> */}
         </>

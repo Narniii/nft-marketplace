@@ -1,10 +1,15 @@
 import { useEffect, useState } from "react";
+import { useDispatch } from "react-redux";
+import { Link } from "react-router-dom";
 import styled from "styled-components";
 import testNFT from '../../assets/testNFT.png'
+import { API_CONFIG } from "../../config";
+import { addItem } from "../../redux/actions";
+import { BG_URL, PUBLIC_URL } from "../../utils/utils";
 import { AddToCartButton } from "../design/Buttons";
 
 const Card = styled.div`
-// width: 100%;
+width: 100%;
 // height: 100%;
 // background: ${({ theme }) => theme.itemCardsBackground};
 // box-shadow: ${({ theme }) => theme.boxShadow};
@@ -45,7 +50,6 @@ const AddButtonHolder = styled.div`
     height:50px;
     display:none;
 `
-
 const InnerDiv = styled.div`
     height: 100%;
     background: ${({ theme }) => theme.itemCardsBackground};
@@ -127,6 +131,7 @@ border-radius:8px;
 const BoldP = styled.p`
 margin:0;
 font-weight:600;
+width:150px;
 `
 const PurpleP = styled.p`
 margin:0;
@@ -137,13 +142,20 @@ height:1px;
 width:100%;
 background-color:#cccccc;
 `
-const ItemCard = ({ theme, name, creator, price, view, itemID }) => {
-    console.log('view', view)
+const ItemCard = ({ theme, name, creator, price, view, itemID, slider, creatorWallet, itemImage }) => {
+    // console.log('view', view)
     const [checked, setChecked] = useState([])
     const [value, setValue] = useState(undefined)
     const [thisChecked, setThisChecked] = useState(undefined)
     const [loading, setLoading] = useState(true)
-
+    const dispatch = useDispatch();
+    const add = (item) => dispatch(addItem(item));
+    var ITEM_IMAGE = itemImage.replace('root/NFTMarketplace-Backend/market/media/', '');
+    const shorten = (str) => {
+        if (str)
+            return str.length > 10 ? str.substring(0, 7) + "..." : str;
+        return 'undefined'
+    }
     useEffect(() => {
         if (view)
             setLoading(false)
@@ -152,7 +164,7 @@ const ItemCard = ({ theme, name, creator, price, view, itemID }) => {
         e.preventDefault()
         var tempArr = checked;
         setValue(e.target.id)
-        console.log(e.target.id)
+        // console.log(e.target.id)
         if (tempArr.includes(e.target.id)) {
             const removeItem = tempArr.filter((item) => item != e.target.id);
             tempArr = removeItem
@@ -161,7 +173,7 @@ const ItemCard = ({ theme, name, creator, price, view, itemID }) => {
 
 
         setChecked(tempArr)
-        console.log(tempArr)
+        // console.log(tempArr)
 
         if (tempArr.includes(e.target.id)) {
             document.getElementById(e.target.id).style.backgroundColor = '#46C263';
@@ -176,46 +188,101 @@ const ItemCard = ({ theme, name, creator, price, view, itemID }) => {
             {loading ? <div>...</div> :
                 <>
                     {view == 'm' ?
-                        <Card className="p-2 col-6 col-md-3 align-items-center align-self-center" >
-                            <InnerDiv>
-                                <Image style={{ backgroundImage: `url(${testNFT})` }} />
-                                <div className="row px-2 w-100 align-self-center align-items-center justify-content-between" style={{ height: "50px" }}>
-                                    <div className="p-0" style={{ width: "auto", fontSize: "14px" }}>{name}</div>
-                                    <div className="p-0" style={{ width: "auto", fontSize: "14px", }}><span style={{ fontWeight: "bold" }}>{price}</span><PriceUnit> ETH</PriceUnit></div>
+                        <>
+                            {slider ?
+                                <Card className="p-2 col-6 col-lg-3 align-items-center align-self-center" >
+                                    <Link style={{ textDecoration: "none", color: "inherit" }} to={'/' + 'assets/ethereum/' + creatorWallet + '/' + itemID}>
+                                        <InnerDiv>
+                                            <Image style={{ backgroundImage: BG_URL(PUBLIC_URL(`${API_CONFIG.MARKET_MEDIA_API_URL}${ITEM_IMAGE}`)) }} />
+                                            <div className="row px-2 w-100 align-self-center align-items-center justify-content-between" style={{ height: "50px" }}>
+                                                <div className="p-0" style={{ width: "auto", fontSize: "14px" }}>{name}</div>
+                                                <div className="p-0" style={{ width: "auto", fontSize: "14px", }}><span style={{ fontWeight: "bold" }}>{price}</span><PriceUnit> ETH</PriceUnit></div>
+                                            </div>
+                                            <CreatorHolder className="row px-2 pb-2 w-100 align-self-center align-items-center justify-content-start" style={{ height: "50px", fontWeight: "bold" }}>
+                                                <LogoHolder />
+                                                &nbsp;
+                                                {shorten(creator)}
+                                            </CreatorHolder>
+                                            <AddButtonHolder className="w-100 p-0 align-self-center align-items-end">
+                                                <AddToCartButton onClick={() => add({ price: price, name: name, id: itemID })}>Add To Cart</AddToCartButton>
+                                            </AddButtonHolder>
+                                        </InnerDiv>
+                                    </Link>
+                                </Card> :
+                                <div className="col-6 col-lg-3 p-0">
+                                    <Card className="p-2 align-items-center align-self-center" >
+                                        <Link style={{ textDecoration: "none", color: "inherit" }} to={'/' + 'assets/ethereum/' + creatorWallet + '/' + itemID}>
+                                            <InnerDiv>
+                                                <Image style={{ backgroundImage: BG_URL(PUBLIC_URL(`${API_CONFIG.MARKET_MEDIA_API_URL}${ITEM_IMAGE}`)) }} />
+                                                <div className="row px-2 w-100 align-self-center align-items-center justify-content-between" style={{ height: "50px" }}>
+                                                    <div className="p-0" style={{ width: "auto", fontSize: "14px" }}>{name}</div>
+                                                    <div className="p-0" style={{ width: "auto", fontSize: "14px", }}><span style={{ fontWeight: "bold" }}>{price}</span><PriceUnit> ETH</PriceUnit></div>
+                                                </div>
+                                                <CreatorHolder className="row px-2 pb-2 w-100 align-self-center align-items-center justify-content-start" style={{ height: "50px", fontWeight: "bold" }}>
+                                                    <LogoHolder />
+                                                    &nbsp;
+                                                    {shorten(creator)}
+                                                </CreatorHolder>
+                                                <AddButtonHolder className="w-100 p-0 align-self-center align-items-end">
+                                                    <AddToCartButton onClick={() => add({ price: price, name: name, id: itemID })}>Add To Cart</AddToCartButton>
+                                                </AddButtonHolder>
+                                            </InnerDiv>
+                                        </Link>
+                                    </Card>
                                 </div>
-                                <CreatorHolder className="row px-2 pb-2 w-100 align-self-center align-items-center justify-content-start" style={{ height: "50px", fontWeight: "bold" }}>
-                                    <LogoHolder />
-                                    &nbsp;
-                                    {creator}
-                                </CreatorHolder>
-                                <AddButtonHolder className="row w-100 p-0 align-self-center align-items-center">
-                                    <AddToCartButton>Add To Cart</AddToCartButton>
-                                </AddButtonHolder>
-                            </InnerDiv>
-                        </Card> :
+                            }
+                        </>
+                        :
                         view == 's' ?
-                            <Card className="p-2 col-6 col-sm-3 col-md-2 align-items-center align-self-center" >
-                                <InnerDiv>
-                                    <Image style={{ backgroundImage: `url(${testNFT})` }} />
-                                    <div className="row px-2 w-100 align-self-center align-items-center justify-content-between" style={{ height: "50px" }}>
-                                        <div className="p-0" style={{ width: "auto", fontSize: "14px" }}>{name}</div>
-                                        <div className="p-0" style={{ width: "auto", fontSize: "14px", }}><span style={{ fontWeight: "bold" }}>{price}</span><PriceUnit> ETH</PriceUnit></div>
+                            <>
+                                {slider ?
+                                    <Card className="p-2 col-6 col-sm-3 col-lg-2 align-items-center align-self-center" >
+                                        <Link style={{ textDecoration: "none", color: "inherit" }} to={'/' + 'assets/ethereum/' + creatorWallet + '/' + itemID}>
+                                            <InnerDiv>
+                                                <Image style={{ backgroundImage: BG_URL(PUBLIC_URL(`${API_CONFIG.MARKET_MEDIA_API_URL}${ITEM_IMAGE}`)) }} />
+                                                <div className="row px-2 w-100 align-self-center align-items-center justify-content-between" style={{ height: "50px" }}>
+                                                    <div className="p-0" style={{ width: "auto", fontSize: "14px" }}>{name}</div>
+                                                    <div className="p-0" style={{ width: "auto", fontSize: "14px", }}><span style={{ fontWeight: "bold" }}>{price}</span><PriceUnit> ETH</PriceUnit></div>
+                                                </div>
+                                                <CreatorHolder className="row px-2 pb-2 w-100 align-self-center align-items-center justify-content-start" style={{ height: "50px", fontWeight: "bold" }}>
+                                                    <LogoHolder />
+                                                    &nbsp;
+                                                    {shorten(creator)}
+                                                </CreatorHolder>
+                                                <AddButtonHolder className="w-100 p-0 align-self-center align-items-end">
+                                                    <AddToCartButton onClick={() => add({ price: price, name: name, id: itemID })}>Add To Cart</AddToCartButton>
+                                                </AddButtonHolder>
+                                            </InnerDiv>
+                                        </Link>
+                                    </Card> :
+                                    <div className="p-0 col-6 col-sm-3 col-lg-2">
+                                        <Card className="p-2 align-items-center align-self-center" >
+                                            <InnerDiv>
+                                                <Image style={{ backgroundImage: BG_URL(PUBLIC_URL(`${API_CONFIG.MARKET_MEDIA_API_URL}${ITEM_IMAGE}`)) }} />
+                                                <div className="row px-2 w-100 align-self-center align-items-center justify-content-between" style={{ height: "50px" }}>
+                                                    <div className="p-0" style={{ width: "auto", fontSize: "14px" }}>{name}</div>
+                                                    <div className="p-0" style={{ width: "auto", fontSize: "14px", }}><span style={{ fontWeight: "bold" }}>{price}</span><PriceUnit> ETH</PriceUnit></div>
+                                                </div>
+                                                <CreatorHolder className="row px-2 pb-2 w-100 align-self-center align-items-center justify-content-start" style={{ height: "50px", fontWeight: "bold" }}>
+                                                    <LogoHolder />
+                                                    &nbsp;
+                                                    {shorten(creator)}
+                                                </CreatorHolder>
+                                                <AddButtonHolder className=" w-100 p-0 align-self-center align-items-end">
+                                                    <AddToCartButton onClick={() => add({ price: price, name: name, id: itemID })}>Add To Cart</AddToCartButton>
+                                                </AddButtonHolder>
+                                            </InnerDiv>
+                                        </Card>
                                     </div>
-                                    <CreatorHolder className="row px-2 pb-2 w-100 align-self-center align-items-center justify-content-start" style={{ height: "50px", fontWeight: "bold" }}>
-                                        <LogoHolder />
-                                        &nbsp;
-                                        {creator}
-                                    </CreatorHolder>
-                                    <AddButtonHolder className="row w-100 p-0 align-self-center align-items-center">
-                                        <AddToCartButton>Add To Cart</AddToCartButton>
-                                    </AddButtonHolder>
-                                </InnerDiv>
-                            </Card>
+                                }
+                            </>
                             : view == 'xs' ?
-                                <RowCard className="col-12 p-2 my-2">
-                                    <CheckPut id={itemID} onClick={handleCheck} />
-                                    <RowImage style={{ backgroundImage: `url(${testNFT})` }} />
-                                    <BoldP>Name</BoldP>
+                                <RowCard className="col-12 p-2">
+                                    <div className="d-flex justify-content-between align-items-center">
+                                        <CheckPut className="me-4" id={itemID} onClick={handleCheck} />
+                                        <RowImage className="me-3" style={{ backgroundImage: BG_URL(PUBLIC_URL(`${API_CONFIG.MARKET_MEDIA_API_URL}${ITEM_IMAGE}`)) }} />
+                                        <BoldP>{shorten(name)}</BoldP>
+                                    </div>
                                     <BoldP>0.245 ETH</BoldP>
                                     <p className="m-0">0.1234 WETH</p>
                                     <p className="m-0">#345</p>
@@ -223,23 +290,50 @@ const ItemCard = ({ theme, name, creator, price, view, itemID }) => {
                                     <p className="m-0">32 mins ago</p>
                                 </RowCard>
                                 :
-                                <Card className="p-2 col-12 col-sm-6 col-md-3 align-items-center align-self-center" >
-                                    <InnerDiv>
-                                        <Image style={{ backgroundImage: `url(${testNFT})` }} />
-                                        <div className="row px-2 w-100 align-self-center align-items-center justify-content-between" style={{ height: "50px" }}>
-                                            <div className="p-0" style={{ width: "auto", fontSize: "14px" }}>{name}</div>
-                                            <div className="p-0" style={{ width: "auto", fontSize: "14px", }}><span style={{ fontWeight: "bold" }}>{price}</span><PriceUnit> ETH</PriceUnit></div>
+                                <>
+                                    {slider ?
+                                        <Card className="p-2 col-12 col-sm-6 col-lg-4 align-items-center align-self-center" >
+                                            <Link style={{ textDecoration: "none", color: "inherit" }} to={'/' + 'assets/ethereum/' + creatorWallet + '/' + itemID}>
+                                                <InnerDiv>
+                                                    <Image style={{ backgroundImage: BG_URL(PUBLIC_URL(`${API_CONFIG.MARKET_MEDIA_API_URL}${ITEM_IMAGE}`)) }} />
+                                                    <div className="row px-2 w-100 align-self-center align-items-center justify-content-between" style={{ height: "50px" }}>
+                                                        <div className="p-0" style={{ width: "auto", fontSize: "14px" }}>{name}</div>
+                                                        <div className="p-0" style={{ width: "auto", fontSize: "14px", }}><span style={{ fontWeight: "bold" }}>{price}</span><PriceUnit> ETH</PriceUnit></div>
+                                                    </div>
+                                                    <CreatorHolder className="row px-2 pb-2 w-100 align-self-center align-items-center justify-content-start" style={{ height: "50px", fontWeight: "bold" }}>
+                                                        <LogoHolder />
+                                                        &nbsp;
+                                                        {shorten(creator)}
+                                                    </CreatorHolder>
+                                                    <AddButtonHolder className=" w-100 p-0 align-self-center align-items-end">
+                                                        <AddToCartButton onClick={() => add({ price: price, name: name, id: itemID })}>Add To Cart</AddToCartButton>
+                                                    </AddButtonHolder>
+                                                </InnerDiv>
+                                            </Link>
+                                        </Card> :
+                                        <div className="col-12 col-sm-6 col-lg-4 p-0">
+                                            <Card className="p-2 align-items-center align-self-center" >
+                                                <Link style={{ textDecoration: "none", color: "inherit" }} to={'/' + 'assets/ethereum/' + creatorWallet + '/' + itemID}>
+                                                    <InnerDiv>
+                                                        <Image style={{ backgroundImage: BG_URL(PUBLIC_URL(`${API_CONFIG.MARKET_MEDIA_API_URL}${ITEM_IMAGE}`)) }} />
+                                                        <div className="row px-2 w-100 align-self-center align-items-center justify-content-between" style={{ height: "50px" }}>
+                                                            <div className="p-0" style={{ width: "auto", fontSize: "14px" }}>{name}</div>
+                                                            <div className="p-0" style={{ width: "auto", fontSize: "14px", }}><span style={{ fontWeight: "bold" }}>{price}</span><PriceUnit> ETH</PriceUnit></div>
+                                                        </div>
+                                                        <CreatorHolder className="row px-2 pb-2 w-100 align-self-center align-items-center justify-content-start" style={{ height: "50px", fontWeight: "bold" }}>
+                                                            <LogoHolder />
+                                                            &nbsp;
+                                                            {shorten(creator)}
+                                                        </CreatorHolder>
+                                                        <AddButtonHolder className=" w-100 p-0 align-self-center align-items-end">
+                                                            <AddToCartButton onClick={() => add({ price: price, name: name, id: itemID })}>Add To Cart</AddToCartButton>
+                                                        </AddButtonHolder>
+                                                    </InnerDiv>
+                                                </Link>
+                                            </Card>
                                         </div>
-                                        <CreatorHolder className="row px-2 pb-2 w-100 align-self-center align-items-center justify-content-start" style={{ height: "50px", fontWeight: "bold" }}>
-                                            <LogoHolder />
-                                            &nbsp;
-                                            {creator}
-                                        </CreatorHolder>
-                                        <AddButtonHolder className="row w-100 p-0 align-self-center align-items-center">
-                                            <AddToCartButton>Add To Cart</AddToCartButton>
-                                        </AddButtonHolder>
-                                    </InnerDiv>
-                                </Card>
+                                    }
+                                </>
                     }
                 </>
             }

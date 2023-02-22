@@ -193,6 +193,12 @@ input:checked+.sliderMenu:before {
     -ms-transform: translateX(26px);
     transform: translateX(26px);
 }
+input:-webkit-autofill,
+input:-webkit-autofill:hover, 
+input:-webkit-autofill:focus, 
+input:-webkit-autofill:active{
+    -webkit-box-shadow: 0 0 0 30px white inset !important;
+}
 
 /* Rounded sliders */
 .slider.round {
@@ -227,6 +233,10 @@ input:checked+.sliderMenu:before {
     border-top-left-radius: 0 !important;
     border-top-right-radius: 0 !important;
     border:1px solid #d9d9d9 !important;
+}
+.css-1poimk-MuiPaper-root-MuiMenu-paper-MuiPaper-root-MuiPopover-paper{
+    /* width:100%; */
+    box-shadow: unset;
 }
 /* .css-1e0dufg-MuiInputBase-root-MuiOutlinedInput-root-MuiSelect-root{
     border-color:none !important;

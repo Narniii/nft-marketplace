@@ -1,19 +1,26 @@
 import styled from "styled-components";
 import CollectionCard from "../Cards/CollectionListingCard";
 import { TestColls } from "../../utils/testCollections";
-import { useEffect, useState } from "react";
-import { CircularProgress, FormControl, FormHelperText, Menu, MenuItem, Select } from "@mui/material";
+import { useEffect, useRef, useState } from "react";
+import { CircularProgress, FormControl, FormHelperText, Menu, MenuItem, Select, Skeleton } from "@mui/material";
 import { Colors } from "../design/Colors";
 import { ArrowDown2 } from "iconsax-react";
 import '../../styles.css'
 import { Tab, Tabs } from "react-bootstrap";
+import { SelectionC } from "../test";
+import SSelection from "../Selection";
+import { Link } from "react-router-dom";
+import '../../styles.css'
+import { MARKET_API } from "../../utils/data/market_api";
+import EmptyListingCard from "../Cards/EmptyCollectionListingCard";
+
 const SectionContainer = styled.div`
     display:flex;
     flex-direction:column;
-    justify-content:space-around;
+    justify-content:space-between;
     margin:50px auto;
-    padding:0 32px;
-    height:80vh;
+    // padding:0 32px;
+    // height:80vh;
 `;
 const TitlesContainer = styled.div`
     display: flex;
@@ -21,8 +28,10 @@ const TitlesContainer = styled.div`
     justify-content: space-between;
     align-items: center;
     color: ${({ theme }) => theme.trendingSectionSubTitles};
+    padding : 0 8px;
     @media screen and (max-width: 600px) {
-        padding-right:0;
+        // padding-right:0;
+        margin-bottom:10px;
     }
 `;
 const Selection = styled.div`
@@ -72,159 +81,429 @@ const conditionalStyles = {
 
 const TrendingSection = ({ theme }) => {
     const [trendingColls, setTrendingColls] = useState(undefined)
-    const [loading, setLoading] = useState(true)
+    const [topLoading, setTopLoading] = useState(true)
+    const [trendingLoading, setTrendingLoading] = useState(true)
     const [value, setValue] = useState('trending');
+    const [topColls, setTopColls] = useState(undefined)
+    const [err, setErr] = useState(undefined)
+    const [timeSelect, setTimeSelect] = useState(undefined)
+    // const [from, setFrom] = useState(undefined)
+    // const [to, setTo] = useState(undefined)
     // const classes = useStyles();
-
+    const loadingSkeletons = ['1', '2', '3', '4', '5']
+    const tabs = ['1H', '6H', '24H', '7D', '30D', 'ALL']
     const handleChange = (event, newValue) => {
         setValue(newValue);
     };
 
-    useEffect(() => {
-        setTrendingColls(TestColls.collections)
-    }, [TestColls])
+
+
+
+    const handleTimeSelect = (e) => {
+        var this_time = parseInt(new Date(Date.now()).getTime())
+        var yesterday = parseInt(new Date(Date.now()).getTime() - (24 * 60 * 60 * 1000));
+        var today = new Date()
+        var last_week = new Date(today.getFullYear(), today.getMonth(), today.getDate() - 7);
+        var last_hour = new Date(this_time - (1000 * 60 * 60));
+        var last_six_hours = new Date(this_time - (6 * 1000 * 60 * 60));
+        var last_month = new Date(today.getFullYear(), today.getMonth(), today.getDate() - 30);
+
+
+
+        // for testing if the timestamps are correct ===>
+
+        // var difference = Math.abs(this_time - last_six_hours) / 1000
+        // var days = Math.floor(difference / 86400);
+        // var hours = Math.floor(difference / 3600) % 24;
+        // console.log('day difference', days)
+        // console.log('hour difference', hours)
+
+
+
+
+        e.preventDefault()
+        console.log(e.target.id)
+        setTimeSelect(e.target.id)
+        var from;
+        var to;
+        // var this_time;
+        if (e.target.id == '1H') {
+            from = last_hour / 1000;
+            to = this_time / 1000;
+            getTops({ from, to })
+            getTrendings({ from, to })
+        } else if (e.target.id == '6H') {
+            from = last_six_hours / 1000;
+            to = this_time / 1000;
+            getTops({ from, to })
+            getTrendings({ from, to })
+        } else if (e.target.id == '24H') {
+            from = yesterday / 1000;
+            to = this_time / 1000;
+            getTops({ from, to })
+            getTrendings({ from, to })
+        } else if (e.target.id == '7D') {
+            from = last_week / 1000;
+            to = this_time / 1000;
+            getTops({ from, to })
+            getTrendings({ from, to })
+        } else if (e.target.id == '30D') {
+            from = last_month / 1000;
+            to = this_time / 1000;
+            getTops({ from, to })
+            getTrendings({ from, to })
+        } else {
+            to = this_time / 1000;
+            from = undefined;
+            getTops({ from, to })
+            getTrendings({ from, to })
+        }
+    }
+
     useEffect(() => {
         if (trendingColls) {
             console.log(trendingColls)
-            setLoading(false)
+            setTrendingLoading(false)
         }
     }, [trendingColls])
+    useEffect(() => {
+        if (topColls) {
+            console.log(topColls)
+            setTopLoading(false)
+        }
+    }, [topColls])
+
+    const apiCall = useRef(undefined)
+
+    const getTops = async ({ from, to }) => {
+        // console.log(from, to)
+        setTopLoading(true)
+        try {
+            apiCall.current = MARKET_API.request({
+                path: `/collection/trendings`,
+                method: "post",
+                body: { from: from ? from : null, to: to ? to : null, from_col: 0, to_col: 10 },
+            });
+            const response = await apiCall.current.promise;
+            console.log('reeesp top', response)
+
+            if (!response.isSuccess)
+                throw response
+            if (response.data.length > 10) {
+                setTopColls(response.data.slice(0, 10))
+            }
+            else setTopColls(response.data)
+            // setTopLoading(false)
+        }
+        catch (err) {
+            console.log('top err', err)
+            if (err.status == 404) {
+                setTopColls([])
+            }
+            else if (err.status == 500) {
+                setErr("Internal server error occured, please try again later.")
+            }
+        }
+    }
+    const getTrendings = async ({ from, to }) => {
+        setTrendingLoading(true)
+        try {
+            apiCall.current = MARKET_API.request({
+                path: `/collection/trendings`,
+                method: "post",
+                body: { from: from ? from : null, to: to ? to : null, from_col: 0, to_col: 10 },
+            });
+            let response = await apiCall.current.promise;
+            console.log('reeesp', response)
+            if (!response.isSuccess)
+                throw response
+            setTrendingColls(response.data)
+        }
+        catch (err) {
+            console.log('trending err', err)
+
+            if (err.status == 404) {
+                setTrendingColls([])
+            }
+            else if (err.status == 500) {
+                setErr("Internal server error occured, please try again later.")
+            }
+            // else {
+            //     setErr('something went wrong , please try again later')
+            // }
+        }
+    }
+    useEffect(() => {
+        var this_time = parseInt(new Date(Date.now()).getTime())
+        var last_hour = new Date(this_time - (1000 * 60 * 60));
+        var from = last_hour / 1000;
+        var to = this_time / 1000;
+        getTops({ from, to })
+        getTrendings({ from, to })
+        // getTops()
+        // getTrendings()
+        return () => {
+            if (apiCall.current != undefined)
+                apiCall.current.cancel();
+        }
+    }, [])
+
+
     return (
 
         <>
             {console.log(theme)}
-            {loading ?
-                <div className="row justify-content-center align-content-center align-items-center">
-                    <CircularProgress />
+            <SectionContainer className="pdng">
+                {/* <div className="d-flex p-1 justify-content-between align-items-center"> */}
+                {/* <div className="d-flex p-0 col-12 col-sm-6 justify-content-start"> */}
+                {/* <div className="d-flex justify-content-between align-items-center p-0"> */}
+
+                <div style={{ transform: 'translateY(75%)' }} className="d-none d-sm-flex col-sm-6 justify-content-end justify-self-end align-self-end">
+                    <SSelection width={'200px'} theme={theme} tabs={tabs} handleSelect={handleTimeSelect} selectValue={timeSelect} />
                 </div>
-                :
-                <SectionContainer
-                // style={{ border: "solid 1px white" }}
-                >
-                    <div className="row p-2 justify-content-between align-items-center"
-                    // style={{ border: "solid 1px white" }}
+
+                <div className="d-flex p-0 flex-column col-12">
+                    <Tabs
+                        defaultActiveKey="Trending"
+                        // id="justify-tab-example"
+                        // justify
+                        className="mb-5"
+                        style={{ borderBottom: "none", color: theme === 'light' ? "#5D3393" : "#DABDDF", borderColor: theme === 'light' ? "#5D3393" : "#DABDDF" }}
+
                     >
-                        <div className="row col-12 col-sm-6 justify-content-start "
-                        // style={{ color: {theme=='light'?Colors.gray7:Colors.gray1} }}
-                        >
-                            <Tabs
-                                defaultActiveKey="Trending"
-                                // id="justify-tab-example"
-                                // justify
-                                className="m-0"
-                                style={{ borderBottom: "none", color: theme === 'light' ? "#5D3393" : "#DABDDF", borderColor: theme === 'light' ? "#5D3393" : "#DABDDF" }}
+                        <Tab eventKey="Trending" title="Trending">
+                            <div className="d-flex justify-content-between">
+                                <div className="d-flex flex-column p-0 col-12 col-lg-6 justify-content-center">
+                                    <TitlesContainer>
+                                        <div style={{
+                                            display: "flex", flexDirection: "row", justifyContent: "start", alignItems: "center",
+                                            width: "50%"
+                                        }}>
+                                            Collection</div>
+                                        <div className="d-flex d-sm-none" style={{
+                                            display: "flex", flexDirection: "row", justifyContent: "end", alignItems: "center",
+                                            width: "50%"
+                                        }}>
+                                            <SSelection width={'100px'} theme={theme} tabs={tabs} handleSelect={handleTimeSelect} selectValue={timeSelect} />
+                                        </div>
+                                        <div className="d-none d-sm-flex" style={{
+                                            display: "flex", flexDirection: "row", justifyContent: "start", alignItems: "center",
+                                            // border: "1px solid blue",
+                                            width: "25%"
+                                        }}>
+                                            Floor Price</div>
+                                        <div className="d-none d-sm-flex" style={{
+                                            display: "flex", flexDirection: "row", justifyContent: "center", alignItems: "center",
+                                            width: "25%"
+                                        }}>
+                                            Volume</div>
+                                    </TitlesContainer>
+                                    {trendingLoading ?
+                                        <>
+                                            {loadingSkeletons.map((l) => {
+                                                return <div className="px-1"> <Skeleton variant="rounded" height={80} sx={{ width: "100%", borderRadius: "24px", my: 1, }} /></div>
 
-                            >
-                                <Tab eventKey="Trending" title="Trending">
-                                </Tab>
-                                <Tab eventKey="Top" title="Top">
-                                </Tab>
-                            </Tabs>
+                                            })}
+                                        </> :
+                                        <>
+                                            {trendingColls.length < 5 ?
+                                                <>
+                                                    {trendingColls.slice(0, trendingColls.length).map((collection, index) => {
+                                                        return <CollectionCard theme={theme} index={index + 1} collectionFloor={collection.floor_price} collectionName={collection.title} collectionVolume={collection.volume} collectionLogo={collection.logo_path} />
+                                                    })}
+                                                    {loadingSkeletons.slice(0, (5 - trendingColls.length)).map((l) => {
+                                                        return <div className="px-1"> <EmptyListingCard variant="rounded" height={80} sx={{ width: "100%", borderRadius: "24px", my: 1, }} /></div>
 
-
-                        </div>
-                        <div className="row d-none d-sm-flex col-sm-6 justify-content-end">
-                            <FormControl sx={{ width: '160px', bgcolor: theme == 'light' ? "#ffffff" : "#272448", borderRadius: "24px", overflow: "hidden", border: "1px solid #d9d9d9" }}>
-                                <Select
-                                    value={10}
-                                    BackdropProps={{ invisible: true }}
-                                    onChange={handleChange}
-                                    displayEmpty
-                                    inputProps={{ MenuProps: { disableScrollLock: true } }}
-                                    // MenuProps={{ classes: { paper: classes.select } }}
-                                    sx={{ bgcolor: theme == 'light' ? "#ffffff" : "#272448", color: theme == 'light' ? "#808080" : "#B3B3B3" }}
-                                >
-                                    <MenuItem
-                                        sx={{ bgcolor: theme == 'light' ? "#ffffff" : "#272448" }}
-                                        value="">
-                                        <em>None</em>
-                                    </MenuItem>
-                                    <MenuItem sx={{ bgcolor: theme == 'light' ? "#ffffff" : "#272448" }} value={10}>24h</MenuItem>
-                                    <MenuItem sx={{ bgcolor: theme == 'light' ? "#ffffff" : "#272448" }} value={20}>12h</MenuItem>
-                                    <MenuItem sx={{ bgcolor: theme == 'light' ? "#ffffff" : "#272448" }} value={30}>6h</MenuItem>
-                                </Select>
-                            </FormControl>
-
-                            {/* <Selection>
-                                24Hours
-                                <div style={{ width: "auto", padding: "0" }}><ArrowDown2 /></div>
-                            </Selection> */}
-                        </div>
-                    </div>
-                    <div className="row justify-content-around"
-                    // style={{ border: "solid 1px white" }}
-                    >
-                        <div className="row p-0 col-sm-12 col-md-6 justify-content-center"
-                        // style={{ border: "solid 1px red" }}
-                        >
-                            <TitlesContainer>
-                                <div style={{
-                                    display: "flex", flexDirection: "row", justifyContent: "start", alignItems: "center",
-                                    // border: "1px solid blue",
-                                    width: "50%"
-                                }}>
-                                    Collection</div>
-                                <div className="d-flex d-sm-none" style={{
-                                    display: "flex", flexDirection: "row", justifyContent: "end", alignItems: "center",
-                                    // border: "1px solid blue",
-                                    width: "50%"
-                                }}>
-                                    <Selection>
-                                        24Hours
-                                        <div style={{ width: "auto", padding: "0" }}><ArrowDown2 /></div>
-                                    </Selection>
+                                                    })}
+                                                </>
+                                                :
+                                                <>
+                                                    {trendingColls.slice(0, 5).map((collection, index) => {
+                                                        return <CollectionCard theme={theme} index={index + 1} collectionFloor={collection.floor_price} collectionName={collection.title} collectionVolume={collection.volume} collectionLogo={collection.logo_path} />
+                                                    })}
+                                                </>
+                                            }
+                                        </>
+                                    }
                                 </div>
-                                <div className="d-none d-sm-flex" style={{
-                                    display: "flex", flexDirection: "row", justifyContent: "start", alignItems: "center",
-                                    // border: "1px solid blue",
-                                    width: "25%"
-                                }}>
-                                    Floor Price</div>
-                                <div className="d-none d-sm-flex" style={{
-                                    display: "flex", flexDirection: "row", justifyContent: "center", alignItems: "center",
-                                    // border: "1px solid blue",
-                                    width: "25%"
-                                }}>
-                                    Volume</div>
-                            </TitlesContainer>
-                            <CollectionCard theme={theme} index={1} collectionFloor={trendingColls[0].floor_price} collectionName={trendingColls[0].collection_name} collectionVolume={trendingColls[0].volume} collectionLogo={trendingColls[0].logo} />
-                            <CollectionCard theme={theme} index={2} collectionFloor={trendingColls[1].floor_price} collectionName={trendingColls[1].collection_name} collectionVolume={trendingColls[1].volume} collectionLogo={trendingColls[1].logo} />
-                            <CollectionCard theme={theme} index={3} collectionFloor={trendingColls[2].floor_price} collectionName={trendingColls[2].collection_name} collectionVolume={trendingColls[2].volume} collectionLogo={trendingColls[2].logo} />
-                            <CollectionCard theme={theme} index={4} collectionFloor={trendingColls[3].floor_price} collectionName={trendingColls[3].collection_name} collectionVolume={trendingColls[3].volume} collectionLogo={trendingColls[3].logo} />
-                            <CollectionCard theme={theme} index={5} collectionFloor={trendingColls[4].floor_price} collectionName={trendingColls[4].collection_name} collectionVolume={trendingColls[4].volume} collectionLogo={trendingColls[4].logo} />
-                        </div>
-                        <div className="d-none d-md-flex row p-0 col-sm-12 col-md-6 justify-content-center"
-                        // style={{ border: "solid 1px red" }}
-                        >
-                            <TitlesContainer>
-                                <div style={{
-                                    display: "flex", flexDirection: "row", justifyContent: "start", alignItems: "center",
-                                    // border: "1px solid blue",
-                                    width: "50%"
-                                }}>
-                                    Collection</div>
-                                <div className="d-none d-sm-flex" style={{
-                                    display: "flex", flexDirection: "row", justifyContent: "start", alignItems: "center",
-                                    // border: "1px solid blue",
-                                    width: "25%"
-                                }}>
-                                    Floor Price</div>
-                                <div className="d-none d-sm-flex" style={{
-                                    display: "flex", flexDirection: "row", justifyContent: "center", alignItems: "center",
-                                    // border: "1px solid blue",
-                                    width: "25%"
-                                }}>
-                                    Volume</div>
-                            </TitlesContainer>
-                            <CollectionCard theme={theme} index={5} collectionFloor={trendingColls[5].floor_price} collectionName={trendingColls[5].collection_name} collectionVolume={trendingColls[5].volume} collectionLogo={trendingColls[5].logo} />
-                            <CollectionCard theme={theme} index={6} collectionFloor={trendingColls[6].floor_price} collectionName={trendingColls[6].collection_name} collectionVolume={trendingColls[6].volume} collectionLogo={trendingColls[6].logo} />
-                            <CollectionCard theme={theme} index={7} collectionFloor={trendingColls[7].floor_price} collectionName={trendingColls[7].collection_name} collectionVolume={trendingColls[7].volume} collectionLogo={trendingColls[7].logo} />
-                            <CollectionCard theme={theme} index={8} collectionFloor={trendingColls[8].floor_price} collectionName={trendingColls[8].collection_name} collectionVolume={trendingColls[8].volume} collectionLogo={trendingColls[8].logo} />
-                            <CollectionCard theme={theme} index={9} collectionFloor={trendingColls[9].floor_price} collectionName={trendingColls[9].collection_name} collectionVolume={trendingColls[9].volume} collectionLogo={trendingColls[9].logo} />
-                        </div>
-                    </div>
+                                <div className="d-none d-lg-flex flex-column p-0 col-12 col-lg-6 justify-content-center"
+                                >
+                                    <TitlesContainer>
+                                        <div style={{
+                                            display: "flex", flexDirection: "row", justifyContent: "start", alignItems: "center",
+                                            width: "50%"
+                                        }}>
+                                            Collection</div>
+                                        <div className="d-none d-sm-flex" style={{
+                                            display: "flex", flexDirection: "row", justifyContent: "start", alignItems: "center",
+                                            width: "25%"
+                                        }}>
+                                            Floor Price</div>
+                                        <div className="d-none d-sm-flex" style={{
+                                            display: "flex", flexDirection: "row", justifyContent: "center", alignItems: "center",
+                                            width: "25%"
+                                        }}>
+                                            Volume</div>
+                                    </TitlesContainer>
+                                    {trendingLoading ?
+                                        <>
+                                            {loadingSkeletons.map((l) => {
+                                                return <div className="px-1"> <Skeleton variant="rounded" height={80} sx={{ width: "100%", borderRadius: "24px", my: 1, }} /></div>
+
+                                            })}
+                                        </>
+                                        :
+                                        <>
+                                            {
+                                                trendingColls.length >= 10 ?
+                                                    <>
+                                                        {trendingColls.slice(5, 10).map((collection, index) => {
+                                                            return <CollectionCard theme={theme} index={index + 6} collectionFloor={collection.floor_price} collectionName={collection.title} collectionVolume={collection.volume} collectionLogo={collection.logo_path} />
+                                                        })}
+                                                    </>
+                                                    : 5 < trendingColls.length < 10 ?
+                                                        <>
+                                                            {trendingColls.slice(5, trendingColls.length).map((collection, index) => {
+                                                                return <CollectionCard theme={theme} index={index + 6} collectionFloor={collection.floor_price} collectionName={collection.title} collectionVolume={collection.volume} collectionLogo={collection.logo_path} />
+                                                            })}
+                                                            {loadingSkeletons.slice(0, (10 - trendingColls.length)).map((l) => {
+                                                                return <div className="px-1"> <EmptyListingCard variant="rounded" height={80} sx={{ width: "100%", borderRadius: "24px", my: 1, }} /></div>
+
+                                                            })}
+                                                        </>
+                                                        :
+                                                        <>
+                                                            {loadingSkeletons.map((l) => {
+                                                                return <div className="px-1"> <EmptyListingCard variant="rounded" height={80} sx={{ width: "100%", borderRadius: "24px", my: 1, }} /></div>
+
+                                                            })}
+                                                        </>
+                                            }
+                                        </>
+                                    }
+                                </div>
+                            </div>
+                        </Tab>
+
+                        <Tab eventKey="Top" title="Top">
+                            <div className="d-flex justify-content-between">
+                                <div className="d-flex flex-column p-0 col-12 col-lg-6 justify-content-center">
+                                    <TitlesContainer>
+                                        <div style={{
+                                            display: "flex", flexDirection: "row", justifyContent: "start", alignItems: "center",
+                                            width: "50%"
+                                        }}>
+                                            Collection</div>
+                                        <div className="d-flex d-sm-none" style={{
+                                            display: "flex", flexDirection: "row", justifyContent: "end", alignItems: "center",
+                                            width: "50%"
+                                        }}>
+                                            <SSelection width={'100px'} theme={theme} tabs={tabs} handleSelect={handleTimeSelect} selectValue={timeSelect} />
+                                        </div>
+                                        <div className="d-none d-sm-flex" style={{
+                                            display: "flex", flexDirection: "row", justifyContent: "start", alignItems: "center",
+                                            // border: "1px solid blue",
+                                            width: "25%"
+                                        }}>
+                                            Floor Price</div>
+                                        <div className="d-none d-sm-flex" style={{
+                                            display: "flex", flexDirection: "row", justifyContent: "center", alignItems: "center",
+                                            width: "25%"
+                                        }}>
+                                            Volume</div>
+                                    </TitlesContainer>
+                                    {topLoading ?
+                                        <>
+                                            {loadingSkeletons.map((l) => {
+                                                return <div className="px-1"> <Skeleton variant="rounded" height={80} sx={{ width: "100%", borderRadius: "24px", my: 1, }} /></div>
+
+                                            })}
+                                        </> :
+                                        <>
+                                            {topColls.length < 5 ?
+                                                <>
+                                                    {topColls.slice(0, topColls.length).map((collection, index) => {
+                                                        return <CollectionCard theme={theme} index={index + 1} collectionFloor={collection.floor_price} collectionName={collection.title} collectionVolume={collection.volume} collectionLogo={collection.logo_path} />
+                                                    })}
+                                                    {loadingSkeletons.slice(0, (5 - topColls.length)).map((l) => {
+                                                        return <div className="px-1"> <EmptyListingCard variant="rounded" height={80} sx={{ width: "100%", borderRadius: "24px", my: 1, }} /></div>
+
+                                                    })}
+                                                </>
+                                                :
+                                                <>
+                                                    {topColls.slice(0, 5).map((collection, index) => {
+                                                        return <CollectionCard theme={theme} index={index + 1} collectionFloor={collection.floor_price} collectionName={collection.title} collectionVolume={collection.volume} collectionLogo={collection.logo_path} />
+                                                    })}
+                                                </>
+                                            }
+                                        </>
+                                    }
+                                </div>
+                                <div className="d-none d-lg-flex flex-column p-0 col-12 col-lg-6 justify-content-center"
+                                >
+                                    <TitlesContainer>
+                                        <div style={{
+                                            display: "flex", flexDirection: "row", justifyContent: "start", alignItems: "center",
+                                            width: "50%"
+                                        }}>
+                                            Collection</div>
+                                        <div className="d-none d-sm-flex" style={{
+                                            display: "flex", flexDirection: "row", justifyContent: "start", alignItems: "center",
+                                            width: "25%"
+                                        }}>
+                                            Floor Price</div>
+                                        <div className="d-none d-sm-flex" style={{
+                                            display: "flex", flexDirection: "row", justifyContent: "center", alignItems: "center",
+                                            width: "25%"
+                                        }}>
+                                            Volume</div>
+                                    </TitlesContainer>
+                                    {topLoading ?
+                                        <>
+                                            {loadingSkeletons.map((l) => {
+                                                return <div className="px-1"> <Skeleton variant="rounded" height={80} sx={{ width: "100%", borderRadius: "24px", my: 1, }} /></div>
+
+                                            })}
+                                        </>
+                                        :
+                                        <>
+                                            {
+                                                topColls.length >= 10 ?
+                                                    <>
+                                                        {topColls.slice(5, 10).map((collection, index) => {
+                                                            return <CollectionCard theme={theme} index={index + 6} collectionFloor={collection.floor_price} collectionName={collection.title} collectionVolume={collection.volume} collectionLogo={collection.logo_path} />
+                                                        })}
+                                                    </>
+                                                    : 5 < topColls.length < 10 ?
+                                                        <>
+                                                            {topColls.slice(5, topColls.length).map((collection, index) => {
+                                                                return <CollectionCard theme={theme} index={index + 6} collectionFloor={collection.floor_price} collectionName={collection.title} collectionVolume={collection.volume} collectionLogo={collection.logo_path} />
+                                                            })}
+                                                            {loadingSkeletons.slice(0, (10 - topColls.length)).map((l) => {
+                                                                return <div className="px-1"> <EmptyListingCard variant="rounded" height={80} sx={{ width: "100%", borderRadius: "24px", my: 1, }} /></div>
+
+                                                            })}
+                                                        </>
+                                                        :
+                                                        <>
+                                                            {loadingSkeletons.map((l) => {
+                                                                return <div className="px-1"> <EmptyListingCard variant="rounded" height={80} sx={{ width: "100%", borderRadius: "24px", my: 1, }} /></div>
+
+                                                            })}
+                                                        </>
+                                            }
+                                        </>
+                                    }
+                                </div>
+                            </div>
+                        </Tab>
 
 
+                    </Tabs>
+                </div>
+
+                <Link to="explore" style={{ textDecoration: "none", color: "inherit" }}>
                     <div style={{ cursor: "pointer" }} className="align-self-center text-center p-3"
                     // style={{ width: "100px", border: "solid 1px white" }}
                     >
@@ -232,8 +511,8 @@ const TrendingSection = ({ theme }) => {
                         <br />
                         <div style={{ width: "auto", padding: "0" }}><ArrowDown2 /></div>
                     </div>
-                </SectionContainer >
-            }
+                </Link>
+            </SectionContainer >
         </>
     );
 }

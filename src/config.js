@@ -1,0 +1,8 @@
+const ISLOCALHOST = false;
+const LOCAL_URL = "";
+export const API_CONFIG = {
+    AUTH_API_URL: ISLOCALHOST ? `${LOCAL_URL}:8000` : 'http://46.102.129.73:8434/auth',
+    MARKET_API_URL: ISLOCALHOST ? `${LOCAL_URL}:8001` : 'http://46.102.129.73:8435/market',
+    MARKET_MEDIA_API_URL: ISLOCALHOST ? `${LOCAL_URL}:8001` : 'http://46.102.129.73:8435/media',
+    AUTH_MEDIA_API_URL: ISLOCALHOST ? `${LOCAL_URL}:8001` : 'http://46.102.129.73:8434/media',
+}

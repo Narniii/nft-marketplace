@@ -1,6 +1,8 @@
 import { FavoriteChart, I3DCubeScan } from "iconsax-react";
+import { Link } from "react-router-dom";
 import styled from "styled-components";
-import catPic from '../../assets/categories.svg'
+// import catPic from '../../assets/categories.svg'
+import catPic from '../../assets/sport-cat.png'
 
 const Card = styled.div`
     // border:1px solid white;
@@ -41,21 +43,22 @@ const IconParent = styled.span`
 `;
 
 
-const CategoryCard = () => {
+const CategoryCard = ({ title }) => {
     // console.log(window.location.pathname)
     return (
         <Card className="p-2 col-xs-12 col-sm-6 col-md-4 align-items-center justify-content-center align-self-center" >
-            <InnerDiv className="d-flex p-3 justify-content-between">
-                <CatDet className="col-6">
-                    <h3 style={{ margin: 0, fontWeight: 600, }}>Title</h3>
-                    <div className="d-flex flex-column p-0 justify-content-between">
-                        <Det><I3DCubeScan size="20" />&nbsp;<DetNum>22</DetNum> <span style={{ fontSize: "12px" }}>Items</span></Det>
-                        <Det><FavoriteChart size="20" />&nbsp;<DetNum>22</DetNum> <span style={{ fontSize: "12px" }}>Collections</span></Det>
-                    </div>
-                </CatDet>
-                <CatPics className="col-6"></CatPics>
-            </InnerDiv>
-
+            <Link style={{ textDecoration: "none", color: "inherit" }} to={'/' + 'explore' + '/#' + title}>
+                <InnerDiv className="d-flex p-3 justify-content-between">
+                    <CatDet className="col-6">
+                        <h3 style={{ margin: 0, fontWeight: 600, }}>{title}</h3>
+                        <div className="d-flex flex-column p-0 justify-content-between">
+                            <Det><I3DCubeScan size="20" />&nbsp;<DetNum>22</DetNum> <span style={{ fontSize: "12px" }}>Items</span></Det>
+                            <Det><FavoriteChart size="20" />&nbsp;<DetNum>22</DetNum> <span style={{ fontSize: "12px" }}>Collections</span></Det>
+                        </div>
+                    </CatDet>
+                    <CatPics className="col-6"></CatPics>
+                </InnerDiv>
+            </Link>
         </Card>
     );
 }

@@ -12,6 +12,13 @@ const FooterDiv = styled.div`
   background-repeat:no-repeat;
   background-position:center;
   padding:0 32px;
+  @media screen and (max-width: 768px) {
+    padding:0 24px;
+  };
+  @media screen and (max-width: 600px) {
+    padding:0 16px;
+  }  
+
   `;
 const Foooter = styled.div`
   height:100%;

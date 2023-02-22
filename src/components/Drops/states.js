@@ -50,7 +50,7 @@ export const Timer = () => {
 
 }
 export const Status = ({ status }) => {
-    console.log(status)
+    // console.log(status)
     return (
         <Container>
             {status == 'minting-now' ? <>

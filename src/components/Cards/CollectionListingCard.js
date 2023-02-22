@@ -1,4 +1,6 @@
 import styled from "styled-components";
+import { API_CONFIG } from "../../config";
+import { BG_URL, PUBLIC_URL } from "../../utils/utils";
 
 const Card = styled.div`
     height:80px;
@@ -26,31 +28,38 @@ const ColLogoHolder = styled.div`
     border-radius:50%;
     width:50px;
     height:50px;
+    background-position:center;
+    background-repeat:no-repeat;
+    background-size:cover;
+
     `;
 const PriceUnit = styled.span`
-color: ${({ theme }) => theme.pricesUnits};
-font-weight:400;
+    color: ${({ theme }) => theme.pricesUnits};
+    font-weight:400;
 `;
 
 
 const CollectionCard = ({ theme, index, collectionLogo, collectionName, collectionFloor, collectionVolume }) => {
+
+    var LOGO_IMAGE = collectionLogo.replace('root/NFTMarketplace-Backend/market/media/', '');
+
     return (
         <>
             {/*no mobile card */}
-            <Card className="d-none d-sm-flex">
+            <Card className="my-2 d-none d-sm-flex">
                 <div style={{
                     display: "flex", flexDirection: "row", justifyContent: "start", alignItems: "center",
                     // border: "1px solid blue",
                     width: "50%"
                 }}>
                     <div>{index}&nbsp;&nbsp;</div>
-                    <ColLogoHolder>{collectionLogo}</ColLogoHolder>
+                    <ColLogoHolder style={{ backgroundImage: BG_URL(PUBLIC_URL(`${API_CONFIG.MARKET_MEDIA_API_URL}${LOGO_IMAGE}`)) }} />
                     <div>&nbsp;&nbsp;{collectionName}&nbsp;</div>
                 </div>
                 <div style={{
                     display: "flex", flexDirection: "row", justifyContent: "start", alignItems: "center",
                     // border: "1px solid blue",
-                    fontWeight:600,
+                    fontWeight: 600,
                     width: "25%",
                 }}>
                     {collectionFloor}&nbsp;<PriceUnit>ETH</PriceUnit>
@@ -59,27 +68,27 @@ const CollectionCard = ({ theme, index, collectionLogo, collectionName, collecti
                     display: "flex", flexDirection: "row", justifyContent: "center", alignItems: "center",
                     // border: "1px solid blue",
                     width: "25%",
-                    fontWeight:600
+                    fontWeight: 600
                 }}>
                     {collectionVolume}&nbsp;<PriceUnit>ETH</PriceUnit>
                 </div>
             </Card>
             {/*mobile card */}
-            <Card className="d-flex d-sm-none">
+            <Card className="my-2 d-flex d-sm-none">
                 <div style={{
                     display: "flex", flexDirection: "row", justifyContent: "start", alignItems: "center",
                     // border: "1px solid blue",
                     width: "60%"
                 }}>
                     <div>{index}&nbsp;&nbsp;</div>
-                    <ColLogoHolder>{collectionLogo}</ColLogoHolder>
+                    <ColLogoHolder style={{ backgroundImage: BG_URL(PUBLIC_URL(`${API_CONFIG.MARKET_MEDIA_API_URL}${LOGO_IMAGE}`)) }} />
                     <div>&nbsp;&nbsp;{collectionName}&nbsp;&nbsp;</div>
                 </div>
                 <div style={{
                     display: "flex", flexDirection: "row", justifyContent: "end", alignItems: "center",
                     // border: "1px solid blue",
                     width: "30%",
-                    fontWeight:600
+                    fontWeight: 600
                 }}>
                     {collectionFloor}&nbsp;<PriceUnit>ETH</PriceUnit>
                 </div>

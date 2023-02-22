@@ -1,3 +1,6 @@
+import axios from "axios";
+import { API_CONFIG } from "../config";
+
 export const GET_USER = 'GET_USER';
 export const LOGOUT_USER = 'LOGOUT_USER';
 export const WALLET_CONNECTION = 'WALLET_CONNECTION';
@@ -20,42 +23,36 @@ const emptyUser = {
 }
 export const getuser = (walletAddress) => {
     const isLoggedIn = localStorage.getItem('lastActive')
+    const hasAccount = localStorage.getItem('account')
     try {
         return async dispatch => {
-            // const response = await axios.post(`${API_CONFIG.AUTH_API_URL}/auth/user/login/`, { wallet_address: walletAddress })
-            let userDetails = {}
-            if (isLoggedIn) {
-                userDetails.username = 'nani'
-                userDetails.userId = 't15t5'
-                userDetails.walletAddress = walletAddress
-                userDetails.isLoggedIn = true
-                // localStorage.removeItem('account')
-                dispatch({
-                    type: GET_USER,
-                    payload: userDetails
-                });
+            if (isLoggedIn && hasAccount) {
+                const response = await axios.post(`${API_CONFIG.AUTH_API_URL}/user/login/`, { wallet_address: walletAddress })
+                console.log('responseeeeeee', response)
+                let userDetails = {}
+                if (response.status >= 200 && response.status < 300) {
+                    userDetails.username = response.data.data.username
+                    userDetails.userId = response.data.data._id.$oid
+                    userDetails.walletAddress = walletAddress
+                    userDetails.isLoggedIn = true
+                    dispatch({
+                        type: GET_USER,
+                        payload: userDetails
+                    });
+                } else {
+                    dispatch({
+                        type: GET_USER,
+                        payload: emptyUser
+                    });
+                }
             }
             else {
+                localStorage.removeItem('lastActive')
                 dispatch({
                     type: GET_USER,
                     payload: emptyUser
                 });
             }
-            // if (response.status >= 200 && response.status < 300) {
-            //     userDetails.username = response.data.data._id.$oid
-            //     userDetails.userId = response.data.data._id.$oid
-            //     userDetails.walletAddress = walletAddress
-            //     userDetails.isLoggedIn = true
-            // dispatch({
-            //     type: GET_USER,
-            //     payload: userDetails
-            // });
-            // } else {
-            //     dispatch({
-            //         type: GET_USER,
-            //         payload: emptyUser
-            //     });
-            // }
         };
     } catch (error) {
         // Add custom logic to handle errors

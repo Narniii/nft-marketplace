@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Box, Divider, Drawer, List, ListItem, ListItemButton, ListItemIcon, ListItemText, Modal, Typography } from "@mui/material";
+import { Box, Divider, Drawer, List, ListItem, ListItemButton, ListItemIcon, ListItemText, Modal, Popper, Typography } from "@mui/material";
 import { ArrowUp2, Bag2, CardSend, EmojiNormal, GlobalSearch, HambergerMenu, Profile, ProfileDelete, SearchNormal1, SearchZoomIn, SearchZoomIn1, Trash, Wallet2, Youtube } from "iconsax-react";
 import '../../styles.css'
 // import styled from "styled-components";
@@ -7,9 +7,10 @@ import testPic from '../../assets/testpic.png'
 import { Colors } from "../design/Colors";
 import { styled } from "@mui/system";
 import { ButtonLarge } from "../design/Buttons";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import ReviewImg from '../../assets/Onreview.svg'
 import Notification from "../design/Notification";
+import { removeItem } from "../../redux/actions";
 
 
 const ItemImage = styled(Box)`
@@ -34,11 +35,11 @@ const TrashHolder = styled(Box)`
 //   color:${Colors.gray7} !important;
   height: 70px;
   border-radius: 24px 0px 0px 24px;
-  background-color: #e6e6e6;
+//   background-color: #e6e6e6;
   cursor:pointer;
   width:45px;
   display:none;
-  @media screen and (max-width: 768px) {
+  @media screen and (max-width: 992px) {
     background-color:transparent;
     display:flex;
   }
@@ -70,6 +71,9 @@ const ItemCard = styled(Box)`
   &:hover .trashHolder{
     display:flex;
   }
+  &:hover .desktopPrice{
+    display:none !important;
+  }
   `;
 const Subtitle = styled('p')`
   color: ${({ theme }) => theme.par} !important;
@@ -81,10 +85,15 @@ const Subtitle = styled('p')`
 const Quantt = styled(Box)`
     position:absolute;
     border-radius:50px;
-    top:-15%;
+    top:-10%;
     right:5%;
-    padding:3%;
+    padding:5%;
+    height:20px;
     // background-color:${({ theme }) => theme.itemCardsBackground};
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    font-size:12px;
 `;
 
 
@@ -116,7 +125,11 @@ color:${Colors.primaryMain};
 text-decoration:underline;
 `
 
-export const Cart = ({ theme, state, toggleDrawer, open, onClose, }) => {
+export const Cart = ({ theme, state, toggleDrawer, open, onClose, anchorEl, cartDesOpen }) => {
+    const dispatch = useDispatch();
+    const remove = (item) => dispatch(removeItem(item));
+
+
     const [openReview, setOpenReview] = useState(false)
     const shoppingCart = useSelector(state => state.cartReducer);
     console.log(shoppingCart)
@@ -140,7 +153,12 @@ export const Cart = ({ theme, state, toggleDrawer, open, onClose, }) => {
 
     const list = (anchor) => (
         <Box
-            sx={{ bgcolor: theme == 'light' ? "#ffffff" : "#272448", color: theme == 'light' ? "#333333" : "#e6e6e6", width: anchor === 'top' || anchor === 'bottom' ? 'auto' : 350, borderRadius: anchor === 'right' ? "24px" : "0", borderTopLeftRadius: "24px", borderTopRightRadius: "24px", overflow: "hidden" }}
+            sx={{
+                border: theme == 'light' ? "0.2px solid #e6e6e6" : "0.2px solid #332E5F",
+                // boxShadow: theme == 'light' ? "2px 5px 13px 1px rgba(77,77,77,0.54)" : "-2px 5px 13px 1px rgba(153,81,244,0.54)",
+                bgcolor: theme == 'light' ? "#ffffff" : "#272448", color: theme == 'light' ? "#333333" : "#e6e6e6", width: anchor === 'top' || anchor === 'bottom' ? 'auto' : '100%', borderRadius: anchor === 'right' ? "24px" : "0", borderTopLeftRadius: "24px", borderTopRightRadius: "24px",
+                overflow: "hidden"
+            }}
             onClick={toggleDrawer(anchor, false)}
             onKeyDown={toggleDrawer(anchor, false)}
         >
@@ -155,24 +173,36 @@ export const Cart = ({ theme, state, toggleDrawer, open, onClose, }) => {
             <List>
                 {shoppingCart.products.map((item, index) => (
                     <ListItem className="p-2" key={item} disablePadding sx={{ justifyContent: "center" }}>
-                        <ItemCard className="row col-12 p-0 m-0 justify-content-between" >
+                        <ItemCard className="d-flex col-12 p-0 m-0 justify-content-between" >
                             <div
                                 // style={{ height: "70px" }}
                                 className="d-flex p-0 col-10">
                                 <ItemImage className="col-2 p-0"
                                 // style={{ backgroundImage: `url(${testPic})`, backgroundPosition: "center", backgroundSize: "cover", backgroundRepeat: "no-repeat", width: "70px", height: "70px", borderRadius: "12px" }}
                                 >{item.quantity > 1 ? <Quantt sx={{ backgroundColor: theme == 'light' ? '#e6e6e6' : '#433D7E', }}>{item.quantity}</Quantt> : undefined}</ItemImage>
-                                <div className="col-10 px-1 d-flex flex-column" style={{ height: "70px" }} >
-                                    <h6 className="m-0" style={{ fontWeight: 600 }}>{item.name}</h6>
-                                    <p className="m-0" style={{ fontSize: '10px' }} >detail</p>
-                                    <p className="m-0 d-flex"><span style={{ fontWeight: "bold", }}>{item.price}</span><span
-                                        style={{ color: theme == 'light' ? `${Colors.gray5}` : `${Colors.gray3}` }} className="me-1">ETH</span>
-                                        <Notification onClick={() => setOpenReview(true)}/>
-                                    </p>
+                                <div className="col-10 px-1 d-flex flex-column flex-lg-row justify-content-between" style={{ height: "70px" }} >
+                                    <div className="d-flex flex-column justify-content-between">
+                                        <h6 className="m-0" style={{ fontWeight: 600 }}>{item.name}</h6>
+                                        <p className="m-0" style={{ fontSize: '10px' }} >detail</p>
+                                        <p className="m-0 d-flex d-lg-none">
+                                            <Typography sx={{ fontWeight: "bold", fontSize: { xs: '12px', lg: '16px' } }}>{item.price}</Typography>
+                                            <Typography
+                                                sx={{ color: theme == 'light' ? `${Colors.gray5}` : `${Colors.gray3}`, fontSize: { xs: '12px', lg: '16px' } }} className="me-1">ETH</Typography>
+                                        </p>
+                                        <Notification onClick={() => setOpenReview(true)} />
+                                    </div>
                                 </div>
                             </div>
-                            <TrashHolder className="trashHolder p-1 col-2 text-center justify-content-center align-items-center" sx={{ color: theme == 'light' ? `${Colors.gray7}` : `${Colors.gray1}` }}>
-                                <Trash /></TrashHolder>
+                            <p className="desktopPrice m-0 d-none d-lg-flex">
+                                <Typography sx={{ fontWeight: "bold", fontSize: { xs: '12px', lg: '16px' } }}>{item.price}</Typography>
+                                <Typography
+                                    sx={{ color: theme == 'light' ? `${Colors.gray5}` : `${Colors.gray3}`, fontSize: { xs: '12px', lg: '16px' } }} className="me-1">ETH</Typography>
+                            </p>
+                            <TrashHolder onClick={() => remove({ id: item.id })}
+                                className="trashHolder p-1 col-2 text-center justify-content-center align-items-center"
+                                sx={{ color: theme == 'light' ? `${Colors.gray7}` : `${Colors.gray1}`, backgroundColor: theme == 'light' ? `${Colors.gray1}` : `${Colors.dark4}` }}>
+                                <Trash />
+                            </TrashHolder>
                         </ItemCard>
                     </ListItem>
                 ))}
@@ -208,6 +238,7 @@ export const Cart = ({ theme, state, toggleDrawer, open, onClose, }) => {
         <>
             {/* tablet and mobile basket */}
             <Drawer
+                className="d-flex d-lg-none"
                 BackdropProps={{ invisible: true }}
                 disableScrollLock={true}
                 PaperProps={{
@@ -223,7 +254,8 @@ export const Cart = ({ theme, state, toggleDrawer, open, onClose, }) => {
             </Drawer>
 
             {/* desktop basket  */}
-            <Drawer
+
+            {/* <Drawer
                 BackdropProps={{ invisible: true }}
                 disableScrollLock={true}
                 PaperProps={{
@@ -242,7 +274,25 @@ export const Cart = ({ theme, state, toggleDrawer, open, onClose, }) => {
                 onClose={toggleDrawer('right', false)}
             >
                 {list('right')}
-            </Drawer>
+            </Drawer> */}
+
+
+            <Popper className="d-none d-lg-flex" open={cartDesOpen} anchorEl={anchorEl} placement={"top-end"} disableScrollLock={true}
+            >
+                <Box sx={{
+                    transform: 'translateY(26px)',
+                    borderRadius: "24px",
+                    width: 400,
+                    bgcolor: theme == 'light' ? "#ffffff" : "#272448",
+                    p: 0,
+                    overflow: "hidden",
+                    boxShadow: theme == 'light' ? '0px 3px 10px rgba(0, 0, 0, 0.07)' : "unset",
+                }}
+                    className="d-flex flex-column">
+                    {list('right')}
+
+                </Box>
+            </Popper>
 
 
 

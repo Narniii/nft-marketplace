@@ -4,16 +4,19 @@ import { Colors } from "../design/Colors";
 import { ArrowDown2, ArrowSwapVertical, CloseSquare, FilterSearch, Grid1, Grid2, Grid5, HambergerMenu, Refresh2 } from "iconsax-react";
 import SearchBox from "../Navbar/SearchBox";
 import { TestColls } from "../../utils/testCollections";
-import { Box,Accordion, AccordionDetails, AccordionSummary, CircularProgress, Modal, Typography } from "@mui/material";
-import { useEffect, useState } from "react";
+import { Box, Accordion, AccordionDetails, AccordionSummary, CircularProgress, Modal, Typography, Skeleton } from "@mui/material";
+import { useEffect, useRef, useState } from "react";
 import ItemCard from "../Cards/ItemCard";
+import SSelection from "../Selection";
+import { Filtering } from "../Filtering";
+import { MARKET_API } from "../../utils/data/market_api";
 
 
 
 const CollectionContainer = styled.div`
-overflow-x:auto;
+overflow-x:scroll;
 white-space: nowrap;
-
+// padding:20px 0;
 scrollbar-width: 5px;
 // -ms-overflow-style: none;
 &::-webkit-scrollbar {
@@ -46,7 +49,6 @@ flex-direction: column;
 // width:100%;
 overflow:hidden;
 `;
-
 const Selection = styled.div`
     display: flex;
     flex-direction: row;
@@ -81,12 +83,11 @@ const ModalLine = styled.div`
     width:70%;
 `;
 
-const CreatedTab = ({ theme }) => {
+const CreatedTab = ({ theme, userWallet }) => {
     const [view, setView] = useState('m')
     const handleViewChange = (v) => {
         setView(v)
     }
-
 
     const [openFilter, setOpenFilter] = useState(false)
     const handleFilter = () => {
@@ -96,18 +97,98 @@ const CreatedTab = ({ theme }) => {
 
     const [trendingColls, setTrendingColls] = useState(undefined)
     const [loading, setLoading] = useState(true)
+    const [itemsLoading, setItemsLoading] = useState(true)
+    const [collectionsLoading, setCollectionsLoading] = useState(true)
     const handleOpen = () => setOpenFilter(true);
     const handleClose = () => setOpenFilter(false);
 
+    // useEffect(() => {
+    //     setTrendingColls(TestColls.collections)
+    // }, [TestColls])
+    // useEffect(() => {
+    //     if (trendingColls) {
+    //         console.log(trendingColls)
+    //         setLoading(false)
+    //     }
+    // }, [trendingColls])
+
+    const apiCall = useRef(undefined)
+    const [collections, setCollections] = useState(undefined)
+    const [items, setItems] = useState(undefined)
+    const [err, setErr] = useState(undefined)
     useEffect(() => {
-        setTrendingColls(TestColls.collections)
-    }, [TestColls])
-    useEffect(() => {
-        if (trendingColls) {
-            console.log(trendingColls)
-            setLoading(false)
+        if (userWallet) {
+            fetchCollections()
+            fetchNFTs()
         }
-    }, [trendingColls])
+        // return () => {
+        //     if (apiCall.current != undefined)
+        //         apiCall.current.cancel();
+
+        // }
+    }, [])
+
+    const fetchCollections = async () => {
+        try {
+            apiCall.current = MARKET_API.request({
+                path: `/collection/user/`,
+                method: "post",
+                body: {
+                    wallet_address: userWallet
+                }
+            })
+            const response = await apiCall.current.promise;
+            if (!response.isSuccess)
+                throw response
+            setCollections(response.data)
+            // setLoading(false)
+        }
+        catch (err) {
+            console.log(err)
+            if (err.data.message == "No Collection Found") {
+                setCollections([])
+            }
+            else {
+                setErr("Internal server error")
+            }
+            // setLoading(false)
+        }
+    }
+    const fetchNFTs = async () => {
+        try {
+            apiCall.current = MARKET_API.request({
+                path: `/nft/creator/`,
+                method: "post",
+                body: {
+                    wallet_address: userWallet
+                }
+            })
+            const response = await apiCall.current.promise;
+            console.log('user items', response)
+            if (!response.isSuccess)
+                throw response
+            setItems(response.data)
+            // setLoading(false)
+        }
+        catch (err) {
+            console.log(err)
+            if (err.data.message == "No NFTs Found For This Wallet Address") {
+                setItems([])
+            }
+            else {
+                setErr("Internal server error")
+            }
+            // setLoading(false)
+        }
+    }
+    useEffect(() => {
+        if (collections)
+            setCollectionsLoading(false)
+        if (items)
+            setItemsLoading(false)
+    }, [collections, items])
+
+
 
     return (
         <>
@@ -117,181 +198,185 @@ const CreatedTab = ({ theme }) => {
                 {/* collections section */}
                 <div className="d-flex flex-column">
                     <h5 style={{ fontWeight: "bold" }}>Collections</h5>
-                    <CollectionContainer className="row flex-nowrap mb-5 p-0">
-                        <CollectionCard />
-                        <CollectionCard />
-                        <CollectionCard />
-                        <CollectionCard />
+                    <CollectionContainer className="d-flex flex-nowrap mb-5 pb-3">
+                        {collectionsLoading ?
+                            <div className="d-flex flex-wrap w-100 justify-content-between">
+                                <div className="col-12 col-sm-6 col-md-4 p-1">
+                                    <Skeleton variant="rounded" height={300} sx={{ width: "100%", borderRadius: "24px" }} />
+                                </div>
+                                <div className="d-none d-sm-block col-12 col-sm-6 col-md-4 p-1">
+                                    <Skeleton variant="rounded" height={300} sx={{ width: "100%", borderRadius: "24px" }} />
+                                </div>
+                                <div className="d-none d-md-block col-12 col-sm-6 col-md-4 p-1">
+                                    <Skeleton variant="rounded" height={300} sx={{ width: "100%", borderRadius: "24px" }} />
+                                </div>
+                            </div>
+                            :
+                            <>
+                                {collections.length == 0 ?
+                                    <Typography sx={{ color: `${Colors.primaryMain}`, textAlign: 'center' }}>No collection found.</Typography>
+                                    :
+                                    <>
+                                        {collections.map((collection) => {
+                                            return <CollectionCard id={collection._id.$oid} slider={false} collectionBanner={collection.banner_image_path} collectionLogo={collection.logo_path} collectionCreator={collection.creator} collectionName={collection.title} royalty={collection.royalty} />
+                                        })}
+                                    </>
+                                }
+                            </>
+                        }
                     </CollectionContainer>
                 </div>
 
                 {/* items section */}
-                <div className="d-flex flex-column p-0 justify-content-between align-items-center">
-                    <div className="row w-100 p-0 justify-content-between mb-1">
-                        <div className="col-8 col-sm-4 col-md-5"><SearchBox /></div>
-                        <div className="d-none d-sm-block col-4 col-md-3">
-                            <Selection className="row p-2" >
-                                price low to high
-                                <div style={{ width: "auto", padding: "4px 0 5px" }}><ArrowDown2 /></div>
-                            </Selection>
-                        </div>
-                        <div className="d-none d-sm-block col-3">
-                            <Selection className="row">
-                                <IconContainer className="col-3 text-center d-flex justify-content-center align-items-center" onClick={() => handleViewChange('xs')}><HambergerMenu /></IconContainer>
-                                <IconContainer className="col-3 text-center d-flex justify-content-center align-items-center" onClick={() => handleViewChange('s')}><Grid1 /></IconContainer>
-                                <IconContainer className="col-3 text-center d-flex justify-content-center align-items-center" onClick={() => handleViewChange('m')}><Grid2 /></IconContainer>
-                                <IconContainer className="col-3 text-center d-flex justify-content-center align-items-center" onClick={() => handleViewChange('l')}><Grid5 /></IconContainer>
-                            </Selection>
-                        </div>
-                        <div className="d-block d-sm-none col-2 col-sm-1">
-                            <Selection className="row p-2 d-flex justify-content-center">
-                                <div style={{ width: "auto", padding: "4px 0 5px" }}><ArrowSwapVertical /></div>
-                            </Selection>
-                        </div>
-                        <div className="col-2 col-sm-1">
-                            <Selection className="row p-2 d-flex justify-content-center">
-                                <div style={{ width: "auto", padding: "4px 0 5px" }} onClick={handleFilter}><FilterSearch /></div>
-                            </Selection>
-                        </div>
-                    </div>
+                <div className="d-flex flex-column">
 
+                    <Filtering id={'profileCreatedSearch'} theme={theme} handleFilter={handleFilter} handleViewChange={handleViewChange} selectOptions={['price low to high', 'price high to low']} />
 
-                    {/*outer div for when status modal is opened */}
-                    <div className="d-flex  w-100 justify-content-between">
-                        <div className="d-flex  w-100 flex-column p-0 justify-content-between">
-                            {loading ? <CircularProgress /> :
+                    <div className="d-flex justify-content-between">
+                        <Box className="d-flex flex-wrap" sx={{ width: !openFilter ? "100%" : "70%", transition: { xs: '0ms', md: '500ms ease' } }}>
+                            {itemsLoading ?
+                                <div className="d-flex w-100 justify-content-between">
+                                    <Box className="d-flex flex-wrap my-3" sx={{ width: !openFilter ? "100%" : "70%", transition: { xs: '0ms', md: '500ms ease' } }}>
+                                        <div className="col-12 col-sm-6 col-md-3 p-1">
+                                            <Skeleton variant="rounded" height={300} sx={{ width: "100%", borderRadius: "24px" }} />
+                                        </div>
+                                        <div className="d-none d-sm-block col-12 col-sm-6 col-md-3 p-1">
+                                            <Skeleton variant="rounded" height={300} sx={{ width: "100%", borderRadius: "24px" }} />
+                                        </div>
+                                        <div className="d-none d-md-block col-12 col-sm-6 col-md-3 p-1">
+                                            <Skeleton variant="rounded" height={300} sx={{ width: "100%", borderRadius: "24px" }} />
+                                        </div>
+                                        <div className="d-none d-md-block col-12 col-sm-6 col-md-3 p-1">
+                                            <Skeleton variant="rounded" height={300} sx={{ width: "100%", borderRadius: "24px" }} />
+                                        </div>
+                                    </Box>
+                                </div>
+                                :
                                 <>
-                                    {/* <div className="d-flex w-100 mt-3 p-0 justify-content-between">
-                                        <Updated><Refresh2 size="20" />&nbsp;Updated 20m ago</Updated>
-                                        <div>22 items</div>
-                                    </div> */}
-                                    <div style={{ width: !openFilter ? "100%" : "70%" , transition:"500ms ease"}} className="row justify-content-between">
-                                        <ItemCard view={view} id={'1'} theme={theme} name={trendingColls[0].collection_name} price={trendingColls[0].floor_price} creator={trendingColls[0].creator} />
-                                        <ItemCard view={view} id={'2'} theme={theme} name={trendingColls[1].collection_name} price={trendingColls[1].floor_price} creator={trendingColls[1].creator} />
-                                        <ItemCard view={view} id={'3'} theme={theme} name={trendingColls[2].collection_name} price={trendingColls[2].floor_price} creator={trendingColls[2].creator} />
-                                        <ItemCard view={view} id={'4'} theme={theme} name={trendingColls[3].collection_name} price={trendingColls[3].floor_price} creator={trendingColls[3].creator} />
-                                        <ItemCard view={view} id={'5'} theme={theme} name={trendingColls[0].collection_name} price={trendingColls[0].floor_price} creator={trendingColls[0].creator} />
-                                        <ItemCard view={view} id={'6'} theme={theme} name={trendingColls[1].collection_name} price={trendingColls[1].floor_price} creator={trendingColls[1].creator} />
-                                        <ItemCard view={view} id={'7'} theme={theme} name={trendingColls[2].collection_name} price={trendingColls[2].floor_price} creator={trendingColls[2].creator} />
-                                        <ItemCard view={view} id={'8'} theme={theme} name={trendingColls[3].collection_name} price={trendingColls[3].floor_price} creator={trendingColls[3].creator} />
-                                        <ItemCard view={view} id={'9'} theme={theme} name={trendingColls[0].collection_name} price={trendingColls[0].floor_price} creator={trendingColls[0].creator} />
-                                        <ItemCard view={view} id={'10'} theme={theme} name={trendingColls[1].collection_name} price={trendingColls[1].floor_price} creator={trendingColls[1].creator} />
-                                        <ItemCard view={view} id={'11'} theme={theme} name={trendingColls[2].collection_name} price={trendingColls[2].floor_price} creator={trendingColls[2].creator} />
-                                        <ItemCard view={view} id={'12'} theme={theme} name={trendingColls[3].collection_name} price={trendingColls[3].floor_price} creator={trendingColls[3].creator} />
-                                    </div>
-                                    {openFilter ? <FilterContainer style={{ width: "28%" }} className="my-2 d-none d-md-flex">
-
-                                    </FilterContainer>
-                                        : undefined}
-
+                                    {items.length == 0 ?
+                                        <Typography sx={{ color: `${Colors.primaryMain}`, textAlign: 'center', width: "100%" }}>No item found.</Typography>
+                                        :
+                                        <>
+                                            {items.map((item) => {
+                                                return <ItemCard slider={false} view={view} itemImage={item.nft_image_path} itemID={item._id.$oid} theme={theme} name={item.title} price={item.price} creator={item.creator} />
+                                            })}
+                                        </>
+                                    }
                                 </>
                             }
-                        </div>
-                        <Modal
-                            open={openFilter}
-                            onClose={handleClose}
-                            aria-labelledby="modal-modal-title"
-                            aria-describedby="modal-modal-description"
-                            className="d-md-none"
-                            // inputProps={{MenuProps: {disableScrollLock: true}}}
-                            disableScrollLock={true}
-                        >
-                            <Box sx={{
-                                width: '100%',
-                                height: '100%',
-                                p: 4,
-                                bgcolor: theme == 'light' ? "#F9F9F9" : "#272448",
-                            }} className="d-flex flex-column">
-                                <Box className="d-flex justify-content-between"><div className="d-flex justify-content-start"> <FilterSearch className="me-2" /><p style={{ margin: 0, fontWeight: "bold" }}>Filter</p></div><div className="d-flex justify-content-end" style={{ cursor: "pointer" }} onClick={handleClose}><CloseSquare /></div>  </Box>
-                                <ModalLine className="my-2" />
-                                <Accordion sx={{
-                                    width: '100%',
-                                    bgcolor: theme == 'light' ? "#F9F9F9" : "#272448",
-                                    color: theme == 'light' ? "#333333" : "#e6e6e6",
-                                    border: 'none',
-                                    boxShadow: 'none',
-                                    '&:before': {
-                                        bgcolor: 'transparent',
-                                    }
-                                }}>
-                                    <AccordionSummary
-                                        expandIcon={<ArrowDown2 color={theme == 'light' ? "#333333" : "#e6e6e6"} />}
-                                        aria-controls="panel1a-content"
-                                        id="panel1a-header"
-                                    >
-                                        <Typography>Event Type</Typography>
-                                    </AccordionSummary>
-                                    <AccordionDetails>
-                                        <ul className="menu">
-                                            <li>sales</li>
-                                            <li>sales</li>
-                                            <li>sales</li>
-                                            <li>sales</li>
-                                            <li>sales</li>
-                                            <li>sales</li>
-                                        </ul>
-                                    </AccordionDetails>
-                                </Accordion>
-                                <Accordion sx={{
-                                    width: '100%',
-                                    bgcolor: theme == 'light' ? "#F9F9F9" : "#272448",
-                                    color: theme == 'light' ? "#333333" : "#e6e6e6",
-                                    border: 'none',
-                                    boxShadow: 'none',
-                                    '&:before': {
-                                        bgcolor: 'transparent',
-                                    }
-                                }}>
-                                    <AccordionSummary
-                                        expandIcon={<ArrowDown2 color={theme == 'light' ? "#333333" : "#e6e6e6"} />}
-                                        aria-controls="panel1a-content"
-                                        id="panel1a-header"
-                                    >
-                                        <Typography>Event Type</Typography>
-                                    </AccordionSummary>
-                                    <AccordionDetails>
-                                        <ul className="menu">
-                                            <li>sales</li>
-                                            <li>sales</li>
-                                            <li>sales</li>
-                                            <li>sales</li>
-                                            <li>sales</li>
-                                            <li>sales</li>
-                                        </ul>
-                                    </AccordionDetails>
-                                </Accordion>
-                                <Accordion sx={{
-                                    width: '100%',
-                                    bgcolor: theme == 'light' ? "#F9F9F9" : "#272448",
-                                    color: theme == 'light' ? "#333333" : "#e6e6e6",
-                                    border: 'none',
-                                    boxShadow: 'none',
-                                    '&:before': {
-                                        bgcolor: 'transparent',
-                                    }
-                                }}>
-                                    <AccordionSummary
-                                        expandIcon={<ArrowDown2 color={theme == 'light' ? "#333333" : "#e6e6e6"} />}
-                                        aria-controls="panel1a-content"
-                                        id="panel1a-header"
-                                    >
-                                        <Typography>Event Type</Typography>
-                                    </AccordionSummary>
-                                    <AccordionDetails>
-                                        <ul className="menu">
-                                            <li>sales</li>
-                                            <li>sales</li>
-                                            <li>sales</li>
-                                            <li>sales</li>
-                                            <li>sales</li>
-                                            <li>sales</li>
-                                        </ul>
-                                    </AccordionDetails>
-                                </Accordion>
-                            </Box>
-                        </Modal>
+
+                        </Box>
+                        {openFilter ? <FilterContainer style={{ width: "28%" }} className="my-2 d-none d-lg-flex">
+                        </FilterContainer>
+                            : undefined}
                     </div>
+
+                    <Modal
+                        open={openFilter}
+                        onClose={handleClose}
+                        aria-labelledby="modal-modal-title"
+                        aria-describedby="modal-modal-description"
+                        className="d-lg-none"
+                        // inputProps={{MenuProps: {disableScrollLock: true}}}
+                        disableScrollLock={true}
+                    >
+                        <Box sx={{
+                            width: '100%',
+                            height: '100%',
+                            p: 4,
+                            bgcolor: theme == 'light' ? "#F9F9F9" : "#272448",
+                        }} className="d-flex flex-column">
+                            <Box className="d-flex justify-content-between"><div className="d-flex justify-content-start"> <FilterSearch className="me-2" /><p style={{ margin: 0, fontWeight: "bold" }}>Filter</p></div><div className="d-flex justify-content-end" style={{ cursor: "pointer" }} onClick={handleClose}><CloseSquare /></div>  </Box>
+                            <ModalLine className="my-2" />
+                            <Accordion sx={{
+                                width: '100%',
+                                bgcolor: theme == 'light' ? "#F9F9F9" : "#272448",
+                                color: theme == 'light' ? "#333333" : "#e6e6e6",
+                                border: 'none',
+                                boxShadow: 'none',
+                                '&:before': {
+                                    bgcolor: 'transparent',
+                                }
+                            }}>
+                                <AccordionSummary
+                                    expandIcon={<ArrowDown2 color={theme == 'light' ? "#333333" : "#e6e6e6"} />}
+                                    aria-controls="panel1a-content"
+                                    id="panel1a-header"
+                                >
+                                    <Typography>Event Type</Typography>
+                                </AccordionSummary>
+                                <AccordionDetails>
+                                    <ul className="menu">
+                                        <li>sales</li>
+                                        <li>sales</li>
+                                        <li>sales</li>
+                                        <li>sales</li>
+                                        <li>sales</li>
+                                        <li>sales</li>
+                                    </ul>
+                                </AccordionDetails>
+                            </Accordion>
+                            <Accordion sx={{
+                                width: '100%',
+                                bgcolor: theme == 'light' ? "#F9F9F9" : "#272448",
+                                color: theme == 'light' ? "#333333" : "#e6e6e6",
+                                border: 'none',
+                                boxShadow: 'none',
+                                '&:before': {
+                                    bgcolor: 'transparent',
+                                }
+                            }}>
+                                <AccordionSummary
+                                    expandIcon={<ArrowDown2 color={theme == 'light' ? "#333333" : "#e6e6e6"} />}
+                                    aria-controls="panel1a-content"
+                                    id="panel1a-header"
+                                >
+                                    <Typography>Event Type</Typography>
+                                </AccordionSummary>
+                                <AccordionDetails>
+                                    <ul className="menu">
+                                        <li>sales</li>
+                                        <li>sales</li>
+                                        <li>sales</li>
+                                        <li>sales</li>
+                                        <li>sales</li>
+                                        <li>sales</li>
+                                    </ul>
+                                </AccordionDetails>
+                            </Accordion>
+                            <Accordion sx={{
+                                width: '100%',
+                                bgcolor: theme == 'light' ? "#F9F9F9" : "#272448",
+                                color: theme == 'light' ? "#333333" : "#e6e6e6",
+                                border: 'none',
+                                boxShadow: 'none',
+                                '&:before': {
+                                    bgcolor: 'transparent',
+                                }
+                            }}>
+                                <AccordionSummary
+                                    expandIcon={<ArrowDown2 color={theme == 'light' ? "#333333" : "#e6e6e6"} />}
+                                    aria-controls="panel1a-content"
+                                    id="panel1a-header"
+                                >
+                                    <Typography>Event Type</Typography>
+                                </AccordionSummary>
+                                <AccordionDetails>
+                                    <ul className="menu">
+                                        <li>sales</li>
+                                        <li>sales</li>
+                                        <li>sales</li>
+                                        <li>sales</li>
+                                        <li>sales</li>
+                                        <li>sales</li>
+                                    </ul>
+                                </AccordionDetails>
+                            </Accordion>
+                        </Box>
+                    </Modal>
                 </div>
+
+
 
             </div>
         </>

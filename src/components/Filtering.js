@@ -1,0 +1,61 @@
+import { ArrowSwapVertical, FilterSearch, Grid1, Grid2, Grid5, HambergerMenu } from "iconsax-react";
+import styled from "styled-components";
+import SearchBox from "./Navbar/SearchBox";
+import SSelection from "./Selection";
+
+const IconContainer = styled.div`
+    border-left: 1px solid #D9D9D9;
+    height:50px;
+    // padding:4px 0 5px;
+    // padding:16px;
+    &:hover{
+        background-color: ${({ theme }) => theme.hoverIcon};
+    }
+`;
+
+const Selectionn = styled.div`
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    cursor:pointer;
+    background: transparent;
+    justify-content:space-between;
+    border: 1px solid #D9D9D9;
+    border-radius: 24px;
+    overflow:hidden;
+    height:50px;
+    font-size:14px;
+`;
+
+export const Filtering = ({ theme, handleFilter, handleViewChange, selectOptions, id }) => {
+    return (
+        <div className="p-0 d-flex w-100 justify-content-center align-items-center mb-4">
+            <div className="d-flex w-100 p-0 justify-content-between align-items-center">
+                <div className="col-8 col-sm-4 col-md-5 p-0"><SearchBox theme={theme} id={id} /></div>
+                <div className="d-none d-sm-block col-4 col-md-3 p-0">
+                    <div className="mx-1">
+                        <SSelection width={'100%'} theme={theme} tabs={selectOptions} />
+                    </div>
+                </div>
+                <div className="d-none d-sm-block col-3 p-0">
+                    <Selectionn className="mx-1 d-flex ">
+                        <IconContainer className="col-3 p-1 p-md-2 text-center d-flex justify-content-center align-items-center" onClick={() => handleViewChange('xs')}><HambergerMenu /></IconContainer>
+                        <IconContainer className="col-3 p-1 p-md-2 text-center d-flex justify-content-center align-items-center" onClick={() => handleViewChange('s')}><Grid1 /></IconContainer>
+                        <IconContainer className="col-3 p-1 p-md-2 text-center d-flex justify-content-center align-items-center" onClick={() => handleViewChange('m')}><Grid2 /></IconContainer>
+                        <IconContainer className="col-3 p-1 p-md-2 text-center d-flex justify-content-center align-items-center" onClick={() => handleViewChange('l')}><Grid5 /></IconContainer>
+                    </Selectionn>
+                </div>
+                <div className="d-block d-sm-none col-2 col-sm-1 p-0" style={{width:"max-content" }}>
+                    <Selectionn style={{ borderRadius: "12px" , }} className="mx-1 d-flex p-3 p-sm-2 p-md-3 d-flex justify-content-center">
+                        <div style={{ width: "auto" }}><ArrowSwapVertical /></div>
+                    </Selectionn>
+                </div>
+                <div className="col-2 col-sm-1 p-0" style={{width:"max-content" }}>
+                    <Selectionn style={{ borderRadius: "12px" , }} className="mx-1 d-flex p-3 p-sm-2 p-md-3 d-flex justify-content-center" onClick={handleFilter}>
+                        <div style={{ width: "auto" }}><FilterSearch size="20" /></div>
+                    </Selectionn>
+                </div>
+            </div>
+        </div>
+    )
+}

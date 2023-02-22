@@ -30,6 +30,11 @@ import { PersistGate } from 'redux-persist/integration/react';
 import Explore from './pages/Explore';
 import Stats from './pages/Stats';
 import Drops from './pages/drops';
+import TestPage from './pages/test';
+import EditNft from './pages/nft/EditNFT';
+import EditCollection from './pages/collection/EditCollection';
+import MyCollections from './pages/myCollections';
+import CreateCollection from './pages/collection/CreateCollection';
 
 function getLibrary(provider) {
   return new Web3(provider)
@@ -65,13 +70,22 @@ function App() {
                     <Route exact path="/" element={<Home theme={theme} themeToggler={themeToggler} />} />
                     <Route exact path="info/:id" element={<Information theme={theme} themeToggler={themeToggler} />} />
                     <Route exact path="/account/setting" element={<Account theme={theme} themeToggler={themeToggler} />} />
-                    <Route exact path="/collection/:name" element={<CollectionSingle theme={theme} themeToggler={themeToggler} />} />
-                    <Route exact path="/assets/:chain/:collectionId/:id" element={<NFTSingle theme={theme} themeToggler={themeToggler} />} />
+                    <Route exact path="/collection/:name/:id" element={<CollectionSingle theme={theme} themeToggler={themeToggler} />} />
+                    <Route exact path="/assets/:chain/:walletAddress/:id" element={<NFTSingle theme={theme} themeToggler={themeToggler} />} />
                     <Route exact path="/asset/create" element={<CreateNFT theme={theme} themeToggler={themeToggler} />} />
-                    <Route exact path="/:username" element={<ProfilePage theme={theme} themeToggler={themeToggler} />} />
+                    <Route exact path="/collection/create" element={<CreateCollection theme={theme} themeToggler={themeToggler} />} />
+                    <Route exact path="/asset/:id/edit" element={<EditNft theme={theme} themeToggler={themeToggler} />} />
+                    <Route exact path="/collection/:id/edit" element={<EditCollection theme={theme} themeToggler={themeToggler} />} />
+                    <Route exact path="/profile/:username" element={<ProfilePage theme={theme} themeToggler={themeToggler} />} />
                     <Route exact path="/explore" element={<Explore theme={theme} themeToggler={themeToggler} />} />
                     <Route exact path="/stats" element={<Stats theme={theme} themeToggler={themeToggler} />} />
+                    <Route exact path="/my-collections" element={<MyCollections theme={theme} themeToggler={themeToggler} />} />
                     <Route exact path="/drops" element={<Drops theme={theme} themeToggler={themeToggler} />} />
+
+
+
+
+                    <Route exact path="/test" element={<TestPage theme={theme} themeToggler={themeToggler} />} />
 
 
 

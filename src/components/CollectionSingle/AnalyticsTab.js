@@ -8,6 +8,8 @@ import { useEffect, useState } from "react";
 import ItemCard from "../Cards/ItemCard";
 import { Colors } from "../design/Colors";
 import TestPic1 from '../../assets/test-1.png'
+import SSelection from "../Selection";
+import { Filtering } from "../Filtering";
 
 const Card = styled.div`
 background-color:${({ theme }) => theme.itemCardsBackground};
@@ -98,6 +100,11 @@ const CollectionAnalyticsTab = ({ theme }) => {
     }
     const handleOpen = () => setOpenFilter(true);
     const handleClose = () => setOpenFilter(false);
+    const [view, setView] = useState('m')
+    const handleViewChange = (v) => {
+        console.log(v)
+        setView(v)
+    }
 
 
     return (
@@ -134,15 +141,12 @@ const CollectionAnalyticsTab = ({ theme }) => {
                     </Card>
                 </div>
             </div>
-            <div className="mb-4 row w-100 p-0 justify-content-between align-items-center">
+            {/* <div className="mb-4 row w-100 p-0 justify-content-between align-items-center">
                 <div className="col-8 col-sm-4 col-md-5"><SearchBox /></div>
                 <div className="d-none d-sm-block col-4 col-md-3">
-                    <Selection className="mx-1 d-flex p-2" >
-                        <span className="d-flex">
-                            price low to high
-                        </span>
-                        <div style={{ width: "auto" }}><ArrowDown2 /></div>
-                    </Selection>
+                    <div className="mx-1">
+                        <SSelection width={'100%'} theme={theme} tabs={['price high to low', 'price low to high',]} />
+                    </div>
                 </div>
                 <div className="d-none d-sm-block col-3">
                     <Selection className="mx-1 d-flex ">
@@ -162,16 +166,20 @@ const CollectionAnalyticsTab = ({ theme }) => {
                         <div style={{ width: "auto" }} onClick={handleFilter}><FilterSearch size="20" /></div>
                     </Selection>
                 </div>
-            </div>
+            </div> */}
+
+            <Filtering id={'colAnalyticsSearch'} theme={theme} handleFilter={handleFilter} handleViewChange={handleViewChange} selectOptions={['last 7 days','last 30 days','last year']}/>
+
+
             <div className="d-flex justify-content-between w-100">
-                <div className="d-flex flex-wrap justify-content-between" style={{ width: !openFilter ? "100%" : "70%", transition: "500ms ease" }}>
+                <Box className="d-flex flex-wrap justify-content-between" sx={{ width: !openFilter ? "100%" : "70%", transition: { xs: '0ms', md: '500ms ease' }}}>
                     <div className="col-12 col-sm-6"><DataContainer className="m-1"></DataContainer></div>
                     <div className="col-12 col-sm-6"><DataContainer className="m-1"></DataContainer></div>
                     <div className="col-12 col-sm-6"><DataContainer className="m-1"></DataContainer></div>
                     <div className="col-12 col-sm-6"><DataContainer className="m-1"></DataContainer></div>
                     <div className="col-12 col-sm-6"><DataContainer className="m-1"></DataContainer></div>
-                </div>
-                {openFilter ? <FilterContainer style={{ width: "28%" }} className="my-2 d-none d-md-flex">
+                </Box>
+                {openFilter ? <FilterContainer style={{ width: "28%" }} className="d-none d-lg-flex">
                 </FilterContainer>
                     : undefined}
             </div>
@@ -180,7 +188,7 @@ const CollectionAnalyticsTab = ({ theme }) => {
                 onClose={handleClose}
                 aria-labelledby="modal-modal-title"
                 aria-describedby="modal-modal-description"
-                className="d-md-none"
+                className="d-lg-none"
                 // inputProps={{MenuProps: {disableScrollLock: true}}}
                 disableScrollLock={true}
             >

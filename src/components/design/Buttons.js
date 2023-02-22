@@ -7,7 +7,7 @@ flex-direction: row;
 justify-content: center;
 align-items: center;
 padding: 16px 12px;
-gap: 8px;
+// gap: 8px;
 // width: 348px;
 width:100%;
 height: 56px;
@@ -89,7 +89,7 @@ color:white;
 
 
 const buttonShowUp = keyframes`
-0% {height: 0px; color:transparent;}
+0% {height: 0px; color:transparent; }
 30% {color:transparent;}
 100% {height: 100%;color:white;}
 `
@@ -103,11 +103,11 @@ height:100%;
 border-bottom-left-radius:24px;
 border-bottom-right-radius:24px;
 border:none;
-transition:500ms linear;
-transform-origin:bottom;
+transition:10ms linear;
+// transform-origin:bottom;
 color:#ffffff;
 animation-name: ${buttonShowUp};
-animation-duration: 1s;
+animation-duration: 0.5s;
 animation-iteration-count: 1;
 
 `;
@@ -124,5 +124,16 @@ flex-direction: row;
 justify-content: center;
 align-items: center;
 padding:10px 20px;
+`
 
+export const ButtonOutlineLight = styled.button`
+color:#f9f9f9;
+border:solid 1px #f9f9f9;
+background-color:transparent;
+border-radius:24px;
+display: flex;
+flex-direction: row;
+justify-content: center;
+align-items: center;
+padding:5px 20px;
 `
