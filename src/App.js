@@ -42,12 +42,21 @@ import { LinearProgress, Popper } from '@mui/material';
 import { v4 as uuidv4 } from 'uuid';
 import Notifications from './pages/Notifications';
 import { Box } from '@mui/system';
+import { NFTMarketplaceProvider } from './NFTMarketplaceContext';
 
 function getLibrary(provider) {
   return new Web3(provider)
 }
 
 function App() {
+
+
+
+
+
+
+
+
 
   // const dispatch = useDispatch();
   // const fetchUser = () => dispatch(getuser('walletaddress'));
@@ -78,46 +87,48 @@ function App() {
         persistor={persistor}>
         <Web3ReactProvider getLibrary={getLibrary}>
           <MetamaskProvider>
-            <BrowserRouter>
-              <ScrollToTop>
-                <ThemeProvider theme={themeMode}>
-                  <>
-                    <GlobalStyles />
-                    {/* <Navbar theme={theme} themeToggler={themeToggler} /> */}
-                    <Routes>
-                      <Route exact path="/" element={<Home theme={theme} themeToggler={themeToggler} />} />
-                      <Route exact path="info/:id" element={<Information theme={theme} themeToggler={themeToggler} />} />
-                      <Route exact path="/account/setting" element={<Account theme={theme} themeToggler={themeToggler} />} />
-                      <Route exact path="/collection/:name/:id" element={<CollectionSingle theme={theme} themeToggler={themeToggler} />} />
-                      <Route exact path="/assets/:chain/:walletAddress/:id" element={<NFTSingle theme={theme} themeToggler={themeToggler} />} />
-                      <Route exact path="/asset/create" element={<CreateNFT theme={theme} themeToggler={themeToggler} />} />
-                      <Route exact path="/collection/create" element={<CreateCollection theme={theme} themeToggler={themeToggler} />} />
-                      <Route exact path="/collection/edit/:id" element={<EditCollection theme={theme} themeToggler={themeToggler} />} />
-                      <Route exact path="/asset/edit/:id" element={<EditNft theme={theme} themeToggler={themeToggler} />} />
-                      <Route exact path="/profile/:username" element={<ProfilePage theme={theme} themeToggler={themeToggler} />} />
-                      <Route exact path="/explore" element={<Explore theme={theme} themeToggler={themeToggler} />} />
-                      <Route exact path="/stats" element={<Stats theme={theme} themeToggler={themeToggler} />} />
-                      <Route exact path="/stats/activity" element={<ActivityStats theme={theme} themeToggler={themeToggler} />} />
-                      <Route exact path="/my-collections" element={<MyCollections theme={theme} themeToggler={themeToggler} />} />
-                      <Route exact path="/drops" element={<Drops theme={theme} themeToggler={themeToggler} />} />
-                      <Route exact path="/notifications" element={<Notifications theme={theme} themeToggler={themeToggler} />} />
+            <NFTMarketplaceProvider>
+              <BrowserRouter>
+                <ScrollToTop>
+                  <ThemeProvider theme={themeMode}>
+                    <>
+                      <GlobalStyles />
+                      {/* <Navbar theme={theme} themeToggler={themeToggler} /> */}
+                      <Routes>
+                        <Route exact path="/" element={<Home theme={theme} themeToggler={themeToggler} />} />
+                        <Route exact path="info/:id" element={<Information theme={theme} themeToggler={themeToggler} />} />
+                        <Route exact path="/account/setting" element={<Account theme={theme} themeToggler={themeToggler} />} />
+                        <Route exact path="/collection/:name/:id" element={<CollectionSingle theme={theme} themeToggler={themeToggler} />} />
+                        <Route exact path="/assets/:chain/:walletAddress/:id" element={<NFTSingle theme={theme} themeToggler={themeToggler} />} />
+                        <Route exact path="/asset/create" element={<CreateNFT theme={theme} themeToggler={themeToggler} />} />
+                        <Route exact path="/collection/create" element={<CreateCollection theme={theme} themeToggler={themeToggler} />} />
+                        <Route exact path="/collection/edit/:id" element={<EditCollection theme={theme} themeToggler={themeToggler} />} />
+                        <Route exact path="/asset/edit/:id" element={<EditNft theme={theme} themeToggler={themeToggler} />} />
+                        <Route exact path="/profile/:username" element={<ProfilePage theme={theme} themeToggler={themeToggler} />} />
+                        <Route exact path="/explore" element={<Explore theme={theme} themeToggler={themeToggler} />} />
+                        <Route exact path="/stats" element={<Stats theme={theme} themeToggler={themeToggler} />} />
+                        <Route exact path="/stats/activity" element={<ActivityStats theme={theme} themeToggler={themeToggler} />} />
+                        <Route exact path="/my-collections" element={<MyCollections theme={theme} themeToggler={themeToggler} />} />
+                        <Route exact path="/drops" element={<Drops theme={theme} themeToggler={themeToggler} />} />
+                        <Route exact path="/notifications" element={<Notifications theme={theme} themeToggler={themeToggler} />} />
 
 
 
 
-                      <Route exact path="/test" element={<TestPage theme={theme} themeToggler={themeToggler} />} />
+                        <Route exact path="/test" element={<TestPage theme={theme} themeToggler={themeToggler} />} />
 
 
 
-                      <Route path='*' element={<NotFound theme={theme} themeToggler={themeToggler} />} />
+                        <Route path='*' element={<NotFound theme={theme} themeToggler={themeToggler} />} />
 
 
 
-                    </Routes>
-                  </>
-                </ThemeProvider>
-              </ScrollToTop>
-            </BrowserRouter>
+                      </Routes>
+                    </>
+                  </ThemeProvider>
+                </ScrollToTop>
+              </BrowserRouter>
+            </NFTMarketplaceProvider>
           </MetamaskProvider>
         </Web3ReactProvider>
       </PersistGate>

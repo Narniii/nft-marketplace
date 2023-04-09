@@ -18,6 +18,7 @@ import { MARKET_API } from "../../utils/data/market_api";
 import '../../styles.css'
 import WalletConnectModal from "../../components/wallet/WalletConnectModal";
 import { useWeb3React } from "@web3-react/core";
+import { useNFTMarketplace } from "../../NFTMarketplaceContext";
 const SwitchS = styled.label`
 position: relative;
 display: inline-block;
@@ -171,6 +172,13 @@ const CreateNFT = ({ theme, themeToggler }) => {
     const [unlockableContent, setunlockableContent] = useState(false)
     const [sensetiveContent, setsensetiveContent] = useState(false)
     const [copies, setCopies] = useState(1)
+    const { mintNFT, account } = useNFTMarketplace();
+
+    const handleMint = () => {
+        const recipient = account;
+        const tokenURI = "https://example.com/tokenURI";
+        mintNFT(recipient, tokenURI)
+    };
 
     const handleChainSelect = (e) => {
         e.preventDefault()
@@ -219,14 +227,12 @@ const CreateNFT = ({ theme, themeToggler }) => {
             setLogoErr("Selected file is not an image")
         }
     }
-
     useEffect(() => {
         return () => {
             if (apiCall.current !== undefined)
                 apiCall.current.cancel();
         }
     }, [])
-
     const onChange = e => {
         var n = { ...nft };
         n[e.target.name] = e.target.value;
@@ -265,7 +271,6 @@ const CreateNFT = ({ theme, themeToggler }) => {
             else setErr(err)
         }
     }
-
     useEffect(() => {
         if (globalUser.isLoggedIn)
             fetchCollections()
@@ -282,7 +287,6 @@ const CreateNFT = ({ theme, themeToggler }) => {
         }
         return result;
     }
-
     const saveLevels = (lv) => {
         setLevels(lv)
         handleClose()
@@ -432,8 +436,12 @@ const CreateNFT = ({ theme, themeToggler }) => {
         // var ipfsFileCid = ' '
         // var ipfsFileUrl = ' '
 
+
+
+
         var ipfsFileCid = undefined
         var ipfsFileUrl = undefined
+
         if (isFreezed == 1) {
             var ipfsCid = await ipfsUpload()
             var ipfsUrl = `https://${ipfsCid}.ipfs.dweb.link/`
@@ -499,7 +507,16 @@ const CreateNFT = ({ theme, themeToggler }) => {
 
             if (!resp.isSuccess)
                 throw resp
-            mintNFT(resp.data._id.$oid)
+
+            var ipfsFileCidForMint = undefined
+            var ipfsFileUrlForMint = undefined
+            var ipfsCidForMint = await ipfsUpload()
+            var ipfsUrlForMint = `https://${ipfsCidForMint}.ipfs.dweb.link/`
+            if (properties.length != 0 && properties[0].name.length !== 0) {
+                ipfsFileCidForMint = await ipfsFileUpload()
+                ipfsFileUrlForMint = `https://${ipfsFileCidForMint}.ipfs.dweb.link/`
+            }
+            mintNFTFunc(resp.data._id.$oid, ipfsUrlForMint)
             setSuccessMesssage('NFT created successfully')
             setApiLoading(false)
         }
@@ -510,34 +527,44 @@ const CreateNFT = ({ theme, themeToggler }) => {
             setApiLoading(false)
         }
     }
-    const mintNFT = async (id) => {
+    const mintNFTFunc = async (id, tokenURIm) => {
+        // {console.log(handleMint())}
+        const recipient = account;
+        const tokenURI = tokenURIm;
+        let tx = await mintNFT(recipient, tokenURI)
+        let tx_hash = tx.hash
+        console.log(tx_hash)
         let this_time = new Date(Date.now())
-        try {
-            apiCall.current = MARKET_API.request({
-                path: `/nft/mint/`,
-                method: "post",
-                body: {
-                    issued_at: this_time,
-                    tx_hash: 'hsdyf87sdf98jdc7d87fh98sdf9ocj0',
-                    nft_id: id,
-                    // owners: [],
-                    // price_history: [],
-                    current_owner: globalUser.walletAddress,
-                },
-                headers: {
-                    'Content-Type': 'multipart/form-data'
-                }
-            });
-            let resp = await apiCall.current.promise;
-            console.log('mint response', resp)
+        if (tx_hash) {
+            try {
+                apiCall.current = MARKET_API.request({
+                    path: `/nft/mint/`,
+                    method: "post",
+                    body: {
+                        issued_at: this_time,
+                        tx_hash: tx_hash,
+                        nft_id: id,
+                        // owners: [],
+                        // price_history: [],
+                        current_owner: globalUser.walletAddress,
+                    },
+                    headers: {
+                        'Content-Type': 'multipart/form-data'
+                    }
+                });
+                let resp = await apiCall.current.promise;
+                console.log('mint response', resp)
 
-            if (!resp.isSuccess)
-                throw resp
-            editAssetActivity('mint', resp.data.copies, resp.data._id.$oid, resp.data)
+                if (!resp.isSuccess)
+                    throw resp
+                editAssetActivity('mint', resp.data.copies, resp.data._id.$oid, resp.data)
+            }
+            catch (err) {
+                console.log('backend mint error:', err)
+            }
+        } else {
+            setErr('nft is created but not minted')
         }
-        catch (err) {
-        }
-
     }
     const editAssetActivity = async (event, copies, id, nft) => {
         var this_time = parseFloat(new Date(Date.now()).getTime()) / 1000
@@ -623,7 +650,7 @@ const CreateNFT = ({ theme, themeToggler }) => {
         }
     }
 
-    const { active, account, library, connector, activate, deactivate } = useWeb3React()
+    const { active, } = useWeb3React()
 
     const changeIsFreezed = () => {
         if (isFreezed == 0) { setIsFreezed(1) }

@@ -192,7 +192,7 @@ const TrendingStats = ({ theme }) => {
                         <Selection className="d-none d-sm-flex">
                             {console.log(times)}
                             {times.map((time) => {
-                                return <IconContainer onClick={handleTimeSelect} id={time} className="col-2 p-sm-2 text-center d-flex justify-content-center align-items-center" >{time}</IconContainer>
+                                return <IconContainer style={{ backgroundColor: timeSelect == time ? theme == 'light' ? '#d9d9d9' : '#332E5F' : 'unset' }} onClick={handleTimeSelect} id={time} className="col-2 p-sm-2 text-center d-flex justify-content-center align-items-center" >{time}</IconContainer>
                             })}
                         </Selection>
                         <div className="w-100 d-flex d-sm-none">

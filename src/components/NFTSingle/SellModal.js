@@ -14,7 +14,7 @@ import { API_CONFIG } from "../../config";
 import { GetUSDExchangeRate } from "../../utils/exChange";
 import Bullet from "../design/Bullet";
 import { Colors } from "../design/Colors";
-import { convertDate, convertThisDate, convertThisHour, countCreatorFee } from "../../utils/countingFunctions";
+import { convertDate, convertThisDate, convertThisHour, countCreatorFee, percentage } from "../../utils/countingFunctions";
 
 const OptionRow = styled.div`
 display:flex;
@@ -288,7 +288,6 @@ const SellModal = ({ collection, open, handleClose, theme, id, userWallet, nft }
         }
     }
     var ITEM_IMAGE = nft.nft_image_path.replace('root/dortzio/market/media/', '');
-
     const selectDuration = (e) => {
         var this_time = parseInt(new Date(Date.now()).getTime())
         var tommorrow = parseInt(new Date(Date.now()).getTime() + (24 * 60 * 60 * 1000));
@@ -326,7 +325,27 @@ const SellModal = ({ collection, open, handleClose, theme, id, userWallet, nft }
         setIsAuction(true)
         setIsListing(false)
     }
-
+    const countCreatorFeeInt = (royalties, creator) => {
+        if (royalties && royalties.length !== 0) {
+            for (var i = 0; i < royalties.length; i++)
+                if (royalties[i].wallet_address == creator)
+                    return royalties[i].royalty
+                else return 0
+        }
+        else return 0
+    }
+    function countPotentialEarning() {
+        if (userWallet == collection.collection_creator) {
+            var listingEarning = myPrice - ((0.5 * myPrice) / 100)
+            var auctionEarning = startingPrice - ((0.5 * startingPrice) / 100)
+            return isListing ? listingEarning : auctionEarning
+        }
+        else {
+            var listingEarning = myPrice - (((parseFloat(countCreatorFeeInt(collection.perpetual_royalties, collection.collection_creator)) + 0.5) * myPrice) / 100)
+            var auctionEarning = startingPrice - (((parseFloat(countCreatorFeeInt(collection.perpetual_royalties, collection.collection_creator)) + 0.5) * startingPrice) / 100)
+            return isListing ? listingEarning : auctionEarning
+        }
+    }
     return (
         <>
             <Modal
@@ -482,7 +501,7 @@ const SellModal = ({ collection, open, handleClose, theme, id, userWallet, nft }
                         </Det>
                         <div className="d-flex justify-content-between align-items-center mb-5">
                             <Typography sx={{ fontWeight: 500, }}>Potential Earning</Typography>
-                            <Typography sx={{ fontWeight: 500, }}>-- ETH</Typography>
+                            <Typography sx={{ fontWeight: 500, }}>{countPotentialEarning()} ETH</Typography>
                         </div>
                     </div>
                     {apiLoading ? <ButtonLarge className="align-self-end">...</ButtonLarge> :

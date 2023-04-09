@@ -185,7 +185,7 @@ const WalletConnect = ({ theme, state, toggleDrawer, open, handleClose, anchorEl
                             borderColor: theme == 'light' ? Colors.gray1 : Colors.gray7, borderRadius: "24px"
                         }}>
                             <Typography sx={{ fontWeight: 500 }}>Total Balance</Typography>
-                            <Typography sx={{ fontWeight: 600, mt: 2, mb: 6, fontSize: "24px" }} className="d-flex">$ {ethBalance ? ethBalance : undefined}&nbsp; <Typography sx={{ color: theme == 'light' ? Colors.gray6 : Colors.gray3, fontSize: "24px" }}>USD</Typography></Typography>
+                            <Typography sx={{ fontWeight: 600, mt: 2, mb: 6, fontSize: "24px" }} className="d-flex">$ {ethBalance ? shorten(ethBalance) : undefined}&nbsp; <Typography sx={{ color: theme == 'light' ? Colors.gray6 : Colors.gray3, fontSize: "24px" }}>USD</Typography></Typography>
                             <ButtonMedium onClick={() => setFundsModal(true)} className="my-2">Add Funds</ButtonMedium>
                             <ButtonOutline onClick={disconnect}>Log Out</ButtonOutline>
                         </Box>

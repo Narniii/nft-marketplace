@@ -167,7 +167,7 @@ const Navbar = ({ theme, themeToggler }) => {
 
   //notifications ====================>
   const apiCall = useRef(undefined)
-  const [notifications, setNotifications] = useState(['m', 'fgh', 'fg', { 'sd': 'sdh' }])
+  const [notifications, setNotifications] = useState([])
   const [err, setErr] = useState(undefined)
   const fetchNotifications = async () => {
     try {
@@ -177,7 +177,7 @@ const Navbar = ({ theme, themeToggler }) => {
         body: { wallet_address: globalUser.walletAddress },
       });
       const response = await apiCall.current.promise;
-      console.log(response)
+      // console.log(response)
 
       if (!response.isSuccess)
         throw response
@@ -206,7 +206,6 @@ const Navbar = ({ theme, themeToggler }) => {
       }
       setNotifications(unreadNotifs)
       if (unreadNotifs.length > 0) {
-        console.log('intooooo miaaaaayyy ????')
         var newNotifs = []
         for (var j = 0; j < unreadNotifs.length; j++) {
           let this_time = parseFloat(new Date().getTime())
@@ -216,7 +215,7 @@ const Navbar = ({ theme, themeToggler }) => {
           let hours = Math.floor(difference / 3600) % 24;
           let minutes = Math.floor(difference / 60) % 60;
           let seconds = Math.floor(difference % 60);
-          console.log('differencee????', days, hours, minutes, seconds)
+          // console.log('differencee????', days, hours, minutes, seconds)
           if (days == 0 && hours == 0 && minutes < 2 && seconds < 60) {
             newNotifs.push(unreadNotifs[j])
           }

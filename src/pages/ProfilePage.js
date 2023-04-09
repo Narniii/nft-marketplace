@@ -155,6 +155,7 @@ const ProfilePage = ({ theme, themeToggler }) => {
         return <span>{month + day}</span>
     }
     const getUser = async () => {
+        console.log(username)
         try {
             apiCall.current = AUTH_API.request({
                 path: `/user/get/`,
@@ -163,6 +164,7 @@ const ProfilePage = ({ theme, themeToggler }) => {
             });
             let response = await apiCall.current.promise;
             console.log('uuuuseeeeeer', response)
+            console.log('haaa???', typeof (response.data.extra))
             if (!response.isSuccess)
                 throw response
             if (response.data.avatar_path) {
@@ -178,10 +180,12 @@ const ProfilePage = ({ theme, themeToggler }) => {
             if (active && globalUser.isLoggedIn && globalUser.walletAddress == response.data.user_id) {
                 setIsProfileOwner(true)
             }
-            setExtras(JSON.parse(response.data.extra))
+            if (typeof (response.data.extra) == 'object') {
+                setExtras(response.data.extra)
+            } else {
+                setExtras(JSON.parse(response.data.extra))
+            }
             setUser(response.data)
-
-
         }
         catch (err) {
             console.log(err)

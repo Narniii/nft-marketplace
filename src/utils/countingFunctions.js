@@ -128,6 +128,8 @@ export const shortenLong = (str) => {
 }
 
 export function percentage(partialValue, totalValue) {
-    let perc = (100 * partialValue) / totalValue;
-    return Math.round(perc)
+    if (totalValue !== 0) {
+        let perc = (100 * partialValue) / totalValue;
+        return Math.round(perc)
+    } else return 0
 }

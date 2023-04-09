@@ -8,6 +8,7 @@ import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import styled from "styled-components";
 import { API_CONFIG } from "../../config";
+import { percentage } from "../../utils/countingFunctions";
 import { MARKET_API } from "../../utils/data/market_api";
 import { BG_URL, PUBLIC_URL } from "../../utils/utils";
 import { Colors } from "../design/Colors";
@@ -161,6 +162,25 @@ const CollectionStatsCard = ({ watchlistTab, collection, theme, index, collectio
     }
     //<-------------------------------------------------------
 
+    function countColSales(nfts) {
+        var salesLength = 0
+        for (var i = 0; i < nfts.length; i++) {
+            salesLength = salesLength + nfts[i].price_history.length
+        }
+        return salesLength
+    }
+    function countListings(nfts) {
+        var listedLength = 0
+        if (nfts.length > 0) {
+            for (var i = 0; i < nfts.length; i++) {
+                if (nfts[i].listings.length) {
+                    listedLength++
+                }
+            }
+        }
+        return listedLength
+    }
+
     var LOGO_IMAGE = collectionLogo.replace('root/dortzio/market/media/', '');
     return (
         <>
@@ -183,16 +203,18 @@ const CollectionStatsCard = ({ watchlistTab, collection, theme, index, collectio
                         {A > B ? <Typography sx={{ color: Colors.successDark }}>{relDiff(A, B)}%</Typography> : A < B ? <Typography sx={{ color: Colors.errorDark }}>{relDiff(A, B)}%</Typography> : <Typography sx={{ color: 'inherit' }}>{relDiff(A, B)}%</Typography>}
                     </DetailHolder>
                     <DetailHolder style={{ width: "150px" }}>
-                        {collection.floor_price}&nbsp;<PriceUnit>ETH</PriceUnit>
+                        {collection.floor_price !== " " ? collection.floor_price : '0'}&nbsp;<PriceUnit>ETH</PriceUnit>
                     </DetailHolder>
                     <DetailHolder style={{ width: "100px" }}>
-                        3
+                        {countColSales(collection.nfts)}
                     </DetailHolder>
-                    <DetailHolder style={{ width: "150px" }}>
-                        {collection.nft_owners_count}
+                    <DetailHolder style={{ width: "150px" }} className="flex-column align-items-start">
+                        {collection.unique_owners ? <>{percentage(collection.unique_owners.length, collection.nft_owners_count)}%</> : '0%'}
+                        <p className="m-0" style={{ fontSize: "10px" }}>{collection.nft_owners_count} owners</p>
                     </DetailHolder>
-                    <DetailHolder style={{ width: "100px" }}>
-                        2
+                    <DetailHolder style={{ width: "100px" }} className="flex-column align-items-start">
+                        {percentage(countListings(collection.nfts), collection.nfts.length)}%
+                        <p className="m-0" style={{ fontSize: "10px" }}>{countListings(collection.nfts)} of {collection.nfts.length}</p>
                     </DetailHolder>
                     {watchlistTab ? undefined :
                         <>
