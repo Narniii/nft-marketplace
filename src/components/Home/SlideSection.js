@@ -1,4 +1,4 @@
-import { ArrowRight2 } from "iconsax-react";
+import { ArrowDown2, ArrowRight2 } from "iconsax-react";
 import styled from "styled-components";
 import ItemCard from "../Cards/ItemCard";
 import { TestColls } from "../../utils/testCollections";
@@ -17,8 +17,25 @@ const SectionContainer = styled.div`
     display:flex;
     flex-direction:column;
     justify-content:space-between;
-    margin:50px auto;
+    margin-top:50px;
+    @media screen and (max-width: 992px) {
+        margin-top:80px;
+    }
+    @media screen and (max-width: 575px) {
+        margin-top:50px;
+    }
+    
+`;
 
+const Scrollable = styled.div`
+&::-webkit-scrollbar {
+    display:none;
+}
+&::-webkit-scrollbar-thumb {
+    display:none;
+}
+&::-webkit-scrollbar-button{
+    display:none;
 `;
 
 
@@ -43,11 +60,11 @@ const SlideSection = ({ theme, themeToggler }) => {
     const [err, setErr] = useState(undefined)
     useEffect(() => {
         fetchItems()
-        // return () => {
-        //     if (apiCall.current != undefined)
-        //         apiCall.current.cancel();
+        return () => {
+            if (apiCall.current != undefined)
+                apiCall.current.cancel();
 
-        // }
+        }
     }, [])
 
     const fetchItems = async () => {
@@ -65,10 +82,10 @@ const SlideSection = ({ theme, themeToggler }) => {
         }
         catch (err) {
             console.log(err)
-            if (err.message == "No NFT Found") {
+            if (err.status == 404) {
                 setItems([])
             }
-            else {
+            else if (err.status == 500) {
                 setErr("Internal server error")
             }
             // setLoading(false)
@@ -80,12 +97,25 @@ const SlideSection = ({ theme, themeToggler }) => {
     }, [items])
 
     return (
-        <SectionContainer className="pdng mb-5">
-            <div className="d-flex p-2 justify-content-between">
-                <div className="d-flex col-6 justify-content-start">NEW</div>
-                <Link to='/explore' style={{ textDecoration: "none", color: "inherit" }} className="d-flex col-6 justify-content-end">
+        <SectionContainer className="pdng">
+            <div style={{ marginBottom: "20px" }} className=" d-flex justify-content-between">
+                <div className="d-flex col-sx-11 col-sm-9 col-md-6 justify-content-start align-items-center">
+                    <h4 className="d-none d-lg-flex" style={{ margin: 0, fontWeight: 500 }}>
+                        NEW
+                    </h4>
+                    <h5 className="d-none d-sm-flex d-lg-none" style={{ margin: 0, fontWeight: 500 }}>
+                        NEW
+                    </h5>
+                    <h6 className="d-flex d-sm-none" style={{ margin: 0, fontWeight: 500 }}>
+                        NEW
+                    </h6>
+                </div>
+                <Link to='/explore' style={{ textDecoration: "none", color: "inherit", fontSize: "14px" }} className="d-flex d-none d-sm-flex col-sm-3 col-md-6 justify-content-end align-items-center">
                     Show more
-                    <div style={{ width: "auto", padding: "0" }}><ArrowRight2 /></div>
+                    <div style={{ width: "auto", padding: "0" }}><ArrowRight2 size="20" /></div>
+                </Link>
+                <Link to='/explore' style={{ textDecoration: "none", color: "inherit" }} className="d-flex d-sm-none col-1 justify-content-end align-items-center" >
+                    <div style={{ width: "auto", padding: "0" }}><ArrowRight2 size="20" /></div>
                 </Link>
             </div>
             {loading ?
@@ -112,11 +142,11 @@ const SlideSection = ({ theme, themeToggler }) => {
                             // <CustomSlider
                             //     theme={theme}
                             //     slidesCount={items.length}>
-                            <div className="d-flex flex-wrap">
+                            <Scrollable className="row overflow-auto">
                                 {items.map((item) => {
-                                    return <ItemCard slider={false} view={'m'} itemImage={item.nft_image_path} itemID={item._id.$oid} theme={theme} name={item.title} price={item.price} creator={item.creator} />
+                                    return <ItemCard item={item} slider={false} view={'l'} itemImage={item.nft_image_path} itemID={item._id.$oid} theme={theme} name={item.title} price={item.price} creator={item.collection_creator_username} creatorImg={item.collection_creator_avatar} />
                                 })}
-                            </div>
+                            </Scrollable>
                             // </CustomSlider>
                             :
                             <CustomSlider
@@ -124,7 +154,7 @@ const SlideSection = ({ theme, themeToggler }) => {
                                 slidesCount={4}
                             >
                                 {items.map((item) => {
-                                    return <ItemCard slider={true} view={'m'} itemImage={item.nft_image_path} itemID={item._id.$oid} theme={theme} name={item.title} price={item.price} creator={item.creator} />
+                                    return <ItemCard item={item} slider={true} view={'m'} itemImage={item.nft_image_path} itemID={item._id.$oid} theme={theme} name={item.title} price={item.price} creator={item.collection_creator_username} creatorImg={item.collection_creator_avatar} />
                                 })}
                             </CustomSlider>
                     }

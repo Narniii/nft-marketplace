@@ -3,11 +3,11 @@ import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import { Link } from "react-router-dom";
 import styled from "styled-components";
-import testNFT from '../../assets/testNFT.png'
 import { API_CONFIG } from "../../config";
 import { addItem } from "../../redux/actions";
 import { BG_URL, PUBLIC_URL } from "../../utils/utils";
 import { AddToCartButton } from "../design/Buttons";
+import { ListMenus } from "../listMenus";
 
 const Card = styled.div`
 width: 100%;
@@ -62,16 +62,31 @@ const InnerDiv = styled.div`
     `
 
 
-const MyCollectionCard = ({ itemImage, collectionName }) => {
-    var ITEM_IMAGE = itemImage.replace('root/NFTMarketplace-Backend/market/media/', '');
+const MyCollectionCard = ({ itemImage, collectionName, collId, theme }) => {
+    var ITEM_IMAGE = itemImage.replace('root/dortzio/market/media/', '');
+    // function list(link) {
+    //     var moreListItems = [{ title: "Edit", link: '/' + 'collection/' + link }]
+    //     return moreListItems
+    // }
+    var moreListItems = [{ title: "Edit", link: '/' + 'collection/' + collectionName + '/' + collId }]
+
+    const [anchorEl, setAnchorEl] = useState(null);
+    const [openList, setOpenList] = useState(false)
+    const handleList = (e) => {
+        setOpenList(!openList)
+        setAnchorEl(e.currentTarget);
+    }
 
     return (
         <div className="col-12 col-sm-6 col-md-3 p-0">
             <Card className="p-1 align-items-center align-self-center" >
                 {/* <Link style={{ textDecoration: "none", color: "inherit" }} to={'/' + }> */}
                 <InnerDiv>
-                    <Image style={{ backgroundImage: BG_URL(PUBLIC_URL(`${API_CONFIG.MARKET_MEDIA_API_URL}${ITEM_IMAGE}`)) }}><MoreOpt><MoreCircle />ّ</MoreOpt></Image>
-                    <NameHolder>{collectionName}</NameHolder>
+                    <Image style={{ backgroundImage: BG_URL(PUBLIC_URL(`${API_CONFIG.MARKET_MEDIA_API_URL}${ITEM_IMAGE}`)) }}><MoreOpt onClick={handleList}><MoreCircle />ّ</MoreOpt></Image>
+                    <ListMenus open={openList} anchorEl={anchorEl} theme={theme} handleClose={() => setOpenList(false)} field={'collection'} tabs={moreListItems} />
+                    <Link style={{ textDecoration: "none", color: "inherit", }} to={'/' + 'collection/' + collectionName + '/' + collId}>
+                        <NameHolder>{collectionName}</NameHolder>
+                    </Link>
                 </InnerDiv>
                 {/* </Link> */}
             </Card>

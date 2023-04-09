@@ -1,3 +1,5 @@
+import { Star1 } from "iconsax-react";
+import { Link } from "react-router-dom";
 import styled from "styled-components";
 import { API_CONFIG } from "../../config";
 import { BG_URL, PUBLIC_URL } from "../../utils/utils";
@@ -8,7 +10,7 @@ const Card = styled.div`
     flex-direction: row;
     justify-content: space-between;
     align-items: center;
-    padding: 12px 8px;
+    // padding: 12px 8px;
     background: ${({ theme }) => theme.collectionCard};
     border-radius: 12px;
     cursor:pointer;
@@ -24,7 +26,7 @@ const Card = styled.div`
 const ColLogoHolder = styled.div`
     box-sizing: border-box;
     background: #D9D9D9;
-    border: 1px solid #D9D9D9;
+    border:${({ theme }) => theme.collectionBorder};
     border-radius:50%;
     width:50px;
     height:50px;
@@ -39,60 +41,74 @@ const PriceUnit = styled.span`
 `;
 
 
-const CollectionCard = ({ theme, index, collectionLogo, collectionName, collectionFloor, collectionVolume }) => {
+const CollectionCard = ({ collection, theme, index, collectionLogo, collectionName, collectionFloor, collectionVolume }) => {
+    const shorten = (str) => {
+        return str.length > 10 ? str.substring(0, 7) + "..." : str;
+    }
+    const shortenDes = (str) => {
+        return str.length > 15 ? str.substring(0, 15) + "..." : str;
+    }
 
-    var LOGO_IMAGE = collectionLogo.replace('root/NFTMarketplace-Backend/market/media/', '');
+    var LOGO_IMAGE = collection.logo_path.replace('root/dortzio/market/media/', '');
 
     return (
         <>
             {/*no mobile card */}
-            <Card className="my-2 d-none d-sm-flex">
-                <div style={{
-                    display: "flex", flexDirection: "row", justifyContent: "start", alignItems: "center",
-                    // border: "1px solid blue",
-                    width: "50%"
-                }}>
-                    <div>{index}&nbsp;&nbsp;</div>
-                    <ColLogoHolder style={{ backgroundImage: BG_URL(PUBLIC_URL(`${API_CONFIG.MARKET_MEDIA_API_URL}${LOGO_IMAGE}`)) }} />
-                    <div>&nbsp;&nbsp;{collectionName}&nbsp;</div>
-                </div>
-                <div style={{
-                    display: "flex", flexDirection: "row", justifyContent: "start", alignItems: "center",
-                    // border: "1px solid blue",
-                    fontWeight: 600,
-                    width: "25%",
-                }}>
-                    {collectionFloor}&nbsp;<PriceUnit>ETH</PriceUnit>
-                </div>
-                <div style={{
-                    display: "flex", flexDirection: "row", justifyContent: "center", alignItems: "center",
-                    // border: "1px solid blue",
-                    width: "25%",
-                    fontWeight: 600
-                }}>
-                    {collectionVolume}&nbsp;<PriceUnit>ETH</PriceUnit>
-                </div>
-            </Card>
+            <Link style={{ textDecoration: "none", color: "inherit" }} to={'/' + 'collection/' + collection.title + '/' + collection._id.$oid}>
+                <Card className="my-2 d-none d-sm-flex">
+                    <div style={{
+                        display: "flex", flexDirection: "row", justifyContent: "start", alignItems: "center",
+                        // border: "1px solid blue",
+                        width: "50%",
+                        paddingLeft: "8px"
+                    }}>
+                        <div>{index}&nbsp;&nbsp;</div>
+                        <ColLogoHolder style={{ backgroundImage: BG_URL(PUBLIC_URL(`${API_CONFIG.MARKET_MEDIA_API_URL}${LOGO_IMAGE}`)) }} />
+                        <div>&nbsp;&nbsp;{shortenDes(collectionName)}&nbsp;</div>
+                    </div>
+                    <div style={{
+                        display: "flex", flexDirection: "row", justifyContent: "start", alignItems: "center",
+                        // border: "1px solid blue",
+                        fontWeight: 600,
+                        width: "150px",
+                    }}>
+                        {collection.floor_price !== " " ? collection.floor_price : 0}&nbsp;<PriceUnit>ETH</PriceUnit>
+                    </div>
+                    <div style={{
+                        display: "flex", flexDirection: "row", justifyContent: "start", alignItems: "center",
+                        // border: "1px solid blue",
+                        width: "150px",
+                        fontWeight: 600,
+                        paddingRight: "8px"
+                    }}>
+                        {collection.volume}&nbsp;<PriceUnit>ETH</PriceUnit>
+                    </div>
+                </Card>
+            </Link>
             {/*mobile card */}
-            <Card className="my-2 d-flex d-sm-none">
-                <div style={{
-                    display: "flex", flexDirection: "row", justifyContent: "start", alignItems: "center",
-                    // border: "1px solid blue",
-                    width: "60%"
-                }}>
-                    <div>{index}&nbsp;&nbsp;</div>
-                    <ColLogoHolder style={{ backgroundImage: BG_URL(PUBLIC_URL(`${API_CONFIG.MARKET_MEDIA_API_URL}${LOGO_IMAGE}`)) }} />
-                    <div>&nbsp;&nbsp;{collectionName}&nbsp;&nbsp;</div>
-                </div>
-                <div style={{
-                    display: "flex", flexDirection: "row", justifyContent: "end", alignItems: "center",
-                    // border: "1px solid blue",
-                    width: "30%",
-                    fontWeight: 600
-                }}>
-                    {collectionFloor}&nbsp;<PriceUnit>ETH</PriceUnit>
-                </div>
-            </Card>
+            <Link style={{ textDecoration: "none", color: "inherit" }} to={'/' + 'collection/' + collection.title + '/' + collection._id.$oid}>
+                <Card className="my-2 d-flex d-sm-none">
+                    <div style={{
+                        display: "flex", flexDirection: "row", justifyContent: "start", alignItems: "center",
+                        paddingLeft: "8px"
+                        // border: "1px solid blue",
+                        // width: "60%"
+                    }}>
+                        <div>{index}&nbsp;&nbsp;</div>
+                        <ColLogoHolder style={{ backgroundImage: BG_URL(PUBLIC_URL(`${API_CONFIG.MARKET_MEDIA_API_URL}${LOGO_IMAGE}`)) }} />
+                        <div>&nbsp;&nbsp;{shorten(collectionName)}&nbsp;&nbsp;</div>
+                    </div>
+                    <div style={{
+                        display: "flex", flexDirection: "row", justifyContent: "end", alignItems: "center",
+                        // border: "1px solid blue",
+                        width: "100px",
+                        fontWeight: 600,
+                        paddingRight: "8px"
+                    }}>
+                        {collection.floor_price !== " " ? collection.floor_price : 0}&nbsp;<PriceUnit>ETH</PriceUnit>
+                    </div>
+                </Card>
+            </Link>
         </>
     );
 }

@@ -29,21 +29,47 @@ display: flex;
 flex-direction: row;
 justify-content: center;
 align-items: center;
-padding: 12px;
+// padding: 12px;
+padding:10px 20px;
 // gap: 6px;
 border:none;
 // width: 330px;
 width:100%;
-// height: 44px;
+height: 44px;
 background: #9951F4;
 mix-blend-mode: normal;
 box-shadow: 0px 1px 6px rgba(0, 0, 0, 0.15);
 border-radius: 24px;
 color:white;
+font-size:14px;
+background: ${Colors.gradientPurpleStandard};
 &:hover{
     background: linear-gradient(276.27deg, #7830D2 0%, #BB86FF 97.78%);
 }
 `;
+export const ButtonMediumChangable = styled.button`
+display: flex;
+flex-direction: row;
+justify-content: space-between;
+align-items: center;
+border:none;
+width:100%;
+height: 44px;
+// padding-left:20px;
+overflow:hidden;
+padding:0;
+background: #9951F4;
+mix-blend-mode: normal;
+box-shadow: 0px 1px 6px rgba(0, 0, 0, 0.15);
+border-radius: 24px;
+color:white;
+font-size:14px;
+background: ${Colors.gradientPurpleStandard};
+// &:hover{
+//     background: linear-gradient(276.27deg, #7830D2 0%, #BB86FF 97.78%);
+// }
+`;
+
 export const ButtonSmall = styled.button`
 display: flex;
 flex-direction: row;
@@ -76,7 +102,7 @@ width:100%;
 font-size:1rem;
 font-weight:600;
 height: 40px;
-// padding:10px;
+padding:15px 30px;
 background: ${Colors.gradientPurpleStandard};
 mix-blend-mode: normal;
 box-shadow: 0px 1px 6px rgba(0, 0, 0, 0.15);
@@ -124,6 +150,7 @@ flex-direction: row;
 justify-content: center;
 align-items: center;
 padding:10px 20px;
+width:100%;
 `
 
 export const ButtonOutlineLight = styled.button`
@@ -136,4 +163,15 @@ flex-direction: row;
 justify-content: center;
 align-items: center;
 padding:5px 20px;
+`
+
+export const ButtonDisabled = styled.button`
+background: linear-gradient(90deg, #767676 2.08%, #A9A9A9 47.4%, #D2D2D2 100%);
+border-radius: 24px;
+display: flex;
+flex-direction: row;
+align-items: center;
+border:none;
+color:white;
+
 `

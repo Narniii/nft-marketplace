@@ -5,6 +5,8 @@
   "dependencies": {
     "@emotion/react": "^11.10.5",
     "@emotion/styled": "^11.10.5",
+    "@ethersproject/providers": "^5.7.2",
+    "@metamask/detect-provider": "^2.0.0",
     "@mui/material": "^5.11.4",
     "@reduxjs/toolkit": "^1.9.1",
     "@testing-library/jest-dom": "^5.16.5",
@@ -15,6 +17,7 @@
     "axios": "^1.3.2",
     "bootstrap": "^5.2.3",
     "ethers": "^5.7.2",
+    "get-eth-price": "^1.0.0",
     "iconsax-react": "^0.0.8",
     "react": "^18.2.0",
     "react-bootstrap": "^2.7.0",
@@ -24,6 +27,7 @@
     "react-router": "^6.6.2",
     "react-router-dom": "^6.6.2",
     "react-scripts": "5.0.1",
+    "react-share": "^4.4.1",
     "react-slick": "^0.29.0",
     "redux": "^4.2.0",
     "redux-devtools-extension": "^2.13.9",
@@ -31,6 +35,7 @@
     "redux-thunk": "^2.4.2",
     "slick-carousel": "^1.8.1",
     "styled-components": "^5.3.6",
+    "swr": "^2.0.4",
     "web-vitals": "^2.1.4",
     "web3": "^1.8.1",
     "web3-react": "^5.0.5"

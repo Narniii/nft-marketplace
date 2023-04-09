@@ -2,10 +2,13 @@ import styled from "styled-components";
 
 const Contnr = styled.div`
 text-align:justify;
-width:70%;
-@media screen and (max-width: 600px) {
+width:60%;
+@media screen and (max-width: 992px) {
+    width: 90%;
+};
+@media screen and (max-width: 575px) {
     width: 100%;
-},
+};
 `
 
 const Comp = styled.div`

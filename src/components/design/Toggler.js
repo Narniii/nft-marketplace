@@ -13,6 +13,10 @@ const Button = styled.button`
   flex:none;
   order:0;
   flex-grow:0;
+  @media screen and (max-width: 575px) {
+    width:32px;
+    height:32px;
+      }   
   }
 `;
 

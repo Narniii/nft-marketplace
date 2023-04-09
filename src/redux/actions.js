@@ -13,6 +13,7 @@ export const ADD_TO_CART = 'ADD_TO_CART';
 export const REMOVE_FROM_CART = 'REMOVE_FROM_CART';
 export const INCREMENT_QUANTITY = 'INCREMENT_QUANTITY';
 export const DECREMENT_QUANTITY = 'DECREMENT_QUANTITY';
+export const SET_CART = 'SET_CART'
 export const EMPTY_CART = 'EMPTY_CART';
 
 const emptyUser = {
@@ -21,6 +22,8 @@ const emptyUser = {
     walletAddress: '',
     isLoggedIn: false,
 }
+const anEmptyCart = []
+
 export const getuser = (walletAddress) => {
     const isLoggedIn = localStorage.getItem('lastActive')
     const hasAccount = localStorage.getItem('account')
@@ -60,6 +63,8 @@ export const getuser = (walletAddress) => {
     }
 };
 export const logOutUser = () => {
+    localStorage.removeItem('lastActive')
+    localStorage.removeItem('account')
     return async dispatch => {
         dispatch({
             type: LOGOUT_USER,
@@ -76,21 +81,203 @@ export const setAccount = (acc) => {
     };
 
 }
+
+
 export const addItem = (item) => {
-    return dispatch => {
-        dispatch({
-            type: ADD_TO_CART,
-            payload: item
-        });
-    };
+    try {
+        var tempNfts = []
+        var tempObj = {}
+        tempObj.nft_id = item._id.$oid
+        tempObj.media = item.is_freezed ? item.media : item.nft_image_path
+        tempObj.title = item.title
+        tempObj.description = item.description
+        tempObj.copies = item.copies ? item.copies : 0
+        tempObj.price = item.price
+        tempObj.quantity = 1
+
+        tempNfts.push(tempObj)
+
+        return async dispatch => {
+            if (localStorage.getItem('basket_id')) {
+                const response = await axios.post(`${API_CONFIG.MARKET_API_URL}/basket/add/`, { nft_info: tempNfts, basket_id: localStorage.getItem('basket_id') })
+                console.log('responseeeeeee add to cart', response)
+                if (response.status >= 200 && response.status < 300) {
+                    dispatch({
+                        type: ADD_TO_CART,
+                        payload: tempObj
+                    });
+                }
+            } else {
+                const reg = await axios.post(`${API_CONFIG.MARKET_API_URL}/basket/register/`, {
+                    buyer_info: {
+                        wallet_address: "",
+                        username: "",
+                        buyer_id: localStorage.getItem('device-id')
+                    }
+                })
+                console.log('responseeeeeee register', reg)
+                if (reg.status >= 200 && reg.status) {
+                    localStorage.setItem('basket_id', reg.data.data._id.$oid)
+                    const response = await axios.post(`${API_CONFIG.MARKET_API_URL}/basket/add/`, { nft_info: tempNfts, basket_id: localStorage.getItem('basket_id') })
+                    console.log('responseeeeeee add to cart', response)
+                    if (response.status >= 200 && response.status < 300) {
+                        dispatch({
+                            type: ADD_TO_CART,
+                            payload: tempObj
+                        });
+                    }
+                }
+
+            }
+        };
+    } catch (error) {
+        // Add custom logic to handle errors
+        console.log(error);
+    }
+
+    // return dispatch => {
+    //     dispatch({
+    //         type: ADD_TO_CART,
+    //         payload: item
+    //     });
+    // };
+
+}
+export const incrementQuantity = (item) => {
+    var tempObj = {}
+    tempObj.nft_id = item.nft_id
+    tempObj.media = item.is_freezed ? item.media : item.nft_image_path
+    tempObj.title = item.title
+    tempObj.description = item.description
+    tempObj.copies = item.copies ? item.copies : 0
+    tempObj.price = item.price
+    tempObj.quantity = item.quantity
+
+    try {
+        return async dispatch => {
+            const response = await axios.post(`${API_CONFIG.MARKET_API_URL}/basket/add-q/`, { nft_id: tempObj.nft_id, basket_id: localStorage.getItem('basket_id') })
+            console.log('responseeeeeee quan to cart', response)
+            if (response.status >= 200 && response.status < 300) {
+                dispatch({
+                    type: INCREMENT_QUANTITY,
+                    payload: tempObj
+                });
+            } else {
+            }
+        };
+    } catch (error) {
+        // Add custom logic to handle errors
+        console.log(error);
+    }
+
+    // return dispatch => {
+    //     dispatch({
+    //         type: INCREMENT_QUANTITY,
+    //         payload: tempObj
+    //     });
+    // };
+
+}
+export const decrementQuantity = (item) => {
+    var tempObj = {}
+    tempObj.nft_id = item.nft_id
+    tempObj.media = item.is_freezed ? item.media : item.nft_image_path
+    tempObj.title = item.title
+    tempObj.description = item.description
+    tempObj.copies = item.copies ? item.copies : 0
+    tempObj.quantity = item.quantity
+    tempObj.price = item.price
+    try {
+        return async dispatch => {
+            const response = await axios.post(`${API_CONFIG.MARKET_API_URL}/basket/remove-q/`, { nft_id: tempObj.nft_id, basket_id: localStorage.getItem('basket_id') })
+            console.log('responseeeeeee quan to cart', response)
+            if (response.status >= 200 && response.status < 300) {
+                dispatch({
+                    type: DECREMENT_QUANTITY,
+                    payload: tempObj
+                });
+            } else {
+            }
+        };
+    } catch (error) {
+        // Add custom logic to handle errors
+        console.log(error);
+    }
+
+    // return dispatch => {
+    //     dispatch({
+    //         type: DECREMENT_QUANTITY,
+    //         payload: tempObj
+    //     });
+    // };
 
 }
 export const removeItem = (item) => {
+    var tempObj = {}
+    tempObj.nft_id = item.nft_id
+    tempObj.media = item.is_freezed ? item.media : item.nft_image_path
+    tempObj.title = item.title
+    tempObj.description = item.description
+    tempObj.copies = item.copies ? item.copies : 0
+    tempObj.quantity = item.quantity
+    tempObj.price = item.price
+    try {
+        return async dispatch => {
+            const response = await axios.post(`${API_CONFIG.MARKET_API_URL}/basket/remove/`, { nft_info: tempObj, basket_id: localStorage.getItem('basket_id') })
+            console.log('responseeeeeee remove to cart', response)
+            if (response.status >= 200 && response.status < 300) {
+                dispatch({
+                    type: REMOVE_FROM_CART,
+                    payload: tempObj
+                });
+            } else {
+            }
+        };
+    } catch (error) {
+        // Add custom logic to handle errors
+        console.log(error);
+    }
+
+    // return dispatch => {
+    //     dispatch({
+    //         type: REMOVE_FROM_CART,
+    //         payload: tempObj
+    //     });
+    // };
+
+}
+export const emptyCart = () => {
+    try {
+        return async dispatch => {
+            const response = await axios.post(`${API_CONFIG.MARKET_API_URL}/basket/remove-all/`, { basket_id: localStorage.getItem('basket_id') })
+            console.log('responseeeeeee remove cart', response)
+            if (response.status >= 200 && response.status < 300) {
+                localStorage.removeItem('basket_id')
+                dispatch({
+                    type: EMPTY_CART,
+                    payload: anEmptyCart
+                });
+            } else {
+            }
+        };
+    } catch (error) {
+        // Add custom logic to handle errors
+        console.log(error);
+    }
+
+    // return dispatch => {
+    //     dispatch({
+    //         type: EMPTY_CART,
+    //         payload: anEmptyCart
+    //     });
+    // };
+
+}
+export const setCart = (cart) => {
     return dispatch => {
         dispatch({
-            type: REMOVE_FROM_CART,
-            payload: item
+            type: SET_CART,
+            payload: cart
         });
     };
-
 }

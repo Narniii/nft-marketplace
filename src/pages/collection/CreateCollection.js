@@ -17,6 +17,8 @@ import SSelection from "../../components/Selection";
 import { MARKET_API } from "../../utils/data/market_api";
 import '../../styles.css'
 import { categories } from "../../utils/Categories";
+import WalletConnectModal from "../../components/wallet/WalletConnectModal";
+import { useWeb3React } from "@web3-react/core";
 const FieldsContainer = styled.div`
     border-radius: 24px;
     background: ${({ theme }) => theme.profilePageGradient};
@@ -72,6 +74,45 @@ padding:16px;
 appearance:none;
 width:100%;
 `;
+const SwitchS = styled.label`
+position: relative;
+display: inline-block;
+width: 55px;
+height: 30px;
+`
+const SwitchInput = styled.input`
+opacity: 0;
+width: 0;
+height: 0;
+`
+const Slide = styled.span`
+position: absolute;
+cursor: pointer;
+top: 0;
+left: 0;
+right: 0;
+bottom: 0;
+/* background-color: #ccc; */
+background: ${Colors.gray0};
+-webkit-transition: .4s;
+transition: .4s;
+border: 0.5px solid #D9D9D9;
+&:before{
+  position: absolute;
+  content: "";
+  height: 26px;
+  width: 26px;
+  // left: 1px;
+  // right: 1px;
+  bottom: 1px;
+  top: 1px;
+  background:${Colors.gradiantGray};
+  /* background: inherit; */
+  -webkit-transition: .4s;
+  transition: .4s;
+  border-radius:50px;
+}
+`
 
 
 const CreateCollection = ({ theme, themeToggler }) => {
@@ -85,6 +126,8 @@ const CreateCollection = ({ theme, themeToggler }) => {
         category: '',
         royalties: [],
     })
+    const [showOpenRarity, setShowOpenRarity] = useState(false)
+    const [sensetiveContent, setsensetiveContent] = useState(false)
     const [loading, setLoading] = useState(true)
     const [apiLoading, setApiLoading] = useState(false)
     const [successMesssage, setSuccessMesssage] = useState(undefined)
@@ -96,11 +139,7 @@ const CreateCollection = ({ theme, themeToggler }) => {
     const [bannerError, setBannerError] = useState(undefined)
     const [banner, setBanner] = useState(imageBG)
     const apiCall = useRef(undefined)
-    const [properties, setProperties] = useState([{ name: " ", value: " " }])
-    const [royalties, setRoyalties] = useState([{ wallet_address: ' ', royalty: ' ' }])
-    const [funds, setFunds] = useState([])
-    const [addProperties, setAddProperties] = useState(false)
-    const [addFunds, setAddFunds] = useState(false)
+    const [royalties, setRoyalties] = useState([{ wallet_address: ' ', royalty: '0' }])
     const [addRoyalties, setAddRoyalties] = useState(false)
     const globalUser = useSelector(state => state.userReducer);
     const [walletMenu, setWalletMenu] = useState({
@@ -113,7 +152,8 @@ const CreateCollection = ({ theme, themeToggler }) => {
     const [categoryValue, setCategoryValue] = useState('choose category')
     const [isFreezed, setIsFreezed] = useState(false)
     const [anchorEl, setAnchorEl] = useState(window.document.getElementById("profile-tab"));
-    const [walletDesOpen, setWalletDesOpen] = useState(false)
+    const [walletConnect, setWalletConnect] = useState(false)
+    const [links, setLinks] = useState(undefined)
 
     const handleChainSelect = (e) => {
         e.preventDefault()
@@ -136,21 +176,9 @@ const CreateCollection = ({ theme, themeToggler }) => {
         //     }
         // }
     }
-
-    const walletDrawer = (anchor, open) => (event) => {
-        if (event.type === 'keydown' && (event.key === 'Tab' || event.key === 'Shift')) {
-            return;
-        }
-        // setAnchorEl(event.currentTarget);
-        setAnchorEl(document.getElementById("profile-tab"))
-        setWalletDesOpen(!walletDesOpen);
-        setWalletMenu({ ...walletMenu, [anchor]: open });
-    };
-
-
     const handleClose = () => {
-        setAddProperties(false)
-        setAddFunds(false)
+        // setAddProperties(false)
+        // setAddFunds(false)
         setAddRoyalties(false)
     }
     const onLogoChange = (e) => {
@@ -185,7 +213,6 @@ const CreateCollection = ({ theme, themeToggler }) => {
             setBannerError("Selected file is not an image")
         }
     }
-
     useEffect(() => {
         return () => {
             if (apiCall.current !== undefined)
@@ -205,19 +232,15 @@ const CreateCollection = ({ theme, themeToggler }) => {
         }
         setFetchedCategories(tempCatArr)
     }
-
     useEffect(() => {
         fetchCategories()
     }, [])
-
-
     const saveRoyalties = (rt) => {
         console.log(rt)
         setRoyalties(rt)
         handleClose()
 
     }
-
     const handleSubmit = async (e) => {
         e.preventDefault()
         console.log(collection)
@@ -253,7 +276,12 @@ const CreateCollection = ({ theme, themeToggler }) => {
             setErr(undefined)
             setCollectionErr(undefined)
         }
+        // let _royalties = []
+        // if (royalties[0].wallet_address.length !== 0) {
+        //     _royalties = [...royalties]
+        // }
         let _royalties = [...royalties]
+        console.log('/////////////', _royalties)
         // _royalties.push(
         //     { wallet_address: "", royalty: 2 },
         // )
@@ -280,7 +308,9 @@ const CreateCollection = ({ theme, themeToggler }) => {
         formData.append('minted_at', "0");
         formData.append('chain', 'ethereum');
         formData.append('perpetual_royalties', JSON.stringify(_royalties));
-
+        if (links) {
+            formData.append('links', JSON.stringify(links))
+        }
         try {
             apiCall.current = MARKET_API.request({
                 path: `/collection/create/`,
@@ -294,7 +324,9 @@ const CreateCollection = ({ theme, themeToggler }) => {
             console.log(response)
             if (!response.isSuccess)
                 throw response
-                setSuccessMesssage("NFT Collection Created Successfully")
+            setSuccessMesssage("NFT Collection Created Successfully")
+            setApiLoading(false)
+
         } catch (error) {
             console.log(error)
             setErr('something went wrong , please try again later')
@@ -303,16 +335,19 @@ const CreateCollection = ({ theme, themeToggler }) => {
 
     }
 
+    const { active, account, library, connector, activate, deactivate } = useWeb3React()
 
-
-
-
+    const AddToLinks = e => {
+        var ue = { ...links };
+        ue[e.target.name] = e.target.value;
+        setLinks(ue);
+    }
 
     return (
         <>
-            <div style={{ padding: "0 32px" }}>
+            <div className="pdng">
                 <Navbar theme={theme} themeToggler={themeToggler} />
-                {globalUser.isLoggedIn ?
+                {globalUser.isLoggedIn && active ?
                     <div className="d-flex flex-column px-0 py-2">
                         <h5 className="my-1" style={{ fontWeight: "bold" }}>Create New Collection</h5>
                         <FieldsContainer className="p-2 p-sm-4">
@@ -409,7 +444,7 @@ const CreateCollection = ({ theme, themeToggler }) => {
                                             <div className="col-11 p-0">
                                                 <InputBase
                                                     name="URL"
-                                                    onChange={onChange}
+                                                    onChange={AddToLinks}
                                                     sx={{ color: "inherit", width: "100%", height: "100%" }}
                                                     placeholder="google.com"
                                                     inputProps={{ 'aria-label': 'URL' }}
@@ -439,9 +474,9 @@ const CreateCollection = ({ theme, themeToggler }) => {
                                     <div className="w-100 d-flex flex-column p-0 my-2">
                                         <p style={{ fontWeight: "bold", margin: 0 }} className='mb-1'>category</p>
                                         {fetchedCategories && fetchedCategories.length !== 0 ?
-                                            <SSelection tabs={fetchedCategories} width={'100%'} handleSelect={handleCategorieSelect} selectValue={categoryValue} theme={theme} />
+                                            <SSelection id={'create-collection'} tabs={fetchedCategories} width={'100%'} handleSelect={handleCategorieSelect} selectValue={categoryValue} theme={theme} />
                                             :
-                                            <SSelection theme={theme} width={'100%'} tabs={['no category']} />
+                                            <SSelection id={'create-collection'} theme={theme} width={'100%'} tabs={['no category']} />
                                         }
                                     </div>
 
@@ -467,10 +502,10 @@ const CreateCollection = ({ theme, themeToggler }) => {
                                 <InputBox className="my-2 py-2 px-3 d-flex justify-content-between">
                                     <div className="col-11 p-0">
                                         <InputBase
-                                            name="name"
-                                            onChange={onChange}
+                                            name="instagram"
+                                            onChange={AddToLinks}
                                             sx={{ color: "inherit", width: "100%", height: "100%" }}
-                                            placeholder="http://www.medium.com/@your medium handle"
+                                            placeholder="http://www.instagram.com/@your instagram account"
                                             inputProps={{ 'aria-label': 'mail link' }}
                                         />
                                     </div>
@@ -479,10 +514,10 @@ const CreateCollection = ({ theme, themeToggler }) => {
                                 <InputBox className="my-2 py-2 px-3 d-flex justify-content-between">
                                     <div className="col-11 p-0">
                                         <InputBase
-                                            name="name"
-                                            onChange={onChange}
+                                            name="twitter"
+                                            onChange={AddToLinks}
                                             sx={{ color: "inherit", width: "100%", height: "100%" }}
-                                            placeholder="http://www.medium.com/@your medium handle"
+                                            placeholder="http://www.twitter.com/@your twitter account"
                                             inputProps={{ 'aria-label': 'mail link' }}
                                         />
                                     </div>
@@ -491,8 +526,8 @@ const CreateCollection = ({ theme, themeToggler }) => {
                                 <InputBox className="my-2 py-2 px-3 d-flex justify-content-between">
                                     <div className="col-11 p-0">
                                         <InputBase
-                                            name="name"
-                                            onChange={onChange}
+                                            name="medium"
+                                            onChange={AddToLinks}
                                             sx={{ color: "inherit", width: "100%", height: "100%" }}
                                             placeholder="http://www.medium.com/@your medium handle"
                                             inputProps={{ 'aria-label': 'mail link' }}
@@ -513,24 +548,26 @@ const CreateCollection = ({ theme, themeToggler }) => {
                                         <p style={{ fontWeight: "bold", margin: 0, fontSize: "14px" }}>Show OpenRarity ranking</p><Inf style={{ fontSize: "12px" }}>Turn on after all items revealed and attribute metadata is finalized.</Inf>
                                     </div>
                                     </div>
-                                    <label className="switch">
-                                        <input type="checkbox" />
-                                        <span className="slider round"></span>
-                                    </label>
+                                    <SwitchS className="switch">
+                                        <SwitchInput type="checkbox" checked={showOpenRarity ? true : false} onChange={() => setShowOpenRarity(!showOpenRarity)} />
+                                        <Slide className="slider round"></Slide>
+                                    </SwitchS>
                                 </div>
 
                                 <div className="my-1 w-100 d-flex flex-row p-0 justify-content-between align-items-center">
                                     <div className="d-flex align-items-center justify-content-start"><Inf><InfoCircle size="26" /></Inf><div className="ms-1 d-flex flex-column justify-content-center align-items-start">
                                         <p style={{ fontWeight: "bold", margin: 0, fontSize: "14px" }}>Explicit & Sensitive Content</p><Inf style={{ fontSize: "12px" }}>Set this item as explicit and sensitive contentinfo</Inf></div></div>
-                                    <label className="switch">
-                                        <input type="checkbox" />
-                                        <span className="slider round"></span>
-                                    </label>
+                                    <SwitchS className="switch">
+                                        <SwitchInput type="checkbox" checked={sensetiveContent ? true : false} onChange={() => setsensetiveContent(!sensetiveContent)} />
+                                        <Slide className="slider round"></Slide>
+                                    </SwitchS>
                                 </div>
 
 
 
-                                {apiLoading ? <ButtonLarge className="mt-5 mb-3" ><CircularProgress sx={{ color: "white" }} /></ButtonLarge> :
+                                {apiLoading ? <ButtonLarge className="mt-5 mb-3" >...
+                                    {/* <CircularProgress sx={{ color: "white" }} /> */}
+                                </ButtonLarge> :
                                     <ButtonLarge className="mt-5 mb-3" onClick={handleSubmit}>create</ButtonLarge>}
 
 
@@ -546,13 +583,13 @@ const CreateCollection = ({ theme, themeToggler }) => {
                         </FieldsContainer>
                     </div>
                     : <div className="d-flex my-5 justify-content-center align-items-center">
-                        <ButtonLarge onClick={walletDrawer('bottom', true)}>connect wallet</ButtonLarge>
-                        <WalletConnect handleClose={handleClose} toggleDrawer={walletDrawer} state={walletMenu} theme={theme} walletDesOpen={walletDesOpen} anchorEl={anchorEl} />
+                        <ButtonLarge onClick={() => { setWalletConnect(!walletConnect) }}>connect wallet</ButtonLarge>
+                        <WalletConnectModal open={walletConnect} handleClose={() => setWalletConnect(false)} theme={theme} />
                     </div>
                 }
             </div>
 
-            <AddModals prevRoyalties={royalties} prevProperties={properties} saveRoyalties={saveRoyalties} openRoyalties={addRoyalties} openFunds={addFunds} openProperties={addProperties} handleClose={handleClose} theme={theme} />
+            <AddModals prevRoyalties={royalties} saveRoyalties={saveRoyalties} openRoyalties={addRoyalties} handleClose={handleClose} theme={theme} />
         </>
     );
 }

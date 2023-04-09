@@ -3,22 +3,25 @@ import { useEffect, useRef, useState } from "react";
 import { MARKET_API } from "../../utils/data/market_api";
 import CollectionCard from "../Cards/CollectionCard";
 import { Colors } from "../design/Colors";
+import NoItemFound from "../NoItem";
 
-const CategoryTabs = ({ category }) => {
+const CategoryTabs = ({ category, tab }) => {
     const apiCall = useRef(undefined)
     const [collections, setCollections] = useState(undefined)
     const [err, setErr] = useState(undefined)
     const [selectedCategory, setSelectedCategory] = useState(undefined)
     const [loading, setLoading] = useState(true)
 
+    console.log(tab == category)
     useEffect(() => {
-        fetchByCategory(category)
+        if (tab == category)
+            fetchByCategory(category)
         return () => {
             if (apiCall.current != undefined)
                 apiCall.current.cancel();
 
         }
-    }, [])
+    }, [tab, category])
 
     const fetchByCategory = async (category) => {
         try {
@@ -58,23 +61,26 @@ const CategoryTabs = ({ category }) => {
             <div className="row flex-wrap p-0">
                 {loading ?
                     <>
-                        <div className="col-12 col-sm-6 col-md-4 p-1">
+                        <div className="col-6 col-sm-4 col-lg-3">
                             <Skeleton variant="rounded" height={300} sx={{ width: "100%", borderRadius: "24px" }} />
                         </div>
-                        <div className="d-none d-sm-block col-12 col-sm-6 col-md-4 p-1">
+                        <div className="col-6 col-sm-4 col-lg-3">
                             <Skeleton variant="rounded" height={300} sx={{ width: "100%", borderRadius: "24px" }} />
                         </div>
-                        <div className="d-none d-md-block col-12 col-sm-6 col-md-4 p-1">
+                        <div className="d-none d-sm-block col-6 col-sm-4 col-lg-3">
+                            <Skeleton variant="rounded" height={300} sx={{ width: "100%", borderRadius: "24px" }} />
+                        </div>
+                        <div className="d-none d-lg-block col-6 col-sm-4 col-lg-3">
                             <Skeleton variant="rounded" height={300} sx={{ width: "100%", borderRadius: "24px" }} />
                         </div>
                     </>
                     : <>
                         {collections.length == 0 ?
-                            <Typography sx={{ color: `${Colors.primaryMain}`, textAlign: 'center', my: 20 }}>No collection found.</Typography>
+                            <NoItemFound text={'no collection found'} />
                             :
                             <>
                                 {collections.map((collection) => {
-                                    return <CollectionCard id={collection._id.$oid} slider={false} collectionBanner={collection.banner_image_path} collectionLogo={collection.logo_path} collectionCreator={collection.creator} collectionName={collection.title} royalty={collection.royalty} />
+                                    return <CollectionCard key={collection._id.$oid} collection={collection} explore={true} id={collection._id.$oid} slider={false} collectionBanner={collection.banner_image_path} collectionLogo={collection.logo_path} collectionCreator={collection.creator} collectionName={collection.title} royalty={collection.royalty} />
                                 })}
                             </>
                         }

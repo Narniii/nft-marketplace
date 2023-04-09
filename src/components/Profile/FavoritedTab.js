@@ -6,6 +6,7 @@ import noItemBG from '../../assets/noItem.svg'
 import styled from "styled-components";
 import { Colors } from "../design/Colors";
 import { MARKET_API } from "../../utils/data/market_api";
+import NoItemFound from "../NoItem";
 const NoItem = styled.div`
     background-image: url(${noItemBG});
     background-size:contain;
@@ -21,13 +22,17 @@ const BG = styled.div`
     background-color:${({ theme }) => theme.collectionCardHover};
     height:500px;
     width:100%;
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    align-items:center;
 `;
 const Pp = styled.p`
 color:${Colors.gray4};
 text-transform: capitalize;
 `
 
-const FavoritedTab = ({ theme , userWallet}) => {
+const FavoritedTab = ({ theme, userWallet, tab }) => {
     const [view, setView] = useState('m')
     const handleViewChange = (v) => {
         setView(v)
@@ -51,36 +56,37 @@ const FavoritedTab = ({ theme , userWallet}) => {
     const [items, setItems] = useState(undefined)
     const [err, setErr] = useState(undefined)
     useEffect(() => {
-        fetchItems()
-        // return () => {
-        //     if (apiCall.current != undefined)
-        //         apiCall.current.cancel();
+        if (tab == 'favorited')
+            fetchItems()
+        return () => {
+            if (apiCall.current != undefined)
+                apiCall.current.cancel();
 
-        // }
-    }, [])
+        }
+    }, [tab])
 
     const fetchItems = async () => {
         try {
             apiCall.current = MARKET_API.request({
-                path: `/nft/all/?from=0&to=10`,
-                method: "get",
-            })
-            const response = await apiCall.current.promise;
+                path: `/nft/get/user/likes/?from=0&to=10`,
+                method: "post",
+                body: { wallet_address: userWallet },
+            });
+            let response = await apiCall.current.promise;
+            console.log('nft like??', response)
             if (!response.isSuccess)
                 throw response
             setItems(response.data)
-            console.log(response)
-            // setLoading(false)
+
         }
         catch (err) {
             console.log(err)
-            if (err.data.message == "No NFT Found") {
+            if (err.status == 404) {
                 setItems([])
             }
-            else {
-                setErr("Internal server error")
+            else if (err.status == 500) {
+                setErr("Internal server error occured, please try again later.")
             }
-            // setLoading(false)
         }
     }
     useEffect(() => {
@@ -107,11 +113,11 @@ const FavoritedTab = ({ theme , userWallet}) => {
                 :
                 <>
                     {items.length == 0 ?
-                        <Typography sx={{ color: `${Colors.primaryMain}`, textAlign: 'center' }}>No item found.</Typography>
+                        <NoItemFound text={'no favorited item found'} />
                         :
                         <>
                             {items.map((item) => {
-                                return <ItemCard slider={false} view={view} itemImage={item.nft_image_path} itemID={item._id.$oid} theme={theme} name={item.title} price={item.price} creator={item.creator} />
+                                return <ItemCard item={item} slider={false} view={view} itemImage={item.nft_image_path} itemID={item._id.$oid} theme={theme} name={item.title} price={item.price} creator={item.creator} />
                             })}
                         </>
                     }

@@ -1,14 +1,14 @@
-import infoImage1 from '../assets/info-pics1.svg'
-import infoImage2 from '../assets/info-pics2.svg'
-import infoImage3 from '../assets/info-pics3.svg'
-import infoImage4 from '../assets/info-pics4.svg'
-import infoImage5 from '../assets/info-pics5.svg'
-import infoImage6 from '../assets/info-pics6.svg'
-import infoImage7 from '../assets/info-pics7.svg'
-import infoImage8 from '../assets/info-pics8.svg'
-import infoImage9 from '../assets/info-pics9.svg'
-import infoImage10 from '../assets/info-pics10.svg'
-import infoImage11 from '../assets/info-pics11.svg'
+import infoImageNFT from '../assets/info-nft.svg'
+import infoImageDorta from '../assets/info-dorta.svg'
+import infoImageWallet from '../assets/info-wallet.svg'
+import infoImageGasFee from '../assets/info-gasfee.svg'
+import infoImageDrops from '../assets/info-drops.svg'
+import infoImageMinting from '../assets/info-minting.svg'
+import infoImageSell from '../assets/info-sell.svg'
+import infoImageBuy from '../assets/info-buy.svg'
+import infoImageCreate from '../assets/info-create.svg'
+import infoImageWeb3 from '../assets/info-web3.svg'
+// import infoImage11 from '../assets/info-pics11.svg'
 
 function makeID(length) {
     let result = 'dorta-';
@@ -27,7 +27,8 @@ export const InformationData = {
     informations: [
         {
             id: '1',
-            card_image: infoImage1,
+            nextId: '2',
+            card_image: infoImageWeb3,
             title: 'What is a web3 ?',
             description: 'An NFT is a digital asset that can come in the form of art, music, in-game items, videos, and more. They are bought and sold online, frequently with cryptocurrency, and they are generally encoded with the same underlying software as many cryptos.Although they’ve been around since 2014, NFTs are gaining notoriety now because they are becoming an increasingly popular way to buy and sell digital artwork. The market for NFTs was worth a staggering $41 billion in 2021 alone, an amount that is approaching the total value of the entire global fine art market.',
             data: [
@@ -67,8 +68,9 @@ export const InformationData = {
         },
         {
             id: '2',
-            card_image: infoImage2,
-            title: 'What is an nft ?',
+            nextId: '3',
+            card_image: infoImageNFT,
+            title: 'What is an NFT ?',
             description: 'An NFT is a digital asset that can come in the form of art, music, in-game items, videos, and more. They are bought and sold online, frequently with cryptocurrency, and they are generally encoded with the same underlying software as many cryptos.Although they’ve been around since 2014, NFTs are gaining notoriety now because they are becoming an increasingly popular way to buy and sell digital artwork. The market for NFTs was worth a staggering $41 billion in 2021 alone, an amount that is approaching the total value of the entire global fine art market.',
             data: [
                 {
@@ -107,8 +109,9 @@ export const InformationData = {
         },
         {
             id: '3',
-            card_image: infoImage3,
-            title: 'What is an cryoto wallet ?',
+            nextId: '4',
+            card_image: infoImageWallet,
+            title: 'What is a cryoto wallet ?',
             description: 'An NFT is a digital asset that can come in the form of art, music, in-game items, videos, and more. They are bought and sold online, frequently with cryptocurrency, and they are generally encoded with the same underlying software as many cryptos.Although they’ve been around since 2014, NFTs are gaining notoriety now because they are becoming an increasingly popular way to buy and sell digital artwork. The market for NFTs was worth a staggering $41 billion in 2021 alone, an amount that is approaching the total value of the entire global fine art market.',
             data: [
                 {
@@ -147,8 +150,9 @@ export const InformationData = {
         },
         {
             id: '4',
-            card_image: infoImage4,
-            title: 'what are NFT drops? ?',
+            nextId: '5',
+            card_image: infoImageDrops,
+            title: 'what are NFT drops?',
             description: 'An NFT is a digital asset that can come in the form of art, music, in-game items, videos, and more. They are bought and sold online, frequently with cryptocurrency, and they are generally encoded with the same underlying software as many cryptos.Although they’ve been around since 2014, NFTs are gaining notoriety now because they are becoming an increasingly popular way to buy and sell digital artwork. The market for NFTs was worth a staggering $41 billion in 2021 alone, an amount that is approaching the total value of the entire global fine art market.',
             data: [
                 {
@@ -187,8 +191,9 @@ export const InformationData = {
         },
         {
             id: '5',
-            card_image: infoImage5,
-            title: 'who is opensea?',
+            nextId: '6',
+            card_image: infoImageDorta,
+            title: 'who is dorta?',
             description: 'An NFT is a digital asset that can come in the form of art, music, in-game items, videos, and more. They are bought and sold online, frequently with cryptocurrency, and they are generally encoded with the same underlying software as many cryptos.Although they’ve been around since 2014, NFTs are gaining notoriety now because they are becoming an increasingly popular way to buy and sell digital artwork. The market for NFTs was worth a staggering $41 billion in 2021 alone, an amount that is approaching the total value of the entire global fine art market.',
             data: [
                 {
@@ -227,8 +232,9 @@ export const InformationData = {
         },
         {
             id: '6',
-            card_image: infoImage6,
-            title: 'what is miting? ?',
+            nextId: '7',
+            card_image: infoImageMinting,
+            title: 'what is minting?',
             description: 'An NFT is a digital asset that can come in the form of art, music, in-game items, videos, and more. They are bought and sold online, frequently with cryptocurrency, and they are generally encoded with the same underlying software as many cryptos.Although they’ve been around since 2014, NFTs are gaining notoriety now because they are becoming an increasingly popular way to buy and sell digital artwork. The market for NFTs was worth a staggering $41 billion in 2021 alone, an amount that is approaching the total value of the entire global fine art market.',
             data: [
                 {
@@ -267,8 +273,9 @@ export const InformationData = {
         },
         {
             id: '7',
-            card_image: infoImage7,
-            title: 'how to create an NFT on opensea?',
+            nextId: '8',
+            card_image: infoImageCreate,
+            title: 'how to create an NFT on Dorta?',
             description: 'An NFT is a digital asset that can come in the form of art, music, in-game items, videos, and more. They are bought and sold online, frequently with cryptocurrency, and they are generally encoded with the same underlying software as many cryptos.Although they’ve been around since 2014, NFTs are gaining notoriety now because they are becoming an increasingly popular way to buy and sell digital artwork. The market for NFTs was worth a staggering $41 billion in 2021 alone, an amount that is approaching the total value of the entire global fine art market.',
             data: [
                 {
@@ -307,7 +314,8 @@ export const InformationData = {
         },
         {
             id: '8',
-            card_image: infoImage8,
+            nextId: '9',
+            card_image: infoImageBuy,
             title: 'how to buy an NFT ?',
             description: 'An NFT is a digital asset that can come in the form of art, music, in-game items, videos, and more. They are bought and sold online, frequently with cryptocurrency, and they are generally encoded with the same underlying software as many cryptos.Although they’ve been around since 2014, NFTs are gaining notoriety now because they are becoming an increasingly popular way to buy and sell digital artwork. The market for NFTs was worth a staggering $41 billion in 2021 alone, an amount that is approaching the total value of the entire global fine art market.',
             data: [
@@ -347,8 +355,9 @@ export const InformationData = {
         },
         {
             id: '9',
-            card_image: infoImage9,
-            title: 'how to sell an NFT using openSea?',
+            nextId: '10',
+            card_image: infoImageSell,
+            title: 'how to sell an NFT using dorta?',
             description: 'An NFT is a digital asset that can come in the form of art, music, in-game items, videos, and more. They are bought and sold online, frequently with cryptocurrency, and they are generally encoded with the same underlying software as many cryptos.Although they’ve been around since 2014, NFTs are gaining notoriety now because they are becoming an increasingly popular way to buy and sell digital artwork. The market for NFTs was worth a staggering $41 billion in 2021 alone, an amount that is approaching the total value of the entire global fine art market.',
             data: [
                 {
@@ -387,48 +396,9 @@ export const InformationData = {
         },
         {
             id: '10',
-            card_image: infoImage10,
+            nextId: '11',
+            card_image: infoImageGasFee,
             title: 'What is an blockchain gas fees?',
-            description: 'An NFT is a digital asset that can come in the form of art, music, in-game items, videos, and more. They are bought and sold online, frequently with cryptocurrency, and they are generally encoded with the same underlying software as many cryptos.Although they’ve been around since 2014, NFTs are gaining notoriety now because they are becoming an increasingly popular way to buy and sell digital artwork. The market for NFTs was worth a staggering $41 billion in 2021 alone, an amount that is approaching the total value of the entire global fine art market.',
-            data: [
-                {
-                    title: 'Fungible vs. non-fungible',
-                    content: 'Before we dive into NFTs, it’s important to understand the “non-fungible” part of “non-fungible token.” When an item is fungible, it means it’s interchangeable with another of the same item. A classic example is a $1 dollar bill: you could swap dollars with someone and you’d both still have $1.Non-fungible, on the other hand, means the item is totally unique, and therefore has its own unique value. For example, two cars of the same make and model might have different values based on how many miles are on the odometer, their accident records, or if it was previously owned by a celebrity.',
-                },
-                {
-                    title: 'How do NFTs work?',
-                    content: "NFTs operate on blockchain technology. The blockchain is basically a large, digital, public record. The most popular blockchains are distributed across many nodes (read: people’s computers), which is why you’ll hear them described as “decentralized.”So instead of a central company-owned server, the blockchain is distributed across a peer-to-peer network. Not only does this ensure that the blockchain remains immutable, it also allows the node operators to earn money, instead of a single company. Because the blockchain records and preserves history, it is uniquely positioned to transform provable authenticity and digital ownership.When someone creates, transfers, buys, sells, or otherwise does something with an NFT, that all gets recorded on the blockchain. This is what enables authentication.This record serves as a permanent statement of authenticity that can be viewed or accessed by anyone. Today, when you buy a piece of art or a collector's item, it typically comes with a paper certificate of authenticity, which you must then keep track of forever. It is easily forgotten, lost or destroyed, creating a very fragile system for authenticity. Blockchain’s offer a simple and more secure solution to this long standing issue of proving authenticity.Let’s say you want to buy a piece of artwork from Tyler Hobbs. With NFTs, you can see the entire history of that piece, all the past owners, every sale, all the way back to Hobbs’ original creation of the piece. Without NFTs, you wouldn’t know if you were buying the real piece or just a really good fake.",
-                },
-                {
-                    title: 'The impact of NFT technology',
-                    content: "Blockchain technology is revolutionary for digital goods. With NFTs, digital goods can be provably scarce, openly transferable, and have authenticated ownership. But you might be thinking…so what?For creators, these new attributes are incredibly powerful. Instead of distributing their artwork, music, or other creations on platforms that are traditionally hard to monetize, they’re able to sell unique and authenticated items on a blockchain-based marketplace. In addition to the initial sales, the underlying code that powers NFTs also can also enable creators to receive set creator earnings on every secondary sale. For example, a developer could make an in-game skin that can be used across a variety of games and has established authenticity and ownership, and that developer can earn money every time that skin is bought or sold.This technology is revolutionary for collectors, too. Imagine you’re about to buy a concert ticket online— with NFTs, you can trust its authenticity, because of the undisputed blockchain history, instead of relying on the reseller’s word.",
-                },
-                {
-                    title: 'What are NFTs used for?',
-                    content: "Blockchain technology is revolutionary for digital goods. With NFTs, digital goods can be provably scarce, openly transferable, and have authenticated ownership. But you might be thinking…so what?For creators, these new attributes are incredibly powerful. Instead of distributing their artwork, music, or other creations on platforms that are traditionally hard to monetize, they’re able to sell unique and authenticated items on a blockchain-based marketplace. In addition to the initial sales, the underlying code that powers NFTs also can also enable creators to receive set creator earnings on every secondary sale. For example, a developer could make an in-game skin that can be used across a variety of games and has established authenticity and ownership, and that developer can earn money every time that skin is bought or sold.This technology is revolutionary for collectors, too. Imagine you’re about to buy a concert ticket online— with NFTs, you can trust its authenticity, because of the undisputed blockchain history, instead of relying on the reseller’s word.",
-                },
-                {
-                    title: 'Art',
-                    content: "Blockchain technology is revolutionary for digital goods. With NFTs, digital goods can be provably scarce, openly transferable, and have authenticated ownership. But you might be thinking…so what?For creators, these new attributes are incredibly powerful. Instead of distributing their artwork, music, or other creations on platforms that are traditionally hard to monetize, they’re able to sell unique and authenticated items on a blockchain-based marketplace. In addition to the initial sales, the underlying code that powers NFTs also can also enable creators to receive set creator earnings on every secondary sale. For example, a developer could make an in-game skin that can be used across a variety of games and has established authenticity and ownership, and that developer can earn money every time that skin is bought or sold.This technology is revolutionary for collectors, too. Imagine you’re about to buy a concert ticket online— with NFTs, you can trust its authenticity, because of the undisputed blockchain history, instead of relying on the reseller’s word.",
-                },
-                {
-                    title: 'collectibles',
-                    content: "Blockchain technology is revolutionary for digital goods. With NFTs, digital goods can be provably scarce, openly transferable, and have authenticated ownership. But you might be thinking…so what?For creators, these new attributes are incredibly powerful. Instead of distributing their artwork, music, or other creations on platforms that are traditionally hard to monetize, they’re able to sell unique and authenticated items on a blockchain-based marketplace. In addition to the initial sales, the underlying code that powers NFTs also can also enable creators to receive set creator earnings on every secondary sale. For example, a developer could make an in-game skin that can be used across a variety of games and has established authenticity and ownership, and that developer can earn money every time that skin is bought or sold.This technology is revolutionary for collectors, too. Imagine you’re about to buy a concert ticket online— with NFTs, you can trust its authenticity, because of the undisputed blockchain history, instead of relying on the reseller’s word.",
-                },
-                {
-                    title: 'domain names',
-                    content: "Blockchain technology is revolutionary for digital goods. With NFTs, digital goods can be provably scarce, openly transferable, and have authenticated ownership. But you might be thinking…so what?For creators, these new attributes are incredibly powerful. Instead of distributing their artwork, music, or other creations on platforms that are traditionally hard to monetize, they’re able to sell unique and authenticated items on a blockchain-based marketplace. In addition to the initial sales, the underlying code that powers NFTs also can also enable creators to receive set creator earnings on every secondary sale. For example, a developer could make an in-game skin that can be used across a variety of games and has established authenticity and ownership, and that developer can earn money every time that skin is bought or sold.This technology is revolutionary for collectors, too. Imagine you’re about to buy a concert ticket online— with NFTs, you can trust its authenticity, because of the undisputed blockchain history, instead of relying on the reseller’s word.",
-                },
-                {
-                    title: 'Ticketing and membership',
-                    content: "Blockchain technology is revolutionary for digital goods. With NFTs, digital goods can be provably scarce, openly transferable, and have authenticated ownership. But you might be thinking…so what?For creators, these new attributes are incredibly powerful. Instead of distributing their artwork, music, or other creations on platforms that are traditionally hard to monetize, they’re able to sell unique and authenticated items on a blockchain-based marketplace. In addition to the initial sales, the underlying code that powers NFTs also can also enable creators to receive set creator earnings on every secondary sale. For example, a developer could make an in-game skin that can be used across a variety of games and has established authenticity and ownership, and that developer can earn money every time that skin is bought or sold.This technology is revolutionary for collectors, too. Imagine you’re about to buy a concert ticket online— with NFTs, you can trust its authenticity, because of the undisputed blockchain history, instead of relying on the reseller’s word.",
-                },
-            ],
-        },
-        {
-            id: '11',
-            card_image: infoImage11,
-            title: 'What is a web3 ?',
             description: 'An NFT is a digital asset that can come in the form of art, music, in-game items, videos, and more. They are bought and sold online, frequently with cryptocurrency, and they are generally encoded with the same underlying software as many cryptos.Although they’ve been around since 2014, NFTs are gaining notoriety now because they are becoming an increasingly popular way to buy and sell digital artwork. The market for NFTs was worth a staggering $41 billion in 2021 alone, an amount that is approaching the total value of the entire global fine art market.',
             data: [
                 {

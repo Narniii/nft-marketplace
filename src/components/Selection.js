@@ -1,4 +1,4 @@
-import { Box, FormControl, makeStyles, Menu, MenuItem, Popper, Select } from "@mui/material";
+import { Box, ClickAwayListener, FormControl, makeStyles, Menu, MenuItem, Popper, Select } from "@mui/material";
 import { styled } from "@mui/system";
 import { ArrowDown2, ArrowUp2 } from "iconsax-react";
 import { Colors } from "./design/Colors";
@@ -24,7 +24,7 @@ height:50px;
 
 
 
-const SSelection = ({ theme, width, tabs, handleSelect, selectValue, }) => {
+const SSelection = ({ theme, width, tabs, handleSelect, selectValue, id }) => {
     const [expanded, setExpanded] = useState(false)
     const [anchorEl, setAnchorEl] = React.useState(null);
     const [value, setValue] = useState(tabs[0])
@@ -42,74 +42,95 @@ const SSelection = ({ theme, width, tabs, handleSelect, selectValue, }) => {
         // setValue(selectValue)
         setAnchorEl(null);
     };
+    const handleClickAway = () => {
+        setAnchorEl(null);
+        setExpanded(false)
+    }
     useEffect(() => {
         if (width == '100%') {
-            let pW = document.getElementById('selection')?.offsetWidth
+            let pW = document.getElementById(id)?.offsetWidth
             setPopWidth(`${pW}px`)
         }
         else
             setPopWidth(width)
-    }, [document.getElementById('selection')?.offsetWidth, width])
+    }, [document.getElementById(id)?.offsetWidth, width])
 
-    const pWidth = document.getElementById('selection')?.offsetWidth
+    const pWidth = document.getElementById(id)?.offsetWidth
     // console.log(pWidth)
     return (
-        <SelectionBox
-            id="selection"
-            className="p-3"
-            onClick={handleClick}
-            sx={{ width: { width }, color: theme == 'light' ? '#888888' : '#f9f9f9', borderBottomRightRadius: expanded ? 0 : '24px', borderBottomLeftRadius: expanded ? 0 : '24px', }}
-        >
-            <span style={{ color: "inherit" }}>{selectValue ? selectValue : tabs[0]}</span>
-            {expanded ? <ArrowUp2 size="18" /> : <ArrowDown2 size="18" />}
-            <Popper
-                // popperProps={{
-                //     middlewares: (presetMiddlewares) => {
-                //         return [
-                //             ...presetMiddlewares,
-                //             size({
-                //                 apply({ rects, elements }) {
-                //                     Object.assign(elements.floating.style, {
-                //                         width: `${rects.reference.width}px`,
-                //                     });
-                //                 },
-                //             }),
-                //         ];
-                //     }
-                // }}
-                PaperProps={{
-                    style: {
-                        // width: `${popWidth}px`,
-                        // backgroundColor: "transparent",
-                    }
-                }}
-                disableScrollLock={true}
-                id="basic-menu"
-                anchorEl={anchorEl}
-                open={open}
-                onClose={handleClose}
-                MenuListProps={{
-                    'aria-labelledby': 'basic-button',
-                }}
-                sx={{
-                    // zIndex: 50,
-                    width: `${popWidth}`,
-                    // width:'200px',
-                    borderBottomLeftRadius: "24px", borderBottomRightRadius: "24px", borderBottom: "1px solid #d9d9d9", borderRight: "1px solid #d9d9d9", borderLeft: "1px solid #d9d9d9", overflow: "hidden"
-                }}
+        <ClickAwayListener onClickAway={handleClickAway}>
+
+            <SelectionBox
+                id={id}
+                className="p-3"
+                onClick={handleClick}
+                sx={{ width: { width }, color: theme == 'light' ? '#4d4d4d' : '#f9f9f9', borderBottomRightRadius: expanded ? 0 : '24px', borderBottomLeftRadius: expanded ? 0 : '24px', fontWeight: expanded ? 500 : 400 }}
             >
-                {tabs.map((tab, index) => (
-                    <MenuItem className="p-2" id={tab} sx={{
-                        // zIndex:50,
-                        color: theme == 'light' ? '#808080' : '#f9f9f9', bgcolor: theme == 'light' ? '#ffffff' : '#1E0E36',
-                        '&:hover': {
-                            bgcolor: theme == 'light' ? `${Colors.gray1}` : `${Colors.dark3}`,
+                <span style={{ color: "inherit", width: "max-content" }}>{selectValue ? selectValue : tabs[0]}</span>
+                {expanded ? <ArrowUp2 size="18" /> : <ArrowDown2 size="18" />}
+
+                <Popper
+                    // popperProps={{
+                    //     middlewares: (presetMiddlewares) => {
+                    //         return [
+                    //             ...presetMiddlewares,
+                    //             size({
+                    //                 apply({ rects, elements }) {
+                    //                     Object.assign(elements.floating.style, {
+                    //                         width: `${rects.reference.width}px`,
+                    //                     });
+                    //                 },
+                    //             }),
+                    //         ];
+                    //     }
+                    // }}
+                    PaperProps={{
+                        style: {
+                            // width: `${popWidth}px`,
+                            // backgroundColor: "transparent",
                         }
                     }}
-                        onClick={handleClose}>{tab}</MenuItem>
-                ))}
-            </Popper>
-        </SelectionBox>
+                    disableScrollLock={true}
+                    id="basic-menu"
+                    anchorEl={anchorEl}
+                    open={open}
+                    onClose={handleClose}
+                    MenuListProps={{
+                        'aria-labelledby': 'basic-button',
+                    }}
+                    placement='bottom-end'
+                    // modifiers={{
+                    //     offset: {
+                    //         enabled: true,
+                    //         offset: '0'
+                    //     }
+                    // }}
+                    sx={{
+                        // position: 'absolute', bottom: '-100%',
+                        // zIndex: 50,
+                        width: `${popWidth}`,
+                        // width:'200px',
+                        zIndex: 1400,
+                        borderBottomLeftRadius: "24px", borderBottomRightRadius: "24px", borderBottom: "1px solid #d9d9d9", borderRight: "1px solid #d9d9d9", borderLeft: "1px solid #d9d9d9",
+                        overflow: "hidden"
+                    }}
+                >
+                    {tabs.map((tab, index) => (
+                        <MenuItem className="p-3" id={tab} sx={{
+                            // zIndex:50,
+                            color: theme == 'light' ? '#808080' : '#f9f9f9', bgcolor: theme == 'light' ? '#ffffff' : '#272448',
+                            '&:hover': {
+                                bgcolor: theme == 'light' ? `${Colors.gray1}` : `${Colors.dark3}`,
+                            }
+                        }}
+                            onClick={handleClose}>{tab}</MenuItem>
+                    ))}
+                </Popper>
+
+
+            </SelectionBox>
+        </ClickAwayListener>
+
     );
 }
 

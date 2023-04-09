@@ -1,0 +1,51 @@
+
+
+
+
+
+
+
+
+// response==>
+activities: [
+    {
+        nft: {},
+        collection: {},
+        event: "sale",
+        price: "3",
+        from_wallet_address: "07cd65",
+        receiver_id: "343556",
+        time: "8726387123",
+    },
+    {
+        nft: {},
+        collection: {},
+        event: "sale",
+        price: "3",
+        from_wallet_address: "07cd65",
+        receiver_id: "343556",
+        time: "8726387123",
+    },
+    {
+        nft: {},
+        collection: {},
+        event: "sale",
+        price: "3",
+        from_wallet_address: "07cd65",
+        receiver_id: "343556",
+        time: "8726387123",
+    },
+    {
+        nft: {},
+        collection: {},
+        event: "sale",
+        price: "3",
+        from_wallet_address: "07cd65",
+        receiver_id: "343556",
+        time: "8726387123",
+    },
+
+
+
+
+]

@@ -1,11 +1,11 @@
 import styled from "styled-components";
 import Footer from "../components/Footer";
 import Navbar from "../components/Navbar/Navbar";
-import pict from '../assets/info-pics4.svg'
+// import pict from '../assets/info-pics4.svg'
 import bg from '../assets/info-bg.svg'
 import { Colors } from "../components/design/Colors";
 import nextbg from '../assets/info-card-bg.svg'
-import walletPic from '../assets/info-pics2.svg'
+// import walletPic from '../assets/info-pics2.svg'
 import { LinearProgress, Typography } from "@mui/material";
 import { ButtonOutlineLight } from "../components/design/Buttons";
 import { Box } from "@mui/system";
@@ -13,13 +13,15 @@ import { useNavigate, useParams } from "react-router";
 import { InformationData } from "../utils/informationData";
 import { useState } from "react";
 import { useEffect } from "react";
+import { Link } from "react-router-dom";
+import { shortenLong } from "../utils/countingFunctions";
 
 const SectionContainer = styled.div`
     background-image: url(${bg});
     background-size:cover;
     background-repeat:no-repeat;
     background-position:top;  
-    padding:0 32px;
+    // padding:0 32px;
 `;
 const Introduction = styled.div`
     position:relative;    
@@ -48,11 +50,10 @@ const Line = styled.div`
   background: ${({ theme }) => theme.navBorderBackground};
 `
 const Image = styled.div`
-// background-image: url(${pict});
 background-size:contain;
 background-repeat:no-repeat;
 background-position:left;
-@media screen and (max-width: 768px) {
+@media screen and (max-width: 992px) {
     background-position:center;
 }
   
@@ -72,7 +73,7 @@ border-radius: 24px;
 padding:15px 30px;
 margin-bottom:12px;
 cursor:pointer;
-font-weight:600;
+font-weight:500;
 &:active{
     background:${({ theme }) => theme.gradientPurple};
     color:white;
@@ -99,7 +100,7 @@ overflow:hidden;
 const ShadowedDiv = styled.div`
 width:100%;
 // height: 100%;
-height:250px;
+height:300px;
 background: linear-gradient(357.7deg, #4C1593 1.45%, rgba(72, 15, 145, 0) 30.57%);
 // border:1px solid red;
 // padding:30px;
@@ -108,6 +109,21 @@ background: linear-gradient(357.7deg, #4C1593 1.45%, rgba(72, 15, 145, 0) 30.57%
   }
   
 `
+const Title = styled.p`
+margin:0;
+color: ${({ theme }) => theme.titleInformation};
+font-weight:500;
+font-size:30px;
+line-height: 42px;
+height:42px;
+margin-bottom:20px;
+text-transform: ${Colors.subtitleFont};
+  @media screen and (max-width: 600px) {
+    font-size:20px;
+}
+
+`
+
 
 const Information = ({ theme, themeToggler }) => {
     const navigate = useNavigate()
@@ -116,20 +132,37 @@ const Information = ({ theme, themeToggler }) => {
     const [info, setInfo] = useState(undefined)
     const [err, setErr] = useState(undefined)
     const [loading, setLoading] = useState(true)
+    const [selectedTitle, setSelectedTitle] = useState(undefined)
+    const [prevSelectedTitle, setPrevSelectedTitle] = useState(undefined)
+    const [titleChanged, setTitleChanged] = useState(false)
+    const [nextPage, setNextPage] = useState(false)
+    const [nextInfo, setNextInfo] = useState(undefined)
+    useEffect(() => {
+        if (nextPage)
+            window.location.reload()
+    }, [nextPage])
+    const handleNextPage = () => {
+        navigate('/' + 'info/' + (parseInt(id) + 1))
+        setNextPage(true)
+    }
 
     useEffect(() => {
         const infor = InformationData.informations.find((item) => item.id == id);
-        console.log('infore', infor)
-        console.log(InformationData.informations)
-
+        // console.log('infore', infor)
+        // console.log(InformationData.informations)
+        var nextInfor = ''
         if (infor) {
             setInfo(infor)
+            nextInfor = InformationData.informations.find((item) => item.id == infor.nextId);
         }
         else {
             setErr('not found')
             navigate("/404")
         }
 
+        if (nextInfor !== '') {
+            setNextInfo(nextInfor)
+        }
 
         // for (var i = 0; i < InformationData.informations.length; i++) {
         //     if (InformationData.informations[i].id == id) {
@@ -151,18 +184,55 @@ const Information = ({ theme, themeToggler }) => {
 
     const shorten = (str) => {
         console.log(str.length)
-        return str.length > 100 ? str.substring(0, 80) + "..." : str;
+        return str.length > 200 ? str.substring(0, 180) + "..." : str;
     }
     const sectionView = (e) => {
         // console.log(e.target.id)
+        setPrevSelectedTitle((prevState) => {
+            if (prevState) {
+                return selectedTitle
+            }
+            else { return e.target }
+        })
+
+        // setPrevSelectedTitle(selectedTitle)
+        setSelectedTitle(e.target)
+        setTitleChanged(true)
         const targett = e.target.id.replace('title', '');
         // console.log(targett)
         const element = document.getElementById(targett);
         element.scrollIntoView();
+        // e.target.style.background = Colors.gradientPurpleStandard;
+        // e.target.style.color = 'white';
+
     }
+
+    useEffect(() => {
+        if (titleChanged && selectedTitle && prevSelectedTitle) {
+            if (prevSelectedTitle == selectedTitle) {
+                console.log('tu if', prevSelectedTitle.id, selectedTitle.id)
+                selectedTitle.style.background = Colors.gradientPurpleStandard;
+                selectedTitle.style.color = 'white';
+            }
+            else {
+                console.log('tu esle', prevSelectedTitle.id, selectedTitle.id)
+
+                selectedTitle.style.background = Colors.gradientPurpleStandard;
+                selectedTitle.style.color = 'white';
+
+                prevSelectedTitle.style.background = ''
+                prevSelectedTitle.style.color = 'inherit';
+            }
+
+
+
+        }
+
+    }, [selectedTitle, titleChanged, prevSelectedTitle])
+
     return (
         <>
-            <div style={{ padding: "0 32px" }}>
+            <div className="pdng">
                 <Navbar theme={theme} themeToggler={themeToggler} />
             </div>
             {loading ?
@@ -174,20 +244,20 @@ const Information = ({ theme, themeToggler }) => {
                             <Typography sx={{ color: `${Colors.primaryMain}` }}>{err}</Typography>
                         </div>
                         : <>
-                            <SectionContainer>
-                                <Introduction className="py-3 mt-3 d-flex flex-column flex-md-row justify-content-between">
+                            <SectionContainer className="pdng">
+                                <Introduction className="py-3 mt-3 d-flex flex-column flex-lg-row justify-content-between">
                                     {/* <BG> */}
                                     <Image style={{
                                         backgroundImage: `url(${info.card_image})`,
                                         // border: "1px solid yellow",
                                         height: "400px"
-                                    }} className="col-12 col-md-5 mb-4"></Image>
+                                    }} className="col-12 col-lg-5 mb-4"></Image>
                                     <div style={{
                                         // border: "1px solid yellow",
                                         // height: "300px"
-                                    }} className="col-12 col-md-7 mb-4">
-                                        <IntroductionTextContainer className="row p-5">
-                                            <h2 className="m-0" style={{ fontWeight: 600 }}>{info.title}</h2>
+                                    }} className="col-12 col-lg-7 mb-4">
+                                        <IntroductionTextContainer className="d-flex flex-column p-5">
+                                            <Title className="mb-4" style={{ fontWeight: 600 }}>{info.title}</Title>
                                             <p className="m-0">An NFT is a digital asset that can come in the form of art, music, in-game items, videos, and more. They are bought and sold online, frequently with cryptocurrency, and they are generally encoded with the same underlying software as many cryptos.
                                                 Although they’ve been around since 2014, NFTs are gaining notoriety now because they are becoming an increasingly popular way to buy and sell digital artwork. The market for NFTs was worth a staggering $41 billion in 2021 alone, an amount that is approaching the total value of the entire global fine art market.
                                             </p>
@@ -198,41 +268,50 @@ const Information = ({ theme, themeToggler }) => {
                                 </Introduction>
                             </SectionContainer>
                             <div style={{ padding: "0 32px" }}>
-                                <div className="my-5 row p-0">
-                                    <div className="d-none d-md-flex flex-column col-md-5">
+                                <div className="my-5 row p-0 justify-content-between">
+                                    <div className="position-relative d-none d-lg-flex flex-column col-lg-4">
+                                        {/* <div className="position-fixed"> */}
                                         {info.data.map((inf, index) => {
                                             return <ReadingTitle id={'title' + index} key={index} onClick={sectionView}>{inf.title}</ReadingTitle>
                                         })}
+                                        {/* </div> */}
                                     </div>
-                                    <div className="col-12 col-md-7">
+                                    <div className="col-12 col-lg-7">
                                         {info.data.map((inf, index) => {
-                                            return <div className="mb-3" id={index}>
-                                                <h3 style={{ fontWeight: 600 }} className="m-0">{inf.title}</h3>
+                                            return <div style={{ marginBottom: '55px' }} id={index}>
+                                                <Title style={{ fontSize: '26px' }} className="mb-2">{inf.title}</Title>
                                                 <p className="m-0">
                                                     {inf.content}
                                                 </p>
                                             </div>
                                         })}
                                         <FAQ className="mb-5" />
-                                        <NextPage>
-                                            <ShadowedDiv className="d-flex flex-column-reverse flex-sm-row p-3 text-light" >
-                                                <div className="col-12 col-sm-8  d-flex flex-column justify-content-between align-items-center align-items-sm-start">
-                                                    <Typography sx={{ fontSize: "14px" }} className="d-none d-sm-block">read next</Typography>
-                                                    <Typography sx={{ fontWeight: 600 }}>What is a crypto wallet</Typography>
-                                                    <Typography className="d-none d-sm-block">
-                                                        A crypto wallet is a program that helps you buy, sell, and store your cryptocurrency and (in many cases) your NFTs. Think of it as your address on the blockchain........
-                                                    </Typography>
-                                                    <Typography className="text-center d-block d-sm-none">
-                                                        {shorten('A crypto wallet is a program that helps you buy, sell, and store your cryptocurrency and (in many cases) your NFTs. Think of it as your address on the blockchain........')}
-                                                    </Typography>
-                                                    <ButtonOutlineLight className="col-9 align-self-center align-self-sm-start">Show more</ButtonOutlineLight>
-                                                </div>
-                                                <Box
-                                                    sx={{ height: { xs: "150px", sm: "100%" }, backgroundImage: `url(${walletPic})`, backgroundPosition: "center", backgroundSize: "contain", backgroundRepeat: "no-repeat" }} className="col-12 col-sm-4 text-center" />
-                                                <Typography sx={{ fontSize: "14px" }} className="d-block d-sm-none">read next</Typography>
+                                        {nextInfo ?
+                                            <NextPage>
+                                                <ShadowedDiv className="d-flex flex-column-reverse flex-sm-row p-4 text-light" >
+                                                    <div className="col-12 col-sm-8  d-flex flex-column justify-content-between align-items-center align-items-sm-start">
+                                                        <Typography sx={{ fontSize: "14px", color: Colors.gray0 }} className="d-none d-sm-block">Read Next</Typography>
+                                                        <div className="d-flex flex-column ">
+                                                            <Typography sx={{ fontWeight: 500, marginBottom: "12px", textTransform: Colors.subtitleFont, fontSize: "24px" }} className="text-center text-sm-start">{nextInfo.title}</Typography>
+                                                            <Typography className="d-none d-sm-block mb-3">
+                                                                {shorten(nextInfo.description)}
+                                                            </Typography>
+                                                            <Typography className="text-center d-block d-sm-none mb-3">
+                                                                {shortenLong(nextInfo.description)}
+                                                            </Typography>
+                                                            {/* <Link className="col-9 align-self-center align-self-sm-start" style={{ textDecoration: "none", color: "inherit"}} to={'/' + 'info/' + info.nextId}> */}
+                                                            <ButtonOutlineLight style={{ height: "44px" }} onClick={handleNextPage} className="col-6 align-self-center align-self-sm-start">Show more</ButtonOutlineLight>
+                                                            {/* </Link> */}
+                                                        </div>
+                                                    </div>
+                                                    <Box
+                                                        sx={{ height: { xs: "150px", sm: "100%" }, backgroundImage: `url(${nextInfo.card_image})`, backgroundPosition: "center", backgroundSize: "contain", backgroundRepeat: "no-repeat" }}
+                                                        className="col-12 col-sm-4 text-center" />
+                                                    <Typography sx={{ fontSize: "14px" }} className="d-block d-sm-none">read next</Typography>
 
-                                            </ShadowedDiv>
-                                        </NextPage>
+                                                </ShadowedDiv>
+                                            </NextPage>
+                                            : undefined}
                                     </div>
                                 </div>
                             </div>

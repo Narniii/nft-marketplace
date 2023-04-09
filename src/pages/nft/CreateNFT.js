@@ -11,11 +11,54 @@ import '../../styles.css'
 import { useSelector } from "react-redux";
 import AddModals from "../../components/NFTSingle/AddModals";
 import WalletConnect from "../../components/Navbar/WalletConnect";
-import { API_CONFIG } from "../../config";
+import { API_CONFIG, NFT_STORAGE_API_KEY } from "../../config";
 import axios from "axios";
 import SSelection from "../../components/Selection";
 import { MARKET_API } from "../../utils/data/market_api";
 import '../../styles.css'
+import WalletConnectModal from "../../components/wallet/WalletConnectModal";
+import { useWeb3React } from "@web3-react/core";
+const SwitchS = styled.label`
+position: relative;
+display: inline-block;
+width: 55px;
+height: 30px;
+`
+const SwitchInput = styled.input`
+opacity: 0;
+width: 0;
+height: 0;
+`
+const Slide = styled.span`
+position: absolute;
+cursor: pointer;
+top: 0;
+left: 0;
+right: 0;
+bottom: 0;
+/* background-color: #ccc; */
+background: ${Colors.gray0};
+-webkit-transition: .4s;
+transition: .4s;
+border: 0.5px solid #D9D9D9;
+&:before{
+  position: absolute;
+  content: "";
+  height: 26px;
+  width: 26px;
+  // left: 1px;
+  // right: 1px;
+  bottom: 1px;
+  top: 1px;
+  background:${Colors.gradiantGray};
+  /* background: inherit; */
+  -webkit-transition: .4s;
+  transition: .4s;
+  border-radius:50px;
+}
+`
+
+
 const FieldsContainer = styled.div`
     border-radius: 24px;
     background: ${({ theme }) => theme.profilePageGradient};
@@ -54,8 +97,19 @@ border:1px solid ${Colors.gray2};
 cursor:pointer;
 `;
 const Inf = styled.p`
-color:${({ theme }) => theme.info};
+color:${({ theme }) => theme.textSub};
 margin:0;
+`;
+const InfP = styled.p`
+color:${({ theme }) => theme.textSub};
+margin:0;
+@media screen and (max-width: 700px) {
+    width:250px;
+}
+@media screen and (max-width: 400px) {
+    width:150px;
+}
+
 `;
 const ChainSelect = styled.select`
 background:${({ theme }) => theme.itemCardsBackground};
@@ -95,11 +149,14 @@ const CreateNFT = ({ theme, themeToggler }) => {
     const [logo, setLogo] = useState(imageBG);
     const [logoErr, setLogoErr] = useState(undefined)
     const apiCall = useRef(undefined)
-    const [properties, setProperties] = useState([{ name: " ", value: " " }])
-    const [royalties, setRoyalties] = useState([{ wallet_address: ' ', royalty: ' ' }])
+    const [properties, setProperties] = useState([{ name: "", value: "" }])
+    const [royalties, setRoyalties] = useState([{ wallet_address: '', royalty: '' }])
+    const [levels, setLevels] = useState([{ name: '', value: '', count: '' }])
+    const [stats, setStats] = useState([{ name: '', value: '', count: '' }])
     const [funds, setFunds] = useState([])
     const [addProperties, setAddProperties] = useState(false)
-    const [addFunds, setAddFunds] = useState(false)
+    const [addLevels, setAddLevels] = useState(false)
+    const [addStats, setAddStats] = useState(false)
     const [addRoyalties, setAddRoyalties] = useState(false)
     const globalUser = useSelector(state => state.userReducer);
     const [walletMenu, setWalletMenu] = useState({
@@ -110,7 +167,11 @@ const CreateNFT = ({ theme, themeToggler }) => {
     });
     const [chainValue, setChainValue] = useState(undefined)
     const [collectionValue, setCollectionValue] = useState('choose collection')
-    const [isFreezed, setIsFreezed] = useState(false)
+    const [isFreezed, setIsFreezed] = useState(0)
+    const [unlockableContent, setunlockableContent] = useState(false)
+    const [sensetiveContent, setsensetiveContent] = useState(false)
+    const [copies, setCopies] = useState(1)
+
     const handleChainSelect = (e) => {
         e.preventDefault()
         setChainValue(e.target.id)
@@ -128,7 +189,7 @@ const CreateNFT = ({ theme, themeToggler }) => {
             }
         }
     }
-
+    const [walletConnect, setWalletConnect] = useState(false)
     const walletDrawer = (anchor, open) => (event) => {
         if (event.type === 'keydown' && (event.key === 'Tab' || event.key === 'Shift')) {
             return;
@@ -136,11 +197,11 @@ const CreateNFT = ({ theme, themeToggler }) => {
 
         setWalletMenu({ ...walletMenu, [anchor]: open });
     };
-
     const handleClose = () => {
         setAddProperties(false)
-        setAddFunds(false)
+        setAddLevels(false)
         setAddRoyalties(false)
+        setAddStats(false)
     }
     const onLogoChange = (e) => {
         var n = { ...nft };
@@ -222,8 +283,13 @@ const CreateNFT = ({ theme, themeToggler }) => {
         return result;
     }
 
-    const saveFunds = (f) => {
-        setFunds(f)
+    const saveLevels = (lv) => {
+        setLevels(lv)
+        handleClose()
+
+    }
+    const saveStats = (st) => {
+        setStats(st)
         handleClose()
 
     }
@@ -238,8 +304,9 @@ const CreateNFT = ({ theme, themeToggler }) => {
         setProperties(pr)
         handleClose()
     }
-
     const handleSubmit = async (e) => {
+        console.log()
+
         e.preventDefault()
         setApiLoading(true)
         setCollectionErr(undefined)
@@ -360,99 +427,65 @@ const CreateNFT = ({ theme, themeToggler }) => {
             createNFT(collection_id)
         }
 
-        // if (collection_id == "") {
-        //     // alert to force the user select a collection 
-        //     // or it might be the server error in creating collection 
-        //     // that we don't have one :)
-        //     // ...
-        //     console.log('collection id is empty NO NO ')
-        //     console.log('intu naya kollan ')
-        //     setErr('something went wrong')
-        // }
-        // else {
-        //     console.log('collection_id set', collection_id)
-        //     //------------------------ if collection was successfully created or was selected from previous collections, create the nft --> 
-
-        //     //---------------------------- form data for creating a new nft 
-
-        //     const NFTData = new FormData();
-        //     NFTData.append('title', nft.name);
-        //     NFTData.append('description', nft.description);
-        //     var extras = {};
-        //     if (properties.length !== 0) {
-        //         extras.properties = properties
-        //     }
-        //     console.log(extras)
-        //     console.log(JSON.stringify(extras))
-        //     NFTData.append('extra', JSON.stringify(properties));
-        //     NFTData.append('media', 'https://example.com');
-        //     NFTData.append('collection_id', collection_id);
-        //     NFTData.append('reference', ipfsFileCid ? JSON.stringify({ attributes: ipfsFileUrl }) : JSON.stringify({}));
-        //     NFTData.append('image', nft.img);
-        //     NFTData.append('expires_at', "0");
-        //     NFTData.append('perpetual_royalties', _royalties);
-        //     NFTData.append('is_freezed', false);
-        //     NFTData.append('price', ' ');
-        //     // NFTData.append('current_owner', globalUser.walletAddress)
-
-        //     try {
-
-        //         apiCall.current = MARKET_API.request({
-        //             path: `/nft/create/`,
-        //             method: "post",
-        //             body: NFTData,
-        //             headers: {
-        //                 'Content-Type': 'multipart/form-data'
-        //             }
-        //         });
-        //         let resp = await apiCall.current.promise;
-        //         console.log('nft resp', resp)
-
-        //         if (!resp.isSuccess)
-        //             throw resp
-
-        //         setSuccessMesssage('NFT created successfully')
-        //         setApiLoading(false)
-        //     }
-        //     catch (err) {
-        //         console.log('create nft err', err)
-        //         setErr(err.statusText)
-        //         setLoading(false)
-        //         setApiLoading(false)
-        //     }
-        // }
-
     }
-
-
     const createNFT = async (collection_id) => {
-        var ipfsFileCid = ' '
-        var ipfsFileUrl = ' '
+        // var ipfsFileCid = ' '
+        // var ipfsFileUrl = ' '
+
+        var ipfsFileCid = undefined
+        var ipfsFileUrl = undefined
+        if (isFreezed == 1) {
+            var ipfsCid = await ipfsUpload()
+            var ipfsUrl = `https://${ipfsCid}.ipfs.dweb.link/`
+            if (properties.length != 0 && properties[0].name.length !== 0) {
+                ipfsFileCid = await ipfsFileUpload()
+                ipfsFileUrl = `https://${ipfsFileCid}.ipfs.dweb.link/`
+            }
+        }
+
         let _royalties = [...royalties]
 
         const NFTData = new FormData();
         NFTData.append('title', nft.name);
         NFTData.append('description', nft.description);
+        // var extra = []
         var extras = {};
-        if (properties.length !== 0) {
-            extras.properties = properties
+        if (properties.length !== 0 && properties[0].name.length !== 0) {
+            extras = properties
+            console.log(extras)
         }
+        var tleveles = {}
+        var tstats = {}
+        if (levels.length !== 0 && levels[0].name.length !== 0) {
+            tleveles = levels
+        }
+        if (stats.length !== 0 && stats[0].name.length !== 0) {
+            tstats = stats
+        }
+
         console.log(extras)
         console.log(JSON.stringify(extras))
-        NFTData.append('extra', JSON.stringify(properties));
-        NFTData.append('media', 'https://example.com');
+        console.log(JSON.stringify(properties))
+        console.log(JSON.stringify(levels), '....', stats)
+
+        let is_freezed = 0;
+        NFTData.append('extra', JSON.stringify(extras));
+        NFTData.append('media', isFreezed == 1 ? ipfsUrl : 'http://1.com');
         NFTData.append('collection_id', collection_id);
         NFTData.append('reference', ipfsFileCid ? JSON.stringify({ attributes: ipfsFileUrl }) : JSON.stringify({}));
         NFTData.append('image', nft.img);
         NFTData.append('expires_at', "0");
-        NFTData.append('is_freezed', false);
+        NFTData.append('is_freezed', isFreezed);
         NFTData.append('price', ' ');
         NFTData.append('current_owner', globalUser.walletAddress)
         NFTData.append('perpetual_royalties', JSON.stringify(_royalties));
-
-
+        NFTData.append('copies', parseInt(copies));
+        NFTData.append('levels', JSON.stringify(tleveles));
+        NFTData.append('stats', JSON.stringify(tstats));
+        if (nft.link) {
+            NFTData.append('links', nft.link);
+        }
         try {
-
             apiCall.current = MARKET_API.request({
                 path: `/nft/create/`,
                 method: "post",
@@ -466,7 +499,7 @@ const CreateNFT = ({ theme, themeToggler }) => {
 
             if (!resp.isSuccess)
                 throw resp
-
+            mintNFT(resp.data._id.$oid)
             setSuccessMesssage('NFT created successfully')
             setApiLoading(false)
         }
@@ -476,26 +509,141 @@ const CreateNFT = ({ theme, themeToggler }) => {
             setLoading(false)
             setApiLoading(false)
         }
+    }
+    const mintNFT = async (id) => {
+        let this_time = new Date(Date.now())
+        try {
+            apiCall.current = MARKET_API.request({
+                path: `/nft/mint/`,
+                method: "post",
+                body: {
+                    issued_at: this_time,
+                    tx_hash: 'hsdyf87sdf98jdc7d87fh98sdf9ocj0',
+                    nft_id: id,
+                    // owners: [],
+                    // price_history: [],
+                    current_owner: globalUser.walletAddress,
+                },
+                headers: {
+                    'Content-Type': 'multipart/form-data'
+                }
+            });
+            let resp = await apiCall.current.promise;
+            console.log('mint response', resp)
+
+            if (!resp.isSuccess)
+                throw resp
+            editAssetActivity('mint', resp.data.copies, resp.data._id.$oid, resp.data)
+        }
+        catch (err) {
+        }
 
     }
+    const editAssetActivity = async (event, copies, id, nft) => {
+        var this_time = parseFloat(new Date(Date.now()).getTime()) / 1000
+        var tommorrow = parseFloat(new Date(Date.now()).getTime() + (24 * 60 * 60 * 1000));
+        var defaultExp = tommorrow / 1000
 
+        var assetTemp = []
+        console.log('............', defaultExp, typeof (defaultExp))
+        for (let t = 0; t < nft.asset_activity.length; t++) {
+            var tempObj = {}
+            tempObj.price = nft.asset_activity[t].price
+            tempObj.expiration = parseFloat(new Date(nft.asset_activity[t].expiration).getTime()) / 1000
+            tempObj.date = parseFloat(new Date(nft.asset_activity[t].date).getTime()) / 1000
+            tempObj.from_wallet_address = nft.asset_activity[t].from_wallet_address
+            tempObj.receiver_id = nft.asset_activity[t].receiver_id
+            tempObj.copies = nft.asset_activity[t].copies
+            tempObj.event = nft.asset_activity[t].event
+            assetTemp.push(tempObj)
+        }
+        assetTemp.push({ event: event, expiration: parseFloat(0), price: '0', from_wallet_address: globalUser.walletAddress, receiver_id: '--', date: this_time, copies: copies })
 
+        try {
+            apiCall.current = MARKET_API.request({
+                path: `/nft/edit/activities`,
+                method: "post",
+                body: {
+                    nft_id: id,
+                    asset_activity: JSON.stringify(assetTemp)
+                },
+                headers: {
+                    'Content-Type': 'multipart/form-data'
+                }
+            });
+            let resp = await apiCall.current.promise;
+            console.log('edit activity resp', resp)
+            if (!resp.isSuccess)
+                throw resp
+            setSuccessMesssage('NFT minted successfully')
+        } catch (error) {
+            setErr(err.statusText)
+            setApiLoading(false)
 
+        }
+    }
+    const ipfsUpload = async () => {
+        try {
+            const response = await axios({
+                method: "post",
+                url: `https://api.nft.storage/upload`,
+                data: nft.img,
+                headers: {
+                    "Authorization": `Bearer ${NFT_STORAGE_API_KEY}`,
+                    "Content-Type": "application/x-www-form-urlencoded"
+                }
+            });
+            console.log(response)
+            if (response.status == 200) {
+                return response.data.value.cid
+            }
+        }
+        catch (err) {
+            console.log(err)
+        }
+    }
+    const ipfsFileUpload = async () => {
+        try {
+            const response = await axios({
+                method: "post",
+                url: `https://api.nft.storage/upload`,
+                data: properties,
+                headers: {
+                    "Authorization": `Bearer ${NFT_STORAGE_API_KEY}`,
+                    "Content-Type": "application/x-www-form-urlencoded"
+                }
+            });
+            console.log(response)
+            if (response.status == 200) {
+                return response.data.value.cid
+            }
+        }
+        catch (err) {
+            console.log(err)
+        }
+    }
+
+    const { active, account, library, connector, activate, deactivate } = useWeb3React()
+
+    const changeIsFreezed = () => {
+        if (isFreezed == 0) { setIsFreezed(1) }
+        else { setIsFreezed(0) }
+    }
     return (
         <>
-            <div style={{ padding: "0 32px" }}>
+            <div className="pdng mb-5">
                 <Navbar theme={theme} themeToggler={themeToggler} />
-                {globalUser.isLoggedIn ?
+                {globalUser.isLoggedIn && active ?
                     <div className="d-flex flex-column px-0 py-2">
-                        <h5 className="my-1" style={{ fontWeight: "bold" }}>Create New Item</h5>
+                        <h5 className="my-4" style={{ fontWeight: 600 }}>Create New Item</h5>
                         <FieldsContainer className="p-2 p-sm-4">
                             {/* first section fields */}
-                            <div className="p-0 d-flex flex-column flex-lg-row-reverse">
+                            <div className="p-0 d-flex flex-column flex-lg-row-reverse justify-content-between">
                                 <div className="col-12 col-sm-7 col-lg-6 d-flex justify-content-start justify-content-lg-end align-items-center">
                                     <Box sx={{
                                         border: `2px dashed ${Colors.gray1}`,
-                                        width: { xs: '100%', md: '340px' },
-                                        height: '300px',
+                                        width: { xs: '100%', md: '400px' },
+                                        height: { xs: '350px', lg: '100%' },
                                         borderRadius: '20px',
                                         position: 'relative',
                                         margin: { xs: '0 auto', sm: 0 }
@@ -518,9 +666,9 @@ const CreateNFT = ({ theme, themeToggler }) => {
                                         </label>
                                     </Box>
                                 </div>
-                                <div className="col-12 col-sm-8 col-lg-6 d-flex flex-column justify-content-between align-items-start">
-                                    <div className="w-100 d-flex flex-column p-0 my-2">
-                                        <p style={{ fontWeight: "bold", margin: 0 }} className='mb-1'>name</p>
+                                <div className="col-12 col-sm-9 col-lg-6 col-xl-5 d-flex flex-column justify-content-between align-content-between">
+                                    <div className="w-100 d-flex flex-column p-0 mt-5 mt-lg-0" style={{ margin: '0 0 14px 0' }}>
+                                        <p style={{ fontWeight: 500, margin: 0 }} className='mb-1'>name</p>
                                         <InputBox className="py-2 px-3 d-flex justify-content-between">
                                             <div className="col-11 p-0">
                                                 <InputBase
@@ -531,30 +679,34 @@ const CreateNFT = ({ theme, themeToggler }) => {
                                                     inputProps={{ 'aria-label': 'enter email' }}
                                                 />
                                             </div>
-                                            <div className="col-1 p-0 text-center d-flex justify-content-end align-items-center"><NotificationBing size="14" /></div>
+                                            <div className="col-1 p-0 text-center d-flex justify-content-end align-items-center">
+                                                {/* <NotificationBing size="14" /> */}
+                                            </div>
                                         </InputBox>
                                     </div>
 
 
-                                    <div className="w-100 d-flex flex-column p-0 my-2">
-                                        <p style={{ fontWeight: "bold", margin: 0 }} className='mb-1'>External link</p>
+                                    <div className="w-100 d-flex flex-column p-0" style={{ margin: '14px 0' }}>
+                                        <p style={{ fontWeight: 500, margin: 0 }} className='mb-1'>External link</p>
                                         <InputBox className="py-2 px-3 d-flex justify-content-between">
                                             <div className="col-11 p-0">
                                                 <InputBase
                                                     name="link"
                                                     onChange={onChange}
                                                     sx={{ color: "inherit", width: "100%", height: "100%" }}
-                                                    placeholder="google.com"
+                                                    placeholder="https://google.com"
                                                     inputProps={{ 'aria-label': 'enter email' }}
                                                 />
                                             </div>
-                                            <div className="col-1 p-0 text-center d-flex justify-content-end align-items-center"><NotificationBing size="14" /></div>
+                                            <div className="col-1 p-0 text-center d-flex justify-content-end align-items-center">
+                                                {/* <NotificationBing size="14" /> */}
+                                            </div>
                                         </InputBox>
                                     </div>
 
 
-                                    <div className="w-100 d-flex flex-column p-0 my-2">
-                                        <p style={{ fontWeight: "bold", margin: 0 }} className='mb-1'>Description</p>
+                                    <div className="w-100 d-flex flex-column p-0" style={{ margin: '14px 0' }}>
+                                        <p style={{ fontWeight: 500, margin: 0 }} className='mb-1'>Description</p>
                                         <InputBox className="py-2 px-3 d-flex justify-content-between">
                                             <div className="col-11 p-0">
                                                 <InputBase
@@ -565,16 +717,18 @@ const CreateNFT = ({ theme, themeToggler }) => {
                                                     inputProps={{ 'aria-label': 'enter email' }}
                                                 />
                                             </div>
-                                            <div className="col-1 p-0 text-center d-flex justify-content-end align-items-center"><NotificationBing size="14" /></div>
+                                            <div className="col-1 p-0 text-center d-flex justify-content-end align-items-center">
+                                                {/* <NotificationBing size="14" /> */}
+                                            </div>
                                         </InputBox>
                                     </div>
 
-                                    <div className="w-100 d-flex flex-column p-0 my-2">
-                                        <p style={{ fontWeight: "bold", margin: 0 }} className='mb-1'>collection</p>
+                                    <div className="w-100 d-flex flex-column p-0" style={{ margin: '14px 0' }}>
+                                        <p style={{ fontWeight: 500, margin: 0 }} className='mb-1'>collection</p>
                                         {userColNames.length !== 0 ?
-                                            <SSelection tabs={userColNames} width={'100%'} handleSelect={handleCollectionSelect} selectValue={collectionValue} theme={theme} />
+                                            <SSelection id={'create-nft-collections'} tabs={userColNames} width={'100%'} handleSelect={handleCollectionSelect} selectValue={collectionValue} theme={theme} />
                                             :
-                                            <SSelection theme={theme} width={'100%'} tabs={['no collection']} />
+                                            <SSelection id={'create-nft-collections'} theme={theme} width={'100%'} tabs={['no collection']} />
                                         }
                                     </div>
 
@@ -583,53 +737,81 @@ const CreateNFT = ({ theme, themeToggler }) => {
 
                             <Line />
                             {/* second section fields */}
-                            <div className="col-12 col-sm-8 col-lg-6 d-flex flex-column justify-content-between align-items-start">
-                                <div className="my-1 w-100 d-flex flex-row p-0 justify-content-between align-items-center">
-                                    <div className="d-flex align-items-center justify-content-start"><Inf><HambergerMenu size="26" /></Inf><div className="ms-1 d-flex flex-column justify-content-center align-items-start">
-                                        <p style={{ fontWeight: "bold", margin: 0, fontSize: "14px" }}>Properties</p><Inf style={{ fontSize: "12px" }}>Textual traits that show up as rectangles</Inf></div></div>
+                            <div className="col-12 col-sm-9 col-lg-6 col-xl-5 d-flex flex-column justify-content-between align-items-start">
+                                <div style={{ margin: '12px 0' }} className=" w-100 d-flex flex-row p-0 justify-content-between align-items-center">
+                                    <div className="d-flex align-items-center justify-content-start"><Inf><HambergerMenu size="26" className="me-1" /></Inf><div className="ms-1 d-flex flex-column justify-content-center align-items-start">
+                                        <p style={{ fontWeight: 500, margin: 0, fontSize: "14px" }}>Properties</p><InfP style={{ fontSize: "12px" }}>Textual traits that show up as rectangles</InfP></div></div>
                                     <AddButton onClick={() => setAddProperties(true)}><Add size="20" /></AddButton>
                                 </div>
 
-                                <div className="my-1 w-100 d-flex flex-row p-0 justify-content-between align-items-center">
-                                    <div className="d-flex align-items-center justify-content-start"><Inf><Star1 size="26" /></Inf><div className="ms-1 d-flex flex-column justify-content-center align-items-start">
-                                        <p style={{ fontWeight: "bold", margin: 0, fontSize: "14px" }}>Levels</p><Inf style={{ fontSize: "12px" }}>Numerical traits that show as a progress bar</Inf></div></div>
-                                    <AddButton onClick={() => setAddFunds(true)}><Add size="20" /></AddButton>
+                                <div style={{ margin: '12px 0' }} className=" w-100 d-flex flex-row p-0 justify-content-between align-items-center">
+                                    <div className="d-flex align-items-center justify-content-start"><Inf><Star1 size="26" className="me-1" /></Inf><div className="ms-1 d-flex flex-column justify-content-center align-items-start">
+                                        <p style={{ fontWeight: 500, margin: 0, fontSize: "14px" }}>Levels</p><InfP style={{ fontSize: "12px" }}>Numerical traits that show as a progress bar</InfP></div></div>
+                                    <AddButton onClick={() => setAddLevels(true)}><Add size="20" /></AddButton>
                                 </div>
 
-                                <div className="my-1 w-100 d-flex flex-row p-0 justify-content-between align-items-center">
-                                    <div className="d-flex align-items-center justify-content-start"><Inf><Chart1 size="26" /></Inf><div className="ms-1 d-flex flex-column justify-content-center align-items-start">
-                                        <p style={{ fontWeight: "bold", margin: 0, fontSize: "14px" }}>stats</p><Inf style={{ fontSize: "12px" }}>Numerical traits that just show as numbers</Inf></div></div>
-                                    <AddButton onClick={() => setAddRoyalties(true)}><Add size="20" /></AddButton>
+                                <div style={{ margin: '12px 0' }} className=" w-100 d-flex flex-row p-0 justify-content-between align-items-center">
+                                    <div className="d-flex align-items-center justify-content-start"><Inf><Chart1 size="26" className="me-1" /></Inf><div className="ms-1 d-flex flex-column justify-content-center align-items-start">
+                                        <p style={{ fontWeight: 500, margin: 0, fontSize: "14px" }}>Stats</p><InfP style={{ fontSize: "12px" }}>Numerical traits that just show as numbers</InfP></div></div>
+                                    <AddButton onClick={() => setAddStats(true)}><Add size="20" /></AddButton>
                                 </div>
 
 
-                                <div className="my-1 w-100 d-flex flex-row p-0 justify-content-between align-items-center">
-                                    <div className="d-flex align-items-center justify-content-start"><Inf><Lock1 size="26" /></Inf><div className="ms-1 d-flex flex-column justify-content-center align-items-start">
-                                        <p style={{ fontWeight: "bold", margin: 0, fontSize: "14px" }}>Unlockable Content</p><Inf style={{ fontSize: "12px" }}>Include unlockable content that can only be revealed by the owner of the item.</Inf>
+                                <div style={{ margin: '12px 0' }} className=" w-100 d-flex flex-row p-0 justify-content-between align-items-center">
+                                    <div className="d-flex align-items-center justify-content-start"><Inf><Lock1 size="26" className="me-1" /></Inf><div className="ms-1 d-flex flex-column justify-content-center align-items-start">
+                                        <p style={{ fontWeight: 500, margin: 0, fontSize: "14px" }}>Unlockable Content</p><InfP style={{ fontSize: "12px" }}>Include unlockable content that can only be revealed by the owner of the item.</InfP>
                                     </div>
                                     </div>
-                                    <label className="switch">
-                                        <input type="checkbox" />
-                                        <span className="slider round"></span>
-                                    </label>
+                                    <SwitchS className="switch">
+                                        <SwitchInput type="checkbox" checked={unlockableContent ? true : false} onChange={() => setunlockableContent(!unlockableContent)} />
+                                        <Slide className="slider round"></Slide>
+                                    </SwitchS>
+
                                 </div>
 
-                                <div className="my-1 w-100 d-flex flex-row p-0 justify-content-between align-items-center">
-                                    <div className="d-flex align-items-center justify-content-start"><Inf><InfoCircle size="26" /></Inf><div className="ms-1 d-flex flex-column justify-content-center align-items-start">
-                                        <p style={{ fontWeight: "bold", margin: 0, fontSize: "14px" }}>Explicit & Sensitive Content</p><Inf style={{ fontSize: "12px" }}>Set this item as explicit and sensitive contentinfo</Inf></div></div>
-                                    <label className="switch">
-                                        <input type="checkbox" />
-                                        <span className="slider round"></span>
-                                    </label>
+                                <div style={{ margin: '12px 0' }} className=" w-100 d-flex flex-row p-0 justify-content-between align-items-center">
+                                    <div className="d-flex align-items-center justify-content-start"><Inf><InfoCircle size="26" className="me-1" /></Inf><div className="ms-1 d-flex flex-column justify-content-center align-items-start">
+                                        <p style={{ fontWeight: 500, margin: 0, fontSize: "14px" }}>Explicit & Sensitive Content</p>
+                                        <InfP style={{ fontSize: "12px" }}>Set this item as explicit and sensitive contentinfo</InfP></div></div>
+                                    <SwitchS className="switch">
+                                        <SwitchInput type="checkbox" checked={sensetiveContent ? true : false} onChange={() => setsensetiveContent(!sensetiveContent)} />
+                                        <Slide className="slider round"></Slide>
+                                    </SwitchS>
+
                                 </div>
 
                             </div>
 
                             <Line />
                             {/* third section fields */}
-                            <div className="col-12 col-sm-8 col-lg-6 d-flex flex-column justify-content-between align-items-start">
+                            <div className="col-12 col-sm-9 col-lg-6 col-xl-5 d-flex flex-column justify-content-between align-items-start">
                                 <div className="w-100 d-flex flex-column p-0 my-2">
-                                    <p style={{ fontWeight: "bold", margin: 0 }} className='mb-1'>Supply</p>
+                                    <p style={{ fontWeight: 500, margin: 0 }} className='mb-1'>Supply</p>
+                                    <InputBox className="py-2 px-3 d-flex justify-content-between">
+                                        <div className="col-11 p-0">
+                                            <InputBase
+                                                sx={{ color: "inherit", width: "100%", height: "100%" }}
+                                                placeholder="0"
+                                                inputProps={{ 'aria-label': 'enter copies' }}
+                                                onChange={(e) => setCopies(e.target.value)}
+                                                type="number"
+                                            />
+                                        </div>
+                                        <div className="col-1 p-0 text-center d-flex justify-content-end align-items-center">
+                                            {/* <NotificationBing size="14" /> */}
+                                        </div>
+
+                                    </InputBox>
+                                </div>
+
+
+                                <div className="w-100 d-flex flex-row p-0 justify-content-between my-2">
+                                    <p style={{ fontWeight: 500, margin: 0 }} className='mb-1'>Freeze Metadata</p>
+                                    <SwitchS className="switch">
+                                        <SwitchInput type="checkbox" checked={isFreezed ? true : false} onChange={changeIsFreezed} />
+                                        <Slide className="slider round"></Slide>
+                                    </SwitchS>
+                                    {/* 
                                     <InputBox className="py-2 px-3 d-flex justify-content-between">
                                         <div className="col-11 p-0">
                                             <InputBase
@@ -638,29 +820,16 @@ const CreateNFT = ({ theme, themeToggler }) => {
                                                 inputProps={{ 'aria-label': 'enter email' }}
                                             />
                                         </div>
-                                        <div className="col-1 p-0 text-center d-flex justify-content-end align-items-center"><NotificationBing size="14" /></div>
-                                    </InputBox>
+                                        <div className="col-1 p-0 text-center d-flex justify-content-end align-items-center">
+                                        <NotificationBing size="14" /></di
+                                        v>
+                                    </InputBox> */}
                                 </div>
 
 
                                 <div className="w-100 d-flex flex-column p-0 my-2">
-                                    <p style={{ fontWeight: "bold", margin: 0 }} className='mb-1'>Freeze Metadata</p>
-                                    <InputBox className="py-2 px-3 d-flex justify-content-between">
-                                        <div className="col-11 p-0">
-                                            <InputBase
-                                                sx={{ color: "inherit", width: "100%", height: "100%" }}
-                                                placeholder="Example@gmail.com"
-                                                inputProps={{ 'aria-label': 'enter email' }}
-                                            />
-                                        </div>
-                                        <div className="col-1 p-0 text-center d-flex justify-content-end align-items-center"><NotificationBing size="14" /></div>
-                                    </InputBox>
-                                </div>
-
-
-                                <div className="w-100 d-flex flex-column p-0 my-2">
-                                    <p style={{ fontWeight: "bold", margin: 0 }} className='mb-1'>Blockchain</p>
-                                    <SSelection tabs={['ethereum', 'solana', 'near']} width={'100%'} handleSelect={handleChainSelect} selectValue={chainValue} theme={theme} />
+                                    <p style={{ fontWeight: 500, margin: 0 }} className='mb-1'>Blockchain</p>
+                                    <SSelection id={'create-nft-chains'} tabs={['ethereum', 'solana', 'near']} width={'100%'} handleSelect={handleChainSelect} selectValue={chainValue} theme={theme} />
                                     {/* <label className="position-relative">
                                         <ChainSelect>
                                             <option>Ethereum</option>
@@ -674,7 +843,9 @@ const CreateNFT = ({ theme, themeToggler }) => {
 
 
 
-                                {apiLoading ? <ButtonLarge className="mt-5 mb-3" ><CircularProgress sx={{ color: "white" }} /></ButtonLarge> :
+                                {apiLoading ? <ButtonLarge className="mt-5 mb-3" >
+                                    {/* <CircularProgress sx={{ color: "white" }} /> */}...
+                                </ButtonLarge> :
                                     <ButtonLarge className="mt-5 mb-3" onClick={handleSubmit}>save</ButtonLarge>}
 
 
@@ -682,7 +853,7 @@ const CreateNFT = ({ theme, themeToggler }) => {
 
 
                             {/* error and success messages */}
-                            <div className="col-12 col-sm-8 col-lg-6 d-flex flex-column justify-content-between align-items-center">
+                            <div className="col-12 col-sm-9 col-lg-6 col-xl-5 d-flex flex-column justify-content-between align-items-center">
                                 {err ? <Typography sx={{ fontSize: "12px", color: `${Colors.errorDark}` }}>{err}</Typography> : undefined}
                                 {successMesssage ? <Typography sx={{ fontSize: "12px", color: `${Colors.successDark}` }}>{successMesssage}</Typography> : undefined}
                             </div>
@@ -690,13 +861,13 @@ const CreateNFT = ({ theme, themeToggler }) => {
                         </FieldsContainer>
                     </div>
                     : <div className="d-flex my-5 justify-content-center align-items-center">
-                        <ButtonLarge onClick={walletDrawer('bottom', true)}>connect wallet</ButtonLarge>
-                        <WalletConnect toggleDrawer={walletDrawer} state={walletMenu} theme={theme} />
+                        <ButtonLarge onClick={() => { setWalletConnect(!walletConnect) }}>connect wallet</ButtonLarge>
+                        <WalletConnectModal open={walletConnect} handleClose={() => setWalletConnect(false)} theme={theme} />
                     </div>
                 }
             </div>
 
-            <AddModals prevRoyalties={royalties} prevProperties={properties} saveFunds={saveFunds} saveProperties={saveProperties} saveRoyalties={saveRoyalties} openRoyalties={addRoyalties} openFunds={addFunds} openProperties={addProperties} handleClose={handleClose} theme={theme} />
+            <AddModals prevProperties={properties} saveLevels={saveLevels} saveStats={saveStats} prevLevels={levels} prevStats={stats} saveProperties={saveProperties} saveRoyalties={saveRoyalties} openRoyalties={addRoyalties} openStats={addStats} openLevels={addLevels} openProperties={addProperties} handleClose={handleClose} theme={theme} />
         </>
     );
 }

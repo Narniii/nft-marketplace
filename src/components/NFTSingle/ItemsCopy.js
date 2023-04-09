@@ -3,7 +3,9 @@ import styled from "styled-components";
 import { useEffect, useState } from "react";
 import { Colors } from "../design/Colors";
 import '../../styles.css'
-import testPic from '../../assets/testpic.png'
+import NoItemFound from "../NoItem";
+import { BG_URL, PUBLIC_URL } from "../../utils/utils";
+import { API_CONFIG } from "../../config";
 
 
 const ItemsContainerDesktop = styled.div`
@@ -55,7 +57,6 @@ padding:5px 16px;
 }
 `
 const ItemImage = styled.div`
-    background-image: url(${testPic});
     background-size:cover;
     background-repeat:no-repeat;
     background-position:center;
@@ -65,20 +66,43 @@ const ItemImage = styled.div`
     margin-right:10px;
 `;
 
-const ItemsCopy = () => {
+const ItemsCopy = ({ nft }) => {
+    const [copies, setCopies] = useState(undefined)
+    useEffect(() => {
+        var copysTemp = []
+        if (nft && nft.copies) {
+            for (var c = 0; c < nft.copies; c++) {
+                copysTemp.push(nft)
+            }
+        }
+        setCopies(copysTemp)
+
+    }, [nft, nft.copies])
+    const shorten = (str) => {
+        if (str)
+            return str.length > 15 ? str.substring(0, 15) + "..." : str;
+        return 'undefined'
+    }
+
     return (<ItemsContainerDesktop>
-        <ItemCard><div className="d-flex"><ItemImage /><div className="d-flex flex-column"><Recommend>Moonbird Geneis #2468</Recommend><p className="m-0">monkey145236 </p></div></div><span style={{ fontWeight: "bold",textTransform:"lowercase",letterSpacing: '0.005em' }}>x 1</span></ItemCard>
-        <ItemCard><div className="d-flex"><ItemImage /><div className="d-flex flex-column"><Recommend>Moonbird Geneis #2468</Recommend><p className="m-0">monkey145236 </p></div></div><span style={{ fontWeight: "bold",textTransform:"lowercase",letterSpacing: '0.005em' }}>x 1</span></ItemCard>
-        <ItemCard><div className="d-flex"><ItemImage /><div className="d-flex flex-column"><Recommend>Moonbird Geneis #2468</Recommend><p className="m-0">monkey145236 </p></div></div><span style={{ fontWeight: "bold",textTransform:"lowercase",letterSpacing: '0.005em' }}>x 1</span></ItemCard>
-        <ItemCard><div className="d-flex"><ItemImage /><div className="d-flex flex-column"><Recommend>Moonbird Geneis #2468</Recommend><p className="m-0">monkey145236 </p></div></div><span style={{ fontWeight: "bold",textTransform:"lowercase",letterSpacing: '0.005em' }}>x 1</span></ItemCard>
-        <ItemCard><div className="d-flex"><ItemImage /><div className="d-flex flex-column"><Recommend>Moonbird Geneis #2468</Recommend><p className="m-0">monkey145236 </p></div></div><span style={{ fontWeight: "bold",textTransform:"lowercase",letterSpacing: '0.005em' }}>x 1</span></ItemCard>
-        <ItemCard><div className="d-flex"><ItemImage /><div className="d-flex flex-column"><Recommend>Moonbird Geneis #2468</Recommend><p className="m-0">monkey145236 </p></div></div><span style={{ fontWeight: "bold",textTransform:"lowercase",letterSpacing: '0.005em' }}>x 1</span></ItemCard>
-        <ItemCard><div className="d-flex"><ItemImage /><div className="d-flex flex-column"><Recommend>Moonbird Geneis #2468</Recommend><p className="m-0">monkey145236 </p></div></div><span style={{ fontWeight: "bold",textTransform:"lowercase",letterSpacing: '0.005em' }}>x 1</span></ItemCard>
-        <ItemCard><div className="d-flex"><ItemImage /><div className="d-flex flex-column"><Recommend>Moonbird Geneis #2468</Recommend><p className="m-0">monkey145236 </p></div></div><span style={{ fontWeight: "bold",textTransform:"lowercase",letterSpacing: '0.005em' }}>x 1</span></ItemCard>
-        <ItemCard><div className="d-flex"><ItemImage /><div className="d-flex flex-column"><Recommend>Moonbird Geneis #2468</Recommend><p className="m-0">monkey145236 </p></div></div><span style={{ fontWeight: "bold",textTransform:"lowercase",letterSpacing: '0.005em' }}>x 1</span></ItemCard>
-        <ItemCard><div className="d-flex"><ItemImage /><div className="d-flex flex-column"><Recommend>Moonbird Geneis #2468</Recommend><p className="m-0">monkey145236 </p></div></div><span style={{ fontWeight: "bold",textTransform:"lowercase",letterSpacing: '0.005em' }}>x 1</span></ItemCard>
-        <ItemCard><div className="d-flex"><ItemImage /><div className="d-flex flex-column"><Recommend>Moonbird Geneis #2468</Recommend><p className="m-0">monkey145236 </p></div></div><span style={{ fontWeight: "bold",textTransform:"lowercase",letterSpacing: '0.005em' }}>x 1</span></ItemCard>
-        <ItemCard><div className="d-flex"><ItemImage /><div className="d-flex flex-column"><Recommend>Moonbird Geneis #2468</Recommend><p className="m-0">monkey145236 </p></div></div><span style={{ fontWeight: "bold",textTransform:"lowercase",letterSpacing: '0.005em' }}>x 1</span></ItemCard>
+        {copies ?
+            <>
+                {copies.length > 0 ?
+                    <>
+                        {copies.map((copy, index) => {
+                            return <ItemCard><div className="d-flex"><ItemImage style={{ backgroundImage: BG_URL(PUBLIC_URL(`${API_CONFIG.MARKET_MEDIA_API_URL}${copy.nft_image_path.replace('root/dortzio/market/media/', '')}`)) }} />
+                                <div className="d-flex flex-column"><Recommend>{copy.title}&nbsp;#{index + 1}</Recommend><p className="m-0">{shorten(copy.description)} </p></div></div><span style={{ fontWeight: "bold", textTransform: "lowercase", letterSpacing: '0.005em' }}>x 1</span></ItemCard>
+                        })}
+                    </> :
+                    <NoItemFound text={'no copies'} />
+                }
+            </>
+            :
+            <>
+                {console.log('inja?')}
+                <NoItemFound text={'no copies'} />
+            </>
+        }
     </ItemsContainerDesktop>);
 }
 

@@ -1,11 +1,12 @@
+import { useNavigate } from 'react-router';
+import { Link } from 'react-router-dom';
 import styled from 'styled-components';
-import testnft from '../assets/test1.png'
-import testAcc from '../assets/sampleProfile.png'
-import testCol from '../assets/testpic.png'
-
+import { API_CONFIG } from '../config';
+import { shortenMedium } from '../utils/countingFunctions';
+import { BG_URL, PUBLIC_URL } from '../utils/utils';
+import { Colors } from './design/Colors';
 
 const ItemImage = styled.div`
-    background-image: url(${testnft});
     background-size:cover;
     background-repeat:no-repeat;
     background-position:center;
@@ -14,7 +15,6 @@ const ItemImage = styled.div`
     border-radius:8px;
 `;
 const ColImage = styled.div`
-    background-image: url(${testCol});
     background-size:cover;
     background-repeat:no-repeat;
     background-position:center;
@@ -23,7 +23,6 @@ const ColImage = styled.div`
     border-radius:8px;
 `;
 const AccountImage = styled.div`
-    background-image: url(${testAcc});
     background-size:cover;
     background-repeat:no-repeat;
     background-position:center;
@@ -31,37 +30,42 @@ const AccountImage = styled.div`
     width:35px;
     border-radius:50%;
 `;
+export const CollectionBrief = ({ title, price, itemsLength, image, id }) => {
+    const navigate = useNavigate()
 
-export const CollectionBrief = () => {
     return (
-        <div className="d-flex justify-content-between align-items-center w-100">
+        <Link className="d-flex justify-content-between align-items-center w-100" style={{ textDecoration: "none", color: "inherit" }} to={'/' + 'collection/' + title + '/' + id}>
             <div className="d-flex align-items-center">
-                <ColImage />
-                <div className='d-flex flex-column justify-content-center align-items-start ms-2'><span>collection name</span><span style={{ fontSize: "10px" }}>22 items</span></div>
+                <ColImage style={{ backgroundImage: image ? BG_URL(PUBLIC_URL(`${API_CONFIG.MARKET_MEDIA_API_URL}${image.replace('root/dortzio/market/media/', '')}`)) : `${Colors.gradientPurpleStandard}` }} />
+                <div className='d-flex flex-column justify-content-center align-items-start ms-2'><span style={{ fontSize: "14px" }}>{shortenMedium(title)}</span><span style={{ fontSize: "10px" }}>{itemsLength} items</span></div>
             </div>
-            <div className='d-flex align-items-center'>150 ETH</div>
-        </div>
+            <div className='d-flex align-items-center align-self-start' style={{ fontSize: "14px" }}>{price} ETH</div>
+        </Link>
     )
 }
-export const AccountBrief = () => {
+export const AccountBrief = ({ username, image }) => {
+    const navigate = useNavigate()
+
     return (
-        <div className="d-flex justify-content-between align-items-center w-100">
+        <Link className="d-flex justify-content-between align-items-center w-100" style={{ textDecoration: "none", color: "inherit" }} to={'/' + 'profile/' + username}>
             <div className="d-flex align-items-center">
-                <AccountImage />
-                <div className='ms-2'>Account Name</div>
+                <AccountImage style={{ backgroundImage: image ? BG_URL(PUBLIC_URL(`${API_CONFIG.AUTH_MEDIA_API_URL}${image.replace('root/dortzio/auth/media/', '')}`)) : `${Colors.gradientPurpleStandard}` }} />
+                <div className='ms-2' style={{ fontSize: "14px" }}>{shortenMedium(username)}</div>
             </div>
             <div className='d-flex align-items-center'></div>
-        </div>
+        </Link>
     )
 }
-export const ItemBrief = () => {
+export const ItemBrief = ({ title, collection, image, id, wallet }) => {
+    const navigate = useNavigate()
+
     return (
-        <div className="d-flex justify-content-between align-items-center w-100">
+        <Link className="d-flex justify-content-between align-items-center w-100" style={{ textDecoration: "none", color: "inherit" }} to={'/' + 'assets/ethereum/' + wallet + '/' + id}>
             <div className="d-flex align-items-center">
-                <ItemImage />
-                <div className='d-flex flex-column justify-content-center align-items-start ms-2'><span>Item name</span><span style={{ fontSize: "10px" }}>collection name</span></div>
+                <ItemImage style={{ backgroundImage: image ? BG_URL(PUBLIC_URL(`${API_CONFIG.MARKET_MEDIA_API_URL}${image.replace('root/dortzio/market/media/', '')}`)) : `${Colors.gradientPurpleStandard}` }} />
+                <div className='d-flex flex-column justify-content-center align-items-start ms-2'><span style={{ fontSize: "14px" }}>{shortenMedium(title)}</span><span style={{ fontSize: "10px" }}>{shortenMedium(collection)}</span></div>
             </div>
             <div className='d-flex align-items-center'></div>
-        </div>
+        </Link>
     )
 }

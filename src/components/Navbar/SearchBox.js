@@ -1,4 +1,4 @@
-import { Divider, InputBase, MenuItem, Popper } from "@mui/material";
+import { ClickAwayListener, Divider, InputBase, Menu, MenuItem, Popper } from "@mui/material";
 import { SearchNormal1 } from "iconsax-react";
 import { useEffect, useRef, useState } from "react";
 import styled from "styled-components";
@@ -24,7 +24,7 @@ const InputBox = styled.div`
 `;
 
 
-const SearchBox = ({ theme, id, phrase }) => {
+const SearchBox = ({ theme, id, phrase, searchingWhat }) => {
     const apiCall = useRef(undefined)
     const [anchorEl, setAnchorEl] = useState(null);
     const [open, setOpen] = useState(false)
@@ -32,6 +32,11 @@ const SearchBox = ({ theme, id, phrase }) => {
     const [searchResults, setSearchResults] = useState(undefined)
     const [err, setErr] = useState(undefined)
     const [loading, setLoading] = useState(true)
+    const [collections, setCollections] = useState(undefined)
+    const [NFTs, setNFTs] = useState(undefined)
+    const [users, setUsers] = useState(undefined)
+
+
     const handleChange = (newPlacement) => (event) => {
         console.log(window.document.getElementById(id))
         console.log(document.getElementById(id)?.offsetWidth)
@@ -40,25 +45,58 @@ const SearchBox = ({ theme, id, phrase }) => {
         }
         else {
             setOpen(true)
+
             // setAnchorEl(event.currentTarget);
             setAnchorEl(window.document.getElementById(id));
+            Search(event.target.value)
+
+            if (searchResults) {
+                for (var s = 0; s < searchResults.length; s++) {
+                    if (searchResults[s].collections) {
+                        setCollections(searchResults[s].collections)
+                    }
+                    if (searchResults[s].users) {
+                        setUsers(searchResults[s].users)
+                    }
+                    if (searchResults[s].nfts) {
+                        setNFTs(searchResults[s].nfts)
+                    }
+                }
+            }
+
         }
 
         setPlacement(newPlacement);
     };
-    const Search = async () => {
+    const Search = async (phrase) => {
         try {
             apiCall.current = MARKET_API.request({
                 path: `/search/`,
                 method: "post",
                 body: {
-                    phrase: phrase
+                    phrase: phrase,
+                    from: 0,
+                    to: 3,
                 }
             })
             const response = await apiCall.current.promise;
+            console.log(response)
             if (!response.isSuccess)
                 throw response
             setSearchResults(response.data)
+            for (var s = 0; s < response.data.length; s++) {
+                if (response.data[s].collections) {
+                    setCollections(response.data[s].collections)
+                }
+                if (response.data[s].users) {
+                    setUsers(response.data[s].users)
+                }
+                if (response.data[s].nfts) {
+                    setNFTs(response.data[s].nfts)
+                }
+            }
+
+
         }
         catch (err) {
             if (err.status == 404) {
@@ -70,14 +108,14 @@ const SearchBox = ({ theme, id, phrase }) => {
         }
     }
     useEffect(() => {
-        if (searchResults)
-            setLoading(false)
+        // if (searchResults)
+        // setOpen(true)
 
     }, [searchResults])
 
     return (
         <>
-            <Box className="d-flex p-2" id={id} style={{ boxShadow: theme == 'light' && window.location.pathname !== '/' ? 'inset 0px 0px 4px rgba(0, 0, 0, 0.2)' : "unset", border: theme == 'light' && window.location.pathname !== '/' ? "none" : "1px solid white" }}>
+            <Box className="d-flex p-2" id={id} style={{ boxShadow: theme == 'light' && window.location.pathname !== '/' ? 'inset 0px 0px 4px rgba(0, 0, 0, 0.2)' : "unset", border: theme == 'light' && window.location.pathname !== '/' ? "none" : "1px solid #b3b3b3" }}>
                 <div className="col-2 p-0 d-flex align-items-center" style={{ width: "auto", color: theme == 'light' && window.location.pathname !== '/' ? `${Colors.gray6}` : "white" }}>
                     <SearchNormal1
                         size="24"
@@ -94,7 +132,7 @@ const SearchBox = ({ theme, id, phrase }) => {
                     />
                 </div>
             </Box>
-            <ResPop theme={theme} open={open} anchorEl={anchorEl} id={id} />
+            <ResPop theme={theme} open={open} anchorEl={anchorEl} id={id} searchResults={searchResults} collections={collections} NFTs={NFTs} users={users} searchingWhat={searchingWhat} setOpen={setOpen} />
         </>
     );
 }
@@ -102,164 +140,138 @@ const SearchBox = ({ theme, id, phrase }) => {
 export default SearchBox;
 
 
-export const ResPop = ({ theme, open, anchorEl, id }) => {
-    const pWidth = document.getElementById(id)?.offsetWidth
-    // console.log(pWidth)
-
+export const ResPop = ({ setOpen, theme, open, anchorEl, id, searchResults, collections, NFTs, users, searchingWhat }) => {
+    const pWidth = window.document.getElementById(id)?.offsetWidth
     return (
+        <ClickAwayListener onClickAway={() => setOpen(false)}>
+            <Popper
+                className="mt-1"
+                PaperProps={{
+                    style: {
+                        // width: '60%',
+                        // backgroundColor: "transparent",
+                    }
+                }}
+                disableScrollLock={true}
+                id="basic-menu"
+                anchorEl={anchorEl}
+                open={open}
+                // onClose={handleClose}
+                MenuListProps={{
+                    'aria-labelledby': 'basic-button',
+                }}
+                sx={{ padding: '10px 0', width: `${pWidth}px`, borderRadius: "24px", bgcolor: theme == 'light' ? '#ffffff' : '#1E0E36', overflow: "hidden", boxShadow: "0px 4px 18px rgba(0, 0, 0, 0.2)", }}
+            >
+                {searchResults && searchResults.length != 0 ?
+                    <>
+                        {id == 'navSearch' || id == 'navSearchTablet' ?
+                            <>
 
-        <Popper
-            className="mt-1"
-            PaperProps={{
-                style: {
-                    // width: '60%',
-                    // backgroundColor: "transparent",
+                                {/* <======== search among collections , items , users in navbar  ========> */}
+
+                                {collections ?
+                                    <>
+                                        <MenuItem id="title" sx={{ color: theme == 'light' ? '#4d4d4d' : '#999999', bgcolor: theme == 'light' ? '#ffffff' : '#1E0E36', cursor: "context-menu", fontWeight: 600, fontSize: "14px", '&:hover': { bgcolor: theme == 'light' ? '#ffffff' : '#1E0E36', } }}>Collection</MenuItem>
+                                        {collections.map((collection) => {
+                                            return <MenuItem key={collection._id.$oid} id="result" sx={{
+                                                color: theme == 'light' ? '#808080' : '#f9f9f9', bgcolor: theme == 'light' ? '#ffffff' : '#1E0E36',
+                                                '&:hover': {
+                                                    bgcolor: theme == 'light' ? `${Colors.gray1}` : `${Colors.dark3}`,
+                                                }
+                                            }}
+                                            >
+                                                <CollectionBrief image={collection.logo_path} id={collection._id.$oid} title={collection.title} price={collection.floor_price} itemsLength={collection.nft_ids.length} />
+                                            </MenuItem>
+                                        })}
+                                    </>
+                                    : undefined}
+
+                                {users ?
+                                    <>
+                                        <MenuItem id="title" sx={{ color: theme == 'light' ? '#4d4d4d' : '#999999', bgcolor: theme == 'light' ? '#ffffff' : '#1E0E36', cursor: "context-menu", fontWeight: 600, fontSize: "14px", mt: 1, '&:hover': { bgcolor: theme == 'light' ? '#ffffff' : '#1E0E36', } }}>Account</MenuItem>
+                                        {users.map((user) => {
+                                            return <MenuItem key={user._id.$oid} id="result" sx={{
+                                                color: theme == 'light' ? '#808080' : '#f9f9f9', bgcolor: theme == 'light' ? '#ffffff' : '#1E0E36',
+                                                '&:hover': {
+                                                    bgcolor: theme == 'light' ? `${Colors.gray1}` : `${Colors.dark3}`,
+                                                }
+                                            }}
+                                            ><AccountBrief username={user.username} image={user.avatar_path ? user.avatar_path : undefined} /></MenuItem>
+                                        })}
+                                    </>
+                                    : undefined}
+
+                                {NFTs ? <>
+                                    <MenuItem id="title" sx={{ color: theme == 'light' ? '#4d4d4d' : '#999999', bgcolor: theme == 'light' ? '#ffffff' : '#1E0E36', cursor: "context-menu", fontWeight: 600, fontSize: "14px", mt: 1, '&:hover': { bgcolor: theme == 'light' ? '#ffffff' : '#1E0E36', } }}>Items</MenuItem>
+                                    {NFTs.map((nft) => {
+                                        return <MenuItem key={nft._id.$oid} id="result" sx={{
+                                            color: theme == 'light' ? '#808080' : '#f9f9f9', bgcolor: theme == 'light' ? '#ffffff' : '#1E0E36',
+                                            '&:hover': {
+                                                bgcolor: theme == 'light' ? `${Colors.gray1}` : `${Colors.dark3}`,
+                                            }
+                                        }}
+                                        ><ItemBrief wallet={nft.current_owner} id={nft._id.$oid} image={nft.nft_image_path} title={nft.title} collection={nft.collection_name} /></MenuItem>
+                                    })}
+                                </> : undefined}
+
+                            </>
+                            :
+                            <>
+                                {/* <======== other search apis  ========> */}
+
+                                {collections && searchingWhat == 'collections' ?
+                                    <>
+                                        <MenuItem id="title" sx={{ color: theme == 'light' ? '#4d4d4d' : '#999999', bgcolor: theme == 'light' ? '#ffffff' : '#1E0E36', cursor: "context-menu", fontWeight: 600, fontSize: "14px", '&:hover': { bgcolor: theme == 'light' ? '#ffffff' : '#1E0E36', } }}>Collection</MenuItem>
+                                        {collections.map((collection) => {
+                                            return <MenuItem key={collection._id.$oid} id="result" sx={{
+                                                color: theme == 'light' ? '#808080' : '#f9f9f9', bgcolor: theme == 'light' ? '#ffffff' : '#1E0E36',
+                                                '&:hover': {
+                                                    bgcolor: theme == 'light' ? `${Colors.gray1}` : `${Colors.dark3}`,
+                                                }
+                                            }}
+                                            >
+                                                <CollectionBrief image={collection.logo_path} id={collection._id.$oid} title={collection.title} price={collection.floor_price} itemsLength={collection.nft_ids.length} />
+                                            </MenuItem>
+                                        })}
+                                    </>
+                                    : undefined}
+
+                                {users && searchingWhat == 'users' ?
+                                    <>
+                                        <MenuItem id="title" sx={{ color: theme == 'light' ? '#4d4d4d' : '#999999', bgcolor: theme == 'light' ? '#ffffff' : '#1E0E36', cursor: "context-menu", fontWeight: 600, fontSize: "14px", mt: 1, '&:hover': { bgcolor: theme == 'light' ? '#ffffff' : '#1E0E36', } }}>Account</MenuItem>
+                                        {users.map((user) => {
+                                            return <MenuItem key={user._id.$oid} id="result" sx={{
+                                                color: theme == 'light' ? '#808080' : '#f9f9f9', bgcolor: theme == 'light' ? '#ffffff' : '#1E0E36',
+                                                '&:hover': {
+                                                    bgcolor: theme == 'light' ? `${Colors.gray1}` : `${Colors.dark3}`,
+                                                }
+                                            }}
+                                            ><AccountBrief image={user.avatar_path ? user.avatar_path : undefined} username={user.username} /></MenuItem>
+                                        })}
+                                    </>
+                                    : undefined}
+
+                                {NFTs && searchingWhat == 'NFTs' ? <>
+                                    <MenuItem id="title" sx={{ color: theme == 'light' ? '#4d4d4d' : '#999999', bgcolor: theme == 'light' ? '#ffffff' : '#1E0E36', cursor: "context-menu", fontWeight: 600, fontSize: "14px", mt: 1, '&:hover': { bgcolor: theme == 'light' ? '#ffffff' : '#1E0E36', } }}>Items</MenuItem>
+                                    {NFTs.map((nft) => {
+                                        return <MenuItem key={nft._id.$oid} id="result" sx={{
+                                            color: theme == 'light' ? '#808080' : '#f9f9f9', bgcolor: theme == 'light' ? '#ffffff' : '#1E0E36',
+                                            '&:hover': {
+                                                bgcolor: theme == 'light' ? `${Colors.gray1}` : `${Colors.dark3}`,
+                                            }
+                                        }}
+                                        ><ItemBrief wallet={nft.current_owner} id={nft._id.$oid} image={nft.nft_image_path} title={nft.title} collection={nft.collection_name} /></MenuItem>
+                                    })}
+                                </> : undefined}
+                            </>
+                        }
+                    </>
+                    : <MenuItem id="title" sx={{ color: theme == 'light' ? '#4d4d4d' : '#999999', bgcolor: theme == 'light' ? '#ffffff' : '#1E0E36', cursor: "context-menu", fontWeight: 600, fontSize: "14px", '&:hover': { bgcolor: theme == 'light' ? '#ffffff' : '#1E0E36', } }}>no results found</MenuItem>
                 }
-            }}
-            disableScrollLock={true}
-            id="basic-menu"
-            anchorEl={anchorEl}
-            open={open}
-            // onClose={handleClose}
-            MenuListProps={{
-                'aria-labelledby': 'basic-button',
-            }}
-            sx={{ width: `${pWidth}px`, borderRadius: "24px", overflow: "hidden", boxShadow: "0px 4px 18px rgba(0, 0, 0, 0.2)" }}
-        >
-            {id == 'navSearch' || 'navSearchTablet' ?
-                <>
-                    {/* <======== search among collections , items , users in navbar  ========> */}
+                {/* <MenuItem id="title" sx={{ color: theme == 'light' ? '#4d4d4d' : '#999999', bgcolor: theme == 'light' ? '#ffffff' : '#1E0E36', cursor: "context-menu", fontWeight: 600, '&:hover': { bgcolor: theme == 'light' ? '#ffffff' : '#1E0E36', } }}></MenuItem> */}
 
-                    <MenuItem id="title" sx={{ color: theme == 'light' ? '#4d4d4d' : '#999999', bgcolor: theme == 'light' ? '#ffffff' : '#1E0E36', cursor: "context-menu", fontWeight: 600, '&:hover': { bgcolor: theme == 'light' ? '#ffffff' : '#1E0E36', } }}>collection</MenuItem>
-
-                    <MenuItem id="something" sx={{
-                        color: theme == 'light' ? '#808080' : '#f9f9f9', bgcolor: theme == 'light' ? '#ffffff' : '#1E0E36',
-                        '&:hover': {
-                            bgcolor: theme == 'light' ? `${Colors.gray1}` : `${Colors.dark3}`,
-                        }
-                    }}
-                    ><CollectionBrief /></MenuItem>
-                    <MenuItem id="account" sx={{
-                        color: theme == 'light' ? '#808080' : '#f9f9f9', bgcolor: theme == 'light' ? '#ffffff' : '#1E0E36', '&:hover': {
-                            bgcolor: theme == 'light' ? `${Colors.gray1}` : `${Colors.dark3}`,
-                        }
-                    }}
-                    ><CollectionBrief /></MenuItem>
-                    <MenuItem id="log" sx={{
-                        '&:hover': {
-                            bgcolor: theme == 'light' ? `${Colors.gray1}` : `${Colors.dark3}`,
-                        }
-                        , color: theme == 'light' ? '#808080' : '#f9f9f9', bgcolor: theme == 'light' ? '#ffffff' : '#1E0E36'
-                    }}
-                    ><CollectionBrief /></MenuItem>
-
-                    <MenuItem id="title" sx={{ color: theme == 'light' ? '#4d4d4d' : '#999999', bgcolor: theme == 'light' ? '#ffffff' : '#1E0E36', cursor: "context-menu", fontWeight: 600, '&:hover': { bgcolor: theme == 'light' ? '#ffffff' : '#1E0E36', } }}>Account</MenuItem>
-                    <MenuItem id="something" sx={{
-                        color: theme == 'light' ? '#808080' : '#f9f9f9', bgcolor: theme == 'light' ? '#ffffff' : '#1E0E36',
-                        '&:hover': {
-                            bgcolor: theme == 'light' ? `${Colors.gray1}` : `${Colors.dark3}`,
-                        }
-                    }}
-                    ><AccountBrief /></MenuItem>
-                    <MenuItem id="account" sx={{
-                        color: theme == 'light' ? '#808080' : '#f9f9f9', bgcolor: theme == 'light' ? '#ffffff' : '#1E0E36', '&:hover': {
-                            bgcolor: theme == 'light' ? `${Colors.gray1}` : `${Colors.dark3}`,
-                        }
-                    }}
-                    ><AccountBrief /></MenuItem>
-                    <MenuItem id="log" sx={{
-                        '&:hover': {
-                            bgcolor: theme == 'light' ? `${Colors.gray1}` : `${Colors.dark3}`,
-                        }
-                        , color: theme == 'light' ? '#808080' : '#f9f9f9', bgcolor: theme == 'light' ? '#ffffff' : '#1E0E36'
-                    }}
-                    ><AccountBrief /></MenuItem>
-
-                    <MenuItem id="title" sx={{ color: theme == 'light' ? '#4d4d4d' : '#999999', bgcolor: theme == 'light' ? '#ffffff' : '#1E0E36', cursor: "context-menu", fontWeight: 600, '&:hover': { bgcolor: theme == 'light' ? '#ffffff' : '#1E0E36', } }}>Items</MenuItem>
-                    <MenuItem id="something" sx={{
-                        color: theme == 'light' ? '#808080' : '#f9f9f9', bgcolor: theme == 'light' ? '#ffffff' : '#1E0E36',
-                        '&:hover': {
-                            bgcolor: theme == 'light' ? `${Colors.gray1}` : `${Colors.dark3}`,
-                        }
-                    }}
-                    ><ItemBrief /></MenuItem>
-                    <MenuItem id="account" sx={{
-                        color: theme == 'light' ? '#808080' : '#f9f9f9', bgcolor: theme == 'light' ? '#ffffff' : '#1E0E36', '&:hover': {
-                            bgcolor: theme == 'light' ? `${Colors.gray1}` : `${Colors.dark3}`,
-                        }
-                    }}
-                    ><ItemBrief /></MenuItem>
-                    <MenuItem id="log" sx={{
-                        '&:hover': {
-                            bgcolor: theme == 'light' ? `${Colors.gray1}` : `${Colors.dark3}`,
-                        }
-                        , color: theme == 'light' ? '#808080' : '#f9f9f9', bgcolor: theme == 'light' ? '#ffffff' : '#1E0E36'
-                    }}
-                    ><ItemBrief /></MenuItem>
-
-
-                </>
-                :
-                <>
-                    {/* <======== other search apis  ========> */}
-
-                    <MenuItem id="something" sx={{
-                        color: theme == 'light' ? '#808080' : '#f9f9f9', bgcolor: theme == 'light' ? '#ffffff' : '#1E0E36',
-                        '&:hover': {
-                            bgcolor: theme == 'light' ? `${Colors.gray1}` : `${Colors.dark3}`,
-                        }
-                    }}
-                    ><ItemBrief /></MenuItem>
-                    <MenuItem id="account" sx={{
-                        color: theme == 'light' ? '#808080' : '#f9f9f9', bgcolor: theme == 'light' ? '#ffffff' : '#1E0E36', '&:hover': {
-                            bgcolor: theme == 'light' ? `${Colors.gray1}` : `${Colors.dark3}`,
-                        }
-                    }}
-                    ><ItemBrief /></MenuItem>
-                    <MenuItem id="log" sx={{
-                        '&:hover': {
-                            bgcolor: theme == 'light' ? `${Colors.gray1}` : `${Colors.dark3}`,
-                        }
-                        , color: theme == 'light' ? '#808080' : '#f9f9f9', bgcolor: theme == 'light' ? '#ffffff' : '#1E0E36'
-                    }}
-                    ><ItemBrief /></MenuItem>
-                </>}
-
-        </Popper >
-
-
-        // <Popper
-        //     PaperProps={{
-        //         style: {
-        //             width: 400,
-        //             backgroundColor: "transparent",
-        //             transform: 'translateY(70px)',
-        //         }
-        //     }}
-        //     className="" open={open} anchorEl={anchorEl} placement={"top"} disableScrollLock={true}
-        //     sx={{
-        //         // transform: 'translateY(70px)',
-        //         borderRadius: "24px",
-        //         // width: '100%',
-        //         width: 400,
-        //         backgroundColor: theme == 'light' ? "#ffffff" : "#272448",
-        //         boxShadow: '0px 0px 13px rgba(0, 0, 0, 0.29)',
-        //         p: 0,
-        //         overflow: "hidden",
-        //         border: 'unset !important',
-        //     }}>
-        //     {console.log(anchorEl)}
-        //     <Box sx={{}} className="d-flex flex-column">
-        //         <MenuItem className='p-3'>something</MenuItem>
-        //         <MenuItem className='p-3'>something</MenuItem>
-        //         <MenuItem className='p-3'>something</MenuItem>
-        //         <MenuItem className='p-3'>something</MenuItem>
-        //         <MenuItem className='p-3'>something</MenuItem>
-        //         <MenuItem className='p-3'>something</MenuItem>
-        //         <MenuItem className='p-3'>something</MenuItem>
-        //         <MenuItem className='p-3'>something</MenuItem>
-        //     </Box>
-        // </Popper>
+            </Popper>
+        </ClickAwayListener>
     )
 
 

@@ -6,10 +6,9 @@ import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import { Colors } from './design/Colors';
 import { useDarkMode } from "./design/useDarkMode"
-
+import '../styles.css'
 function SampleNextArrow(props) {
     const { onClick } = props;
-    console.log(props)
     // const [theme, themeToggler, mountedComponent] = useDarkMode();  
     // if (!mountedComponent) return <div />
 
@@ -17,7 +16,7 @@ function SampleNextArrow(props) {
         <Box
             sx={{
                 display: "flex",
-                background: props.theme == 'light' ? '#FFFFFF' : `${Colors.dark3}`,
+                background: props.theme == 'light' ? `${Colors.gray0}` : `${Colors.dark3}`,
                 width: { xs: '35px', sm: '40px' },
                 height: { xs: '35px', sm: '40px' },
                 borderRadius: '12px',
@@ -25,11 +24,12 @@ function SampleNextArrow(props) {
                 alignItems: 'center',
                 position: 'absolute',
                 top: '50%',
-                right: '-1%',
+                right: '-0.5%',
                 zIndex: 4,
                 transform: 'translate(0, -50%)',
                 // boxShadow: '0px 0px 20px 3px rgba(0,0,0,0.5)',
-                border: '0.5px solid #d9d9d9',
+                border: props.theme == 'light' ? `1px solid ${Colors.gray1}` : `1px solid ${Colors.dark4}`,
+                // border: '1px solid',
                 cursor: 'pointer'
             }}
             onClick={onClick}
@@ -41,12 +41,11 @@ function SampleNextArrow(props) {
 
 function SamplePrevArrow(props) {
     const { onClick } = props;
-    console.log(props.theme)
     return (
         <Box
             sx={{
                 display: "flex",
-                background: props.theme == 'light' ? '#FFFFFF' : `${Colors.dark3}`,
+                background: props.theme == 'light' ? `${Colors.gray0}` : `${Colors.dark3}`,
                 width: { xs: '35px', sm: '40px' },
                 height: { xs: '35px', sm: '40px' },
                 borderRadius: '12px',
@@ -54,11 +53,12 @@ function SamplePrevArrow(props) {
                 alignItems: 'center',
                 position: 'absolute',
                 top: '50%',
-                left: '-1%',
+                left: '-0.5%',
                 zIndex: 4,
                 transform: 'translate(0, -50%)',
                 // boxShadow: '0px 0px 20px 3px rgba(0,0,0,0.5)',
-                border: '0.5px solid #d9d9d9',
+                border: props.theme == 'light' ? `1px solid ${Colors.gray1}` : `1px solid ${Colors.dark4}`,
+                // border: '1px solid',
                 cursor: 'pointer'
             }}
             onClick={onClick}
@@ -106,8 +106,8 @@ export default function CustomSlider({ children, slidesCount, slidesCountTablet,
     };
     return (
         <>
-            <div className="imgslider">
-                <Slider {...settings}>
+            <div className="row p-0 imgslider">
+                <Slider className='p-0' {...settings}>
                     {children}
                 </Slider>
             </div>

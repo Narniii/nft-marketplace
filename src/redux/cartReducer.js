@@ -1,4 +1,4 @@
-import { ADD_TO_CART, DECREMENT_QUANTITY, INCREMENT_QUANTITY, REMOVE_FROM_CART, EMPTY_CART } from "./actions";
+import { ADD_TO_CART, DECREMENT_QUANTITY, INCREMENT_QUANTITY, REMOVE_FROM_CART, EMPTY_CART, SET_CART } from "./actions";
 // src/redux/cartSlice.js
 import { createSlice } from '@reduxjs/toolkit';
 
@@ -10,7 +10,7 @@ import { createSlice } from '@reduxjs/toolkit';
 //     reducers: {
 //         addToCart: (state, action) => {
 //             console.log(state.cart)
-//             const itemInCart = state.cart.find((item) => item.id === action.payload.id);
+//             const itemInCart = state.cart.find((item) => item.id === action.payload.nft_id);
 //             if (itemInCart) {
 //                 itemInCart.quantity++;
 //             } else {
@@ -62,7 +62,7 @@ function cartReducer(state = initialState, action) {
             //     products: [],
             // };
             // cart = state.products
-            var itemInCart = cart.find((item) => item.id === action.payload.id);
+            var itemInCart = cart.find((item) => item.nft_id === action.payload.nft_id);
             if (itemInCart) {
                 var index = cart.indexOf(itemInCart)
                 // console.log(index, cart[index])
@@ -70,7 +70,7 @@ function cartReducer(state = initialState, action) {
                 itemInCart.quantity++;
             } else {
                 cart.push({ ...action.payload, quantity: 1 });
-                // cart.push({ id: action.payload.id, quantity: 1 });
+                // cart.push({ id: action.payload.nft_id, quantity: 1 });
             }
             // return state;
             return {
@@ -84,79 +84,45 @@ function cartReducer(state = initialState, action) {
             // if (index > -1) { // only splice array when item is found
             //     cart.splice(index, 1); // 2nd parameter means remove one item only
             // }
-            const removeItem = cart.filter((item) => item.id !== action.payload.id);
+            console.log(action.payload)
+            const removeItem = cart.filter((item) => item.nft_id !== action.payload.nft_id);
             cart = removeItem;
             console.log(state)
             return {
                 ...state,
                 products: cart
             };
-        // return {
-        //     ...state,
-        //     products: state.products.map(product =>
-        //         product.id === action.payload.id
-        //             ? { ...product, selected: false, quantity: 1 }
-        //             : product,
-        //     ),
-        // };
         case INCREMENT_QUANTITY:
             // cart = state.products
-            const ItemI = cart.find((item) => item.id === action.payload.id);
+            const ItemI = cart.find((item) => item.nft_id === action.payload.nft_id);
             ItemI.quantity++;
             // return state;
             return {
                 ...state,
                 products: cart
             };
-        // return {
-        //     ...state,
-        //     products: state.products.map(product =>
-        //         product.id === action.payload.id
-        //             ? { ...product, quantity: product.quantity + 1 }
-        //             : product,
-        //     ),
-        // };
-
         case DECREMENT_QUANTITY:
-            // cart = state.products
-            const item = cart.find((item) => item.id === action.payload.id);
+            const item = cart.find((item) => item.nft_id === action.payload.nft_id);
             if (item.quantity === 1) {
                 item.quantity = 1
             } else {
                 item.quantity--;
             }
-            // return state;
-
             return {
                 ...state,
                 products: cart
             };
-
-        // return {
-        //     ...state,
-        //     products: state.products.map(product =>
-        //         product.id === action.payload.id
-        //             ? {
-        //                 ...product,
-        //                 quantity: product.quantity !== 1 ? product.quantity - 1 : 1,
-        //             }
-        //             : product,
-        //     ),
-        // };
         case EMPTY_CART:
             cart = []
             return {
                 ...state,
                 products: cart
             };
-        // return {
-        //     ...state,
-        //     products: state.products.map(product =>
-        //         product.selected
-        //             ? { ...product, selected: false, quantity: 1 }
-        //             : product,
-        //     ),
-        // };
+        case SET_CART:
+            return {
+                ...state,
+                products: action.payload
+            };
 
         default:
             return state;

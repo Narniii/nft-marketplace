@@ -54,10 +54,11 @@ export const lightTheme = {
     itemCardsBackground: '#FFFFFF',
     par: Colors.gray5,
     info: Colors.gray8,
+    titleInformation: Colors.gray8,
 
     boxShadow: '0px 3px 10px rgba(0, 0, 0, 0.07)',
     deeperBoxShadow: '0px 0px 14px rgba(0, 0, 0, 0.1)',
-    hoverBoxShadow:"0px 6px 20px rgba(0, 0, 0, 0.12)",
+    hoverBoxShadow: "0px 6px 20px rgba(0, 0, 0, 0.12)",
 
     collectionCard: '#ffffff',
     collectionCardHover: Colors.gray0,
@@ -77,7 +78,7 @@ export const lightTheme = {
     collectionDetailsTitle: Colors.gray4,
     collectionDetailsAnswer: Colors.gray8,
 
-    searchBoxBorder: window.location.pathname == "/" ? "1px solid white" : "none",
+    searchBoxBorder: window.location.pathname == "/" ? `1px solid ${Colors.gray2}` : "none",
     // searchBoxShadow: window.location.pathname !== '/' ? 'inset 0px 0px 4px rgba(0, 0, 0, 0.2)' : "unset",
     searchBoxShadow: 'inset 0px 0px 4px rgba(0, 0, 0, 0.2)',
     inputBox: Colors.gray1,
@@ -86,6 +87,7 @@ export const lightTheme = {
     categoryDetNum: Colors.gray8,
 
     profileBorder: `1px solid ${Colors.gray2}`,
+    collectionBorder: `1px solid ${Colors.gray2}`,
 
     activeTab: Colors.gray1,
     hoverIcon: "#d9d9d9",
@@ -95,7 +97,7 @@ export const lightTheme = {
 
     toggleBGLD: Colors.gradientOrange,
 
-    textSub: Colors.gray6,
+    textSub: Colors.gray4,
 
     addProPic: Colors.gray0,
     addProPicBorder: `1px solid ${Colors.gray2}`,
@@ -107,6 +109,7 @@ export const lightTheme = {
     polyBG: '#ffffff',
     polyBX: ' inset 0px 4px 9px rgba(0, 0, 0, 0.12), inset 0px 0px 27px rgba(72, 72, 72, 0.17)',
 
+    catImgBorder: `3px solid white`
 
 
 }
@@ -151,13 +154,14 @@ export const darkTheme = {
     titleColor: Colors.dark3,
 
     par: Colors.gray2,
-    itemCardsBackground: Colors.dark3,
+    itemCardsBackground: Colors.dark2,
     info: Colors.gray3,
+    titleInformation: Colors.gray1,
 
     // boxShadow: '0px 3px 4px rgba(190, 138, 255, 0.32)',
     boxShadow: '0px 3px 10px rgba(0, 0, 0, 0.07)',
     deeperBoxShadow: '0px 0px 14px rgba(190, 138, 255, 0.32)',
-    hoverBoxShadow:"0px 3px 4px rgba(190, 138, 255, 0.32)",
+    hoverBoxShadow: "0px 3px 4px rgba(190, 138, 255, 0.32)",
 
 
 
@@ -181,7 +185,7 @@ export const darkTheme = {
     collectionDetailsAnswer: Colors.gray0,
 
 
-    searchBoxBorder: 'solid 1px #e6e6e6',
+    searchBoxBorder: `solid 1px ${Colors.gray2}`,
     searchBoxShadow: 'unset',
 
     inputBox: Colors.gray4,
@@ -190,6 +194,7 @@ export const darkTheme = {
     categoryDetNum: '#F9F9F9',
 
     profileBorder: `1px solid ${Colors.dark4}`,
+    collectionBorder: `1px solid ${Colors.dark1}`,
     activeTab: Colors.dark4,
 
     // selectionBorder:"1px solid #D9D9D9"
@@ -212,5 +217,8 @@ export const darkTheme = {
 
     polyBG: Colors.dark2,
     polyBX: '0px 0px 4px rgba(190, 138, 255, 0.32)',
+
+    catImgBorder: `3px solid ${Colors.dark2}`
+
 
 }

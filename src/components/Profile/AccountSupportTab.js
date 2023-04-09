@@ -1,5 +1,16 @@
 import { Accordion, AccordionDetails, AccordionSummary, Typography } from "@mui/material";
 import { ArrowDown2 } from "iconsax-react";
+import styled from "styled-components";
+
+const Contnr = styled.div`
+width:60%;
+@media screen and (max-width: 992px) {
+    width: 90%;
+};
+@media screen and (max-width: 575px) {
+    width: 100%;
+};
+`
 
 const AccountSupport = ({ theme }) => {
     return (

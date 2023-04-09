@@ -25,10 +25,10 @@ const HeaderDiv = styled.div`
   background-position:center;
   // position:absolute;
   // top:0;
-  @media screen and (max-width: 768px) {
+  @media screen and (max-width: 992px) {
     padding:0 24px;
   };
-  @media screen and (max-width: 600px) {
+  @media screen and (max-width: 575px) {
     padding:0 16px;
   }  
   text-transform:${Colors.bodyFont};
@@ -36,16 +36,25 @@ const HeaderDiv = styled.div`
 const Title = styled.h2`
   color: ${({ theme }) => theme.titleColor};
   font-weight:bold;
+  margin-bottom:20px;
 `;
 const Titler = styled.h3`
   color: ${({ theme }) => theme.titlerColor};
   // margin:0 auto;
   font-weight:600;
+  @media screen and (max-width: 1200px) {
+    font-size:22px;
+  }  
+
 `;
 const Par = styled.p`
   color: ${({ theme }) => theme.par};
   margin:0;
   padding:0 5%;
+  @media screen and (max-width: 1200px) {
+    font-size:14px;
+  }  
+
 
 `;
 const StyledBox = styled.div`
@@ -57,6 +66,7 @@ const StyledBox = styled.div`
   // position:absolute,
   // bottom:0;
   // transform:translateY(-100px);
+
 `;
 
 const StyledPolygon = styled.div`
@@ -112,6 +122,7 @@ width:700px;
 const HolderHolder = styled.div`
 height:100%;
 width:100%;
+
 `
 const SvgPolygon = () => (
   <svg height="250" width="500">
@@ -150,13 +161,16 @@ const Header = ({ theme, themeToggler }) => {
         >
           <Navbar theme={theme} themeToggler={themeToggler} />
           <div className="d-flex justify-content-between pt-3" style={{ height: "80%" }}>
-            <div className="col-4 d-flex flex-column align-items-start justify-content-center align-self-center">
-              <Title>WELCOME TO DORTA CLUB</Title>
-              <p style={{ color: '#f9f9f9', textAlign: "justify" }}>A membership NFT give you early access to future JRNY NFT sets.exclusive NFT videos ,early access to partner NFT projects and more A membership NFT give you early access to future JRNY NFT sets.exclusive NFT videos ,early access to partner NFT projects and more
+            <div className="col-6 col-xl-5 d-flex flex-column align-items-start justify-content-center align-self-center">
+              <p className="mb-2" style={{ color: '#F0E4FF' }}>BUY YOUR JRNY NFT AT DORTA</p>
+              <Title >WELCOME TO DORTA CLUB</Title>
+              <p style={{ color: '#f9f9f9', textAlign: "justify", fontSize: "14px" }} className="mb-5 d-none d-lg-block d-xl-none">A membership NFT give you early access to future JRNY NFT sets.exclusive NFT videos ,early access to partner NFT projects and more A membership NFT give you early access to future JRNY NFT sets.exclusive NFT videos ,early access to partner NFT projects and more
+              </p>
+              <p style={{ color: '#f9f9f9', textAlign: "justify", fontSize: "16px" }} className="mb-5 d-none d-xl-block">A membership NFT give you early access to future JRNY NFT sets.exclusive NFT videos ,early access to partner NFT projects and more A membership NFT give you early access to future JRNY NFT sets.exclusive NFT videos ,early access to partner NFT projects and more
               </p>
               <ButtonLarge onClick={walletDrawer('right', true)}>Connect Wallet</ButtonLarge>
             </div>
-            <div className="col-4  p-0">
+            <div className="col-5  p-0">
               <HeaderImg />
             </div>
           </div>
@@ -165,32 +179,18 @@ const Header = ({ theme, themeToggler }) => {
           <StyledBox
             className="w-100 d-none d-lg-flex flex-column align-items-center justify-content-center justify-self-center position-absolute start-50 translate-middle"
           >
-            {/* <div className="col-12"></div> */}
-            {/* <filter id="round"> */}
-            {/* <StyledPolygon className="text-center d-flex flex-column justify-content-center pt-5">
-              <Titler className="mb-3">what is an nft?</Titler>
-              <Par>An NFT is a digital asset that can come in the form of art, music, in-game items, videos, and more. They are bought and sold online, frequently with cryptocurrency, and they are generally encoded with the same underlying software as many cryptos.
-                Although they’ve been around since 2014, NFTs are gaining notoriety now because they are becoming an increasingly popular way to buy and sell digital artwork. </Par>
-            </StyledPolygon> */}
-            <img src={theme == 'light' ? RectLight : RectDark} style={{ width: "100%", height: "100%", }}>
+            <img src={theme == 'light' ? RectLight : RectDark} style={{
+              width: "100%", height: "100%", boxShadow: theme == 'light' ? 'unset' : '15px 20px 40px -30px rgba(190,138,255,0.6)',
+              borderRadius: '64px',
+            }}>
             </img>
             <HolderHolder className="p-relative">
               <Holder className="d-none d-md-flex flex-column align-items-center justify-content-center justify-self-center position-absolute start-50 translate-middle">
-                <Titler className="mb-3">what is an nft?</Titler>
+                <Titler className="mb-3">What Is An NFT?</Titler>
                 <Par>An NFT is a digital asset that can come in the form of art, music, in-game items, videos, and more. They are bought and sold online, frequently with cryptocurrency, and they are generally encoded with the same underlying software as many cryptos.
                   Although they’ve been around since 2014, NFTs are gaining notoriety now because they are becoming an increasingly popular way to buy and sell digital artwork. </Par>
               </Holder>
             </HolderHolder>
-            {/* </filter> */}
-            {/* <StyledBox
-              className="position-absolute start-50 translate-middle"
-            > */}
-            {/* <StyledPolygon className="row pt-5 px-5 align-content-center"> */}
-            {/* <img src="/assets/rectangle-dark.svg" style={{width:"100%",height:"100%"}} alt="dorta" /> */}
-            {/* <div className="text-center px-5" > */}
-            {/* </div> */}
-            {/* </StyledPolygon> */}
-            {/* </StyledBox> */}
           </StyledBox>
         </HeaderDiv>
       </div >
@@ -211,9 +211,10 @@ const Header = ({ theme, themeToggler }) => {
             style={{ padding: "80px 0" }}
           >
             <div className="col-6 row align-items-center align-self-center ">
+              <p className="mb-2" style={{ color: '#F0E4FF' }}>BUY YOUR JRNY NFT AT DORTA</p>
               <Title>WELCOME TO DORTA CLUB</Title>
               <p
-                style={{ color: '#f9f9f9', textAlign: "justify" }}
+                style={{ color: '#f9f9f9', textAlign: "justify", fontSize: "14px" }}
               // onClick={() => add({ price: '0.2', name: 'Number', id: '555' })}
               >A membership NFT give you early access to future JRNY NFT sets.exclusive NFT videos ,early access to partner NFT projects and more A membership NFT give you early access to future JRNY NFT sets.exclusive NFT videos ,early access to partner NFT projects and more
               </p>
@@ -240,14 +241,19 @@ const Header = ({ theme, themeToggler }) => {
       <div className="d-block d-sm-none">
         <HeaderDiv>
           <Navbar theme={theme} themeToggler={themeToggler} />
-          <div style={{ padding: "20px 0" }} className="d-flex justify-content-between">
-            <div className="col-9 d-flex flex-column align-items-start align-self-center">
-              <Title style={{ fontSize: "14px" }}>WELCOME TO DORTA CLUB</Title>
-              <p className="d-block d-sm-none text-justify" style={{ color: '#f9f9f9', textAlign: "justify" }}>A membership NFT give you early access to future</p>
+          <div style={{ padding: "35px 0" }} className="d-flex justify-content-between">
+            <div className="col-12 d-flex flex-column align-items-center align-self-center">
+              <p className="mb-2" style={{ color: '#F0E4FF', fontSize: "14px" }}>BUY YOUR JRNY NFT AT DORTA</p>
+              <Title className="m-0" style={{ fontSize: "20px" }}>WELCOME TO DORTA CLUB</Title>
+              <div className="col-3 p-0 my-4" style={{ height: '120px' }}>
+                <HeaderImg />
+              </div>
+              <p className="d-block d-sm-none text-justify mb-4" style={{ color: '#f9f9f9', textAlign: "center", fontSize: "14px" }}>A membership NFT give you early access to future JRNY NFT sets.exclusive NFT videos ,early access to partner NFT projects and more A membership NFT give you early access to future JRNY NFT sets.exclusive NFT videos ,early access to partner NFT projects and more</p>
               {/* <ButtonSmall>Connect Wallet</ButtonSmall> */}
-            </div>
-            <div className="col-3 p-0">
-              <HeaderImg />
+              <ButtonLarge
+                onClick={walletDrawer('bottom', true)}
+              >Connect Wallet</ButtonLarge>
+
             </div>
           </div>
 

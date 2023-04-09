@@ -12,6 +12,7 @@ export const Colors = {
     gradientPurpleStandard: 'linear-gradient(276.27deg, #580DB7 0%, #AB69FF 82.5%)',
     gradientBlue: 'linear-gradient(180deg, #509FFF 0%, #3C87E2 40.1%, #03418C 100%)',
     gradientOrange: 'linear-gradient(134.12deg, #F9CA13 21.12%, #FABF10 43.26%, #FF8A00 83.64%)',
+    gradiantGray: 'linear-gradient(90deg, #767676 2.08%, #A9A9A9 47.4%, #D2D2D2 100%)',
 
     gray0: '#F9F9F9',
     gray1: '#e6e6e6',
@@ -33,7 +34,7 @@ export const Colors = {
     successMain: '#53D769',
     successDark: '#46C263',
 
-    errorLight: '#FFC1BF',
+    errorLight: '#FFF1F1',
     errorMain: '#FC3D39',
     errorDark: '#E80500',
 

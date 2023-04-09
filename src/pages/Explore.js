@@ -15,6 +15,7 @@ import { Skeleton, Typography } from '@mui/material';
 import { Colors } from '../components/design/Colors';
 import ImgHd from '../assets/explore-pic.svg'
 import CategoryTabs from '../components/Explore/CategoryTabs';
+import { categories } from '../utils/Categories';
 
 const HeaderContainer = styled.div`
     background-color: ${({ theme }) => theme.collectionCardHover};
@@ -61,7 +62,11 @@ const Explore = ({ theme, themeToggler }) => {
     const [collections, setCollections] = useState(undefined)
     const [err, setErr] = useState(undefined)
     const [selectedCategory, setSelectedCategory] = useState(undefined)
+    const [fetchedCategories, setFetchedCategories] = useState([])
+
+    const [tab, setTab] = useState(window.location.hash ? window.location.hash.replace('#', '') : "trending")
     useEffect(() => {
+        fetchCategories()
         fetchCollections()
         return () => {
             if (apiCall.current != undefined)
@@ -69,29 +74,43 @@ const Explore = ({ theme, themeToggler }) => {
 
         }
     }, [])
+    const fetchCategories = async () => {
+        let tempCatArr = []
+        for (var c = 0; c < categories.length; c++) {
+            tempCatArr.push(categories[c].title)
+        }
+        setFetchedCategories(tempCatArr)
+    }
+
 
     const fetchCollections = async () => {
-        try {
-            apiCall.current = MARKET_API.request({
-                path: `/collection/all/?from=0&to=10`,
-                method: "get",
-            })
-            const response = await apiCall.current.promise;
-            if (!response.isSuccess)
-                throw response
-            setCollections(response.data)
-            // setLoading(false)
-        }
-        catch (err) {
-            console.log(err)
-            if (err.data.message == "No NFT Collection Found") {
-                setCollections([])
+        var this_time = parseInt(new Date(Date.now()).getTime())
+        var to = this_time / 1000;
+        var from = undefined;
+
+        if (tab == 'trending' || tab == 'top')
+            try {
+                apiCall.current = MARKET_API.request({
+                    path: `/collection/trendings`,
+                    method: "post",
+                    body: { from: from ? from : null, to: to ? to : null, from_col: 0, to_col: 10, cat: '' },
+                });
+                const response = await apiCall.current.promise;
+                if (!response.isSuccess)
+                    throw response
+                setCollections(response.data)
+                // setLoading(false)
             }
-            else {
-                setErr("Internal server error")
+            catch (err) {
+                console.log(err)
+                if (err.status == 404) {
+                    setCollections([])
+                }
+                else if (err.status == 500) {
+                    setErr("Internal server error")
+                }
+                // setLoading(false)
             }
-            // setLoading(false)
-        }
     }
     useEffect(() => {
         if (collections)
@@ -104,7 +123,7 @@ const Explore = ({ theme, themeToggler }) => {
                 <Navbar theme={theme} themeToggler={themeToggler} />
             </div>
             <div className='w-100 d-flex flex-column'>
-                <HeaderContainer className='my-5 py-1 px-4'>
+                <HeaderContainer className='my-5 py-1 pdng'>
                     <Typography sx={{ fontWeight: 600, fontSize: { xs: '20px', sm: '36px' } }} variant='h1'>Explore</Typography>
                     <ImageH />
                 </HeaderContainer>
@@ -113,9 +132,24 @@ const Explore = ({ theme, themeToggler }) => {
                         fill
                         // justify
                         defaultActiveKey={window.location.hash ? window.location.hash.replace('#', '') : "trending"}
-                        className="m-0 mb-3 tab-scroll"
-                        style={{ color: theme === 'light' ? "#5D3393" : "#DABDDF", borderColor: theme === 'light' ? "#5D3393" : "#DABDDF", borderBottom: "none" }}
+                        className="m-0 mb-5 tab-scroll"
+                        style={{
+                            color: theme === 'light' ? "#5D3393" : "#DABDDF",
+                            borderColor: theme === 'light' ? "#5D3393" : "#DABDDF",
+                            borderBottom: "none"
+                        }}
+                        onSelect={(e) => setTab(e)}
+
                     >
+                        {/* {fetchedCategories.length == 0 ? <></> : <>
+                            {fetchedCategories.map((category) => {
+                                return <Tab eventKey={category.title} title={category.title}>
+                                    <CategoryTabs category={category.title} />
+                                </Tab>
+                            })}
+                        </>} */}
+
+
                         <Tab eventKey="trending" title="Trending">
                             <div className="row flex-wrap p-0">
                                 {loading ?
@@ -137,7 +171,7 @@ const Explore = ({ theme, themeToggler }) => {
                                             :
                                             <>
                                                 {collections.map((collection) => {
-                                                    return <CollectionCard id={collection._id.$oid} slider={false} collectionBanner={collection.banner_image_path} collectionLogo={collection.logo_path} collectionCreator={collection.creator} collectionName={collection.title} royalty={collection.royalty} />
+                                                    return <CollectionCard collection={collection} explore={true} id={collection._id.$oid} slider={false} collectionBanner={collection.banner_image_path} collectionLogo={collection.logo_path} collectionCreator={collection.creator} collectionName={collection.title} royalty={collection.royalty} />
                                                 })}
                                             </>
                                         }
@@ -165,7 +199,7 @@ const Explore = ({ theme, themeToggler }) => {
                                             :
                                             <>
                                                 {collections.map((collection) => {
-                                                    return <CollectionCard id={collection._id.$oid} slider={false} collectionBanner={collection.banner_image_path} collectionLogo={collection.logo_path} collectionCreator={collection.creator} collectionName={collection.title} royalty={collection.royalty} />
+                                                    return <CollectionCard collection={collection} explore={true} id={collection._id.$oid} slider={false} collectionBanner={collection.banner_image_path} collectionLogo={collection.logo_path} collectionCreator={collection.creator} collectionName={collection.title} royalty={collection.royalty} />
                                                 })}
                                             </>
                                         }
@@ -173,28 +207,28 @@ const Explore = ({ theme, themeToggler }) => {
                                 }
                             </div>
                         </Tab>
+
                         <Tab eventKey="art" title="Art">
-                            <CategoryTabs category={'art'} />
+                            <CategoryTabs tab={tab} category={'art'} />
                         </Tab>
                         <Tab eventKey="collectibles" title="Collectibles">
-                            <CategoryTabs category={'collectibles'} />
+                            <CategoryTabs tab={tab} category={'collectibles'} />
                         </Tab>
                         <Tab eventKey="music" title="Music">
-                            <CategoryTabs category={'music'} />
+                            <CategoryTabs tab={tab} category={'music'} />
                         </Tab>
                         <Tab eventKey="photography" title="Photography">
-                            <CategoryTabs category={'photography'} />
+                            <CategoryTabs tab={tab} category={'photography'} />
                         </Tab>
                         <Tab eventKey="sport" title="Sports">
-                            <CategoryTabs category={'sport'} />
+                            <CategoryTabs tab={tab} category={'sport'} />
                         </Tab>
-                        {/* <Tab eventKey="Trading Cards" title="Trading Cards"> */}
-                        {/* </Tab> */}
                         <Tab eventKey="utility" title="Utility">
-                            <CategoryTabs category={'utility'} />
+                            <CategoryTabs tab={tab} category={'utility'} />
                         </Tab>
-                        {/* <Tab eventKey="Virtual Worlds" title="Virtual Worlds"> */}
-                        {/* </Tab> */}
+                        <Tab eventKey="animals" title="Animals">
+                            <CategoryTabs tab={tab} category={'animals'} />
+                        </Tab>
                     </Tabs>
                 </div>
             </div>
@@ -202,4 +236,4 @@ const Explore = ({ theme, themeToggler }) => {
     );
 }
 
-export default Explore; <></>
+export default Explore;

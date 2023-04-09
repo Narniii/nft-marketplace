@@ -12,9 +12,12 @@ box-shadow:${({ theme }) => theme.searchBoxShadow};
 border-radius:30px;
 background:transparent;
 width:60%;
-@media screen and (max-width: 600px) {
-  width:100%;
-}
+@media screen and (max-width: 992px) {
+    width: 90%;
+};
+@media screen and (max-width: 575px) {
+    width: 100%;
+};
 `;
 const ButtonHolder = styled.div`
 width:60%;
@@ -33,7 +36,7 @@ const ProfileDetails = ({ globalUser, user, setUser, avatar, banner }) => {
 
     useEffect(() => {
         if (user) {
-            setExtras(user.extra)
+            setExtras(JSON.parse(user.extra))
             setLoading(false)
         }
     }, [user])
@@ -106,6 +109,10 @@ const ProfileDetails = ({ globalUser, user, setUser, avatar, banner }) => {
         formData.append('description', user.description);
         console.log(extras)
         console.log(JSON.stringify(extras))
+        var ex = {}
+        ex.email = 'nar@g.com'
+        console.log(ex)
+        console.log(JSON.stringify(ex))
         formData.append('extra', JSON.stringify(extras));
 
         try {
@@ -183,7 +190,7 @@ const ProfileDetails = ({ globalUser, user, setUser, avatar, banner }) => {
                             sx={{ color: "inherit", width: "100%", height: "100%" }}
                             name="email"
                             onChange={AddtoExtras}
-                            placeholder={user.extra.email ? user.extra.email : "example@gmail.com"}
+                            placeholder={extras.email ? extras.email : "example@gmail.com"}
                             inputProps={{ 'aria-label': 'enter email' }}
                         />
                     </div>
@@ -198,7 +205,7 @@ const ProfileDetails = ({ globalUser, user, setUser, avatar, banner }) => {
                             sx={{ color: "inherit", width: "100%", height: "100%" }}
                             name="link"
                             onChange={AddtoExtras}
-                            placeholder={user.extra.link ? user.extra.link : "example.com"}
+                            placeholder={extras.link ? extras.link : "example.com"}
                             inputProps={{ 'aria-label': 'enter link' }}
                         />
                     </div>
@@ -212,6 +219,7 @@ const ProfileDetails = ({ globalUser, user, setUser, avatar, banner }) => {
                             name="wallet_address"
                             disabled
                             placeholder={globalUser.walletAddress}
+                            value={globalUser.walletAddress}
                             inputProps={{ 'aria-label': 'enter email' }}
                         />
                     </div>

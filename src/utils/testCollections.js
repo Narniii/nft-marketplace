@@ -12,7 +12,7 @@ export const TestColls = {
                 category: 'animal',
                 created_at: '',
                 royalty: 8,
-                logo_path:"/root/NFTMarketplace-Backend/market/media/logo_1676799651.729938MetaMask_Fox.svg.png",
+                logo_path:"/root/dortzio/market/media/logo_1676799651.729938MetaMask_Fox.svg.png",
             },
             {
                 title: 'cats',
@@ -25,7 +25,7 @@ export const TestColls = {
                 category: 'animal',
                 created_at: '',
                 royalty: 15,
-                logo_path:"/root/NFTMarketplace-Backend/market/media/logo_1676799651.729938MetaMask_Fox.svg.png",
+                logo_path:"/root/dortzio/market/media/logo_1676799651.729938MetaMask_Fox.svg.png",
             },
             {
                 title: 'airplanes',
@@ -38,7 +38,7 @@ export const TestColls = {
                 category: 'utilities',
                 created_at: '',
                 royalty: 10,
-                logo_path:"/root/NFTMarketplace-Backend/market/media/logo_1676799651.729938MetaMask_Fox.svg.png",
+                logo_path:"/root/dortzio/market/media/logo_1676799651.729938MetaMask_Fox.svg.png",
             },
             {
                 title: 'flowers',
@@ -51,7 +51,7 @@ export const TestColls = {
                 category: 'nature',
                 created_at: '',
                 royalty: 5,
-                logo_path:"/root/NFTMarketplace-Backend/market/media/logo_1676799651.729938MetaMask_Fox.svg.png",
+                logo_path:"/root/dortzio/market/media/logo_1676799651.729938MetaMask_Fox.svg.png",
             },
             {
                 title: 'designs',
@@ -64,7 +64,7 @@ export const TestColls = {
                 category: 'art',
                 created_at: '',
                 royalty: 7,
-                logo_path:"/root/NFTMarketplace-Backend/market/media/logo_1676799651.729938MetaMask_Fox.svg.png",
+                logo_path:"/root/dortzio/market/media/logo_1676799651.729938MetaMask_Fox.svg.png",
             },
             {
                 title: 'airplanes',
@@ -77,7 +77,7 @@ export const TestColls = {
                 category: 'utilities',
                 created_at: '',
                 royalty: 9,
-                logo_path:"/root/NFTMarketplace-Backend/market/media/logo_1676799651.729938MetaMask_Fox.svg.png",
+                logo_path:"/root/dortzio/market/media/logo_1676799651.729938MetaMask_Fox.svg.png",
             },
             {
                 title: 'flowers',
@@ -90,7 +90,7 @@ export const TestColls = {
                 category: 'nature',
                 created_at: '',
                 royalty: 2,
-                logo_path:"/root/NFTMarketplace-Backend/market/media/logo_1676799651.729938MetaMask_Fox.svg.png",
+                logo_path:"/root/dortzio/market/media/logo_1676799651.729938MetaMask_Fox.svg.png",
             },
             {
                 title: 'designs',
@@ -103,7 +103,7 @@ export const TestColls = {
                 category: 'art',
                 created_at: '',
                 royalty: 6,
-                logo_path:"/root/NFTMarketplace-Backend/market/media/logo_1676799651.729938MetaMask_Fox.svg.png",
+                logo_path:"/root/dortzio/market/media/logo_1676799651.729938MetaMask_Fox.svg.png",
             },
             {
                 title: 'cats',
@@ -116,7 +116,7 @@ export const TestColls = {
                 category: 'animal',
                 created_at: '',
                 royalty: 4,
-                logo_path:"/root/NFTMarketplace-Backend/market/media/logo_1676799651.729938MetaMask_Fox.svg.png",
+                logo_path:"/root/dortzio/market/media/logo_1676799651.729938MetaMask_Fox.svg.png",
             },
             {
                 title: 'airplanes',
@@ -129,7 +129,7 @@ export const TestColls = {
                 category: 'utilities',
                 created_at: '',
                 royalty: 5,
-                logo_path:"/root/NFTMarketplace-Backend/market/media/logo_1676799651.729938MetaMask_Fox.svg.png",
+                logo_path:"/root/dortzio/market/media/logo_1676799651.729938MetaMask_Fox.svg.png",
             },
 
         ]

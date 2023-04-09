@@ -8,6 +8,9 @@ import { useEffect, useState } from "react";
 import ItemCard from "../Cards/ItemCard";
 import { Colors } from "../design/Colors";
 import TestPic1 from '../../assets/test-1.png'
+import volumePic from '../../assets/analytics-volume.svg'
+import floorPic from '../../assets/analytics-floorPrice.svg'
+import salePic from '../../assets/analytics-sale.svg'
 import SSelection from "../Selection";
 import { Filtering } from "../Filtering";
 
@@ -91,7 +94,7 @@ border-radius:24px;
 background-color:${({ theme }) => theme.itemCardsBackground};
 box-shadow:${({ theme }) => theme.boxShadow};
 `
-const CollectionAnalyticsTab = ({ theme }) => {
+const CollectionAnalyticsTab = ({ theme , tab }) => {
     const [loading, setLoading] = useState(true)
     const [openFilter, setOpenFilter] = useState(false)
     const handleFilter = () => {
@@ -117,58 +120,31 @@ const CollectionAnalyticsTab = ({ theme }) => {
                             <Subtitle style={{ fontSize: "20px" }}><Num>175 </Num>ETH</Subtitle>
                             <div className="d-flex align-items-center"><ArrowSquareUp variant="Bulk" color={`${Colors.successDark}`} size="20" /> <Perc>+150%</Perc></div>
                         </div>
-                        <ImgB />
+                        <ImgB style={{backgroundImage:`url(${volumePic})`}} />
                     </Card>
                 </div>
                 <div className="col-12 col-sm-6 col-md-4">
                     <Card className="m-1">
                         <div className="d-flex flex-column justify-content-between">
-                            <Subtitle style={{ fontSize: "14px" }}>Volume</Subtitle>
+                            <Subtitle style={{ fontSize: "14px" }}>Sale</Subtitle>
                             <Subtitle style={{ fontSize: "20px" }}><Num>175 </Num>ETH</Subtitle>
                             <div className="d-flex align-items-center"><ArrowSquareUp variant="Bulk" color={`${Colors.successDark}`} size="20" /> <Perc>+150%</Perc></div>
                         </div>
-                        <ImgB />
+                        <ImgB style={{backgroundImage:`url(${salePic})`}} />
                     </Card>
                 </div>
                 <div className="col-12 col-sm-6 col-md-4">
                     <Card className="m-1">
                         <div className="d-flex flex-column justify-content-between">
-                            <Subtitle style={{ fontSize: "14px" }}>Volume</Subtitle>
+                            <Subtitle style={{ fontSize: "14px" }}>Floor Price</Subtitle>
                             <Subtitle style={{ fontSize: "20px" }}><Num>175 </Num>ETH</Subtitle>
                             <div className="d-flex align-items-center"><ArrowSquareUp variant="Bulk" color={`${Colors.successDark}`} size="20" /> <Perc>+150%</Perc></div>
                         </div>
-                        <ImgB />
+                        <ImgB style={{backgroundImage:`url(${floorPic})`}} />
                     </Card>
                 </div>
             </div>
-            {/* <div className="mb-4 row w-100 p-0 justify-content-between align-items-center">
-                <div className="col-8 col-sm-4 col-md-5"><SearchBox /></div>
-                <div className="d-none d-sm-block col-4 col-md-3">
-                    <div className="mx-1">
-                        <SSelection width={'100%'} theme={theme} tabs={['price high to low', 'price low to high',]} />
-                    </div>
-                </div>
-                <div className="d-none d-sm-block col-3">
-                    <Selection className="mx-1 d-flex ">
-                        <IconContainer className="col-3 p-2 text-center d-flex justify-content-center align-items-center" ><HambergerMenu /></IconContainer>
-                        <IconContainer className="col-3 p-2 text-center d-flex justify-content-center align-items-center" ><Grid1 /></IconContainer>
-                        <IconContainer className="col-3 p-2 text-center d-flex justify-content-center align-items-center" ><Grid2 /></IconContainer>
-                        <IconContainer className="col-3 p-2 text-center d-flex justify-content-center align-items-center" ><Grid5 /></IconContainer>
-                    </Selection>
-                </div>
-                <div className="d-block d-sm-none col-2 col-sm-1">
-                    <Selection className="mx-1 d-flex p-2 d-flex justify-content-center">
-                        <div style={{ width: "auto" }}><ArrowSwapVertical /></div>
-                    </Selection>
-                </div>
-                <div className="col-2 col-sm-1">
-                    <Selection className="mx-1 d-flex p-2 d-flex justify-content-center">
-                        <div style={{ width: "auto" }} onClick={handleFilter}><FilterSearch size="20" /></div>
-                    </Selection>
-                </div>
-            </div> */}
-
-            <Filtering id={'colAnalyticsSearch'} theme={theme} handleFilter={handleFilter} handleViewChange={handleViewChange} selectOptions={['last 7 days','last 30 days','last year']}/>
+            <Filtering view={view} selectionId={'collection-analytics'} id={'colAnalyticsSearch'} theme={theme} handleFilter={handleFilter} handleViewChange={handleViewChange} selectOptions={['last 7 days','last 30 days','last year']}/>
 
 
             <div className="d-flex justify-content-between w-100">

@@ -5,8 +5,19 @@ import { Colors } from "../design/Colors";
 
 const Card = styled.div`
 // border:1px solid white;
-height: 200px;
+height: 250px;
 width:100%;
+padding-left:12px;
+padding-right:12px;
+@media screen and (max-width: 992px) {
+    padding-left:8px;
+    padding-right:8px;
+}
+@media screen and (max-width: 575px) {
+    padding-left:8px;
+    padding-right:8px;
+}
+
 `
 const OuterDiv = styled.div`
 background: ${Colors.gradientPurpleStandard};
@@ -26,12 +37,12 @@ overflow:hidden;
 z-index:0;
 // position:relative;
 border-radius: 24px;
-text-transform:${Colors.subtitleFont};
+text-transform:${Colors.body};
 `
 
 const Imagebg = styled.div`
 height: 100%;
-background-size:contain;
+// background-size:contain;
 background-repeat:no-repeat;
 background-position:center;
 // z-index:2;
@@ -43,13 +54,13 @@ const ShadowedDiv = styled.div`
 width:100%;
 // z-index:1;
 height: 100%;
-background: linear-gradient(357.7deg, #4C1593 1.45%, rgba(72, 15, 145, 0) 30.57%);`
+background: linear-gradient(357.57deg, #4C1593 14.65%, rgba(72, 15, 145, 0) 25.82%,rgba(72, 15, 145, 0) 97.28%);
+`
 
-const InfoCard = ({ image, slider, title, id }) => {
-    // console.log(image)
+const InfoCard = ({ image, slider, title, id, nextInfo }) => {
     return (
         <>{slider ?
-            <Card className="p-1 col-xs-12 col-sm-6 col-md-4 align-items-center align-self-center" >
+            <Card className=" col-xs-12 col-sm-6 col-md-4 align-items-center align-self-center" >
                 {/* <OuterDiv> */}
                 <Link to={'/' + 'info/' + id} style={{ textDecoration: "none", width: "auto", height: "auto" }}>
                     <InnerDiv>
@@ -60,10 +71,11 @@ const InfoCard = ({ image, slider, title, id }) => {
                                         width: "100%",
                                         // height:"50px"
                                         // border: "1px solid blue"
+                                        padding: "20px",
                                     }}
-                                    className="position-absolute bottom-0 p-3"
+                                    className="position-absolute bottom-0"
                                 >
-                                    <h5 style={{ margin: 0, color: "white", fontWeight: "600" }}>{title}</h5>
+                                    <h5 style={{ margin: 0, color: "white", fontWeight: 500 }}>{title}</h5>
                                 </div>
                             </ShadowedDiv>
                         </Imagebg>
@@ -73,7 +85,7 @@ const InfoCard = ({ image, slider, title, id }) => {
             </Card>
             :
             <div className="col-xs-12 col-sm-6 col-md-4 p-0">
-                <Card className="p-1 align-items-center align-self-center" >
+                <Card className=" align-items-center align-self-center" >
                     {/* <OuterDiv> */}
                     <Link to={'/' + 'info/' + id} style={{ textDecoration: "none", width: "auto", height: "auto" }}>
                         <InnerDiv>
@@ -84,10 +96,11 @@ const InfoCard = ({ image, slider, title, id }) => {
                                             width: "100%",
                                             // height:"50px"
                                             // border: "1px solid blue"
+                                            padding: "20px",
                                         }}
-                                        className="position-absolute bottom-0 p-3"
+                                        className="position-absolute bottom-0"
                                     >
-                                        <h5 style={{ margin: 0, color: "white", fontWeight: "600" }}>{title}</h5>
+                                        <h5 style={{ margin: 0, color: "white", fontWeight: 500 }}>{title}</h5>
                                     </div>
                                 </ShadowedDiv>
                             </Imagebg>

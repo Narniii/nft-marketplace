@@ -20,8 +20,8 @@ align-items:center;
 `;
 const Notification = ({ onClick }) => {
     return (
-        <Container className="p-1" onClick={onClick}>
-            <NotificationBing size="12" />
+        <Container className="py-1 px-2" onClick={onClick}>
+            <NotificationBing size="12" className="me-1" />
             <span>notification</span>
         </Container>
     );

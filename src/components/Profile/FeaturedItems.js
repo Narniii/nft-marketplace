@@ -5,6 +5,7 @@ import styled from "styled-components";
 import { MARKET_API } from "../../utils/data/market_api";
 import ItemCard from "../Cards/ItemCard";
 import { Colors } from "../design/Colors";
+import NoItemFound from "../NoItem";
 
 const Selection = styled.div`
 display: flex;
@@ -18,7 +19,6 @@ border-radius: 24px;
 overflow:hidden;
 height:100%;
 `;
-
 const IconContainer = styled.div`
 border-left: 1px solid #D9D9D9;
 height:100%;
@@ -27,7 +27,30 @@ padding:18px;
     background-color: ${({ theme }) => theme.hoverIcon};
 }
 `;
-const FeaturedItems = ({theme}) => {
+const Scrollable = styled.div`
+    // padding:20px 0;
+    overflow-x:scroll;
+    &::-webkit-scrollbar {
+        width: 3px;
+        height:5px;
+        background:white;
+        border-radius:20px !important;
+    }
+    &::-webkit-scrollbar-thumb {
+        height:3px;
+        background: ${Colors.primaryDark}; 
+        border-radius: 10px;
+    }
+    &::-webkit-scrollbar-button{
+        background:${Colors.primaryDark};
+        width:3px;
+        height:3px;
+        border-radius:50%;
+    }
+    `;
+
+const FeaturedItems = ({ theme, userWallet, tab }) => {
+    console.log(tab)
     const [view, setView] = useState('m')
     const handleViewChange = (v) => {
         setView(v)
@@ -37,48 +60,57 @@ const FeaturedItems = ({theme}) => {
     const [items, setItems] = useState(undefined)
     const [err, setErr] = useState(undefined)
     const [loading, setLoading] = useState(true)
+    const [sections, setSections] = useState(undefined)
+
+
     useEffect(() => {
-        fetchItems()
-        // return () => {
-        //     if (apiCall.current != undefined)
-        //         apiCall.current.cancel();
+        if (tab == 'featured')
+            fetchSections()
+        return () => {
+            if (apiCall.current != undefined)
+                apiCall.current.cancel();
 
-        // }
-    }, [])
+        }
+    }, [tab])
 
-    const fetchItems = async () => {
+    const fetchSections = async () => {
         try {
             apiCall.current = MARKET_API.request({
-                path: `/nft/all/?from=0&to=4`,
-                method: "get",
+                path: `/featured/get/all/users`,
+                method: "post",
+                body: {
+                    user_id: userWallet
+                }
             })
             const response = await apiCall.current.promise;
+            console.log(response)
             if (!response.isSuccess)
                 throw response
-            setItems(response.data)
-            console.log('reeeeee',response)
+            // setItems(response.data)
+            setSections(response.data)
             // setLoading(false)
         }
         catch (err) {
             console.log(err)
-            if (err.data.message == "No NFT Found") {
-                setItems([])
+            if (err.status == 404) {
+                setSections([])
             }
-            else {
+            else if (err.status == 500) {
+                console.log('error code 500')
                 setErr("Internal server error")
             }
             // setLoading(false)
         }
     }
     useEffect(() => {
-        if (items)
+        if (sections)
             setLoading(false)
-    }, [items])
+    }, [sections])
 
     return (
         <>
             <div className="d-flex flex-column">
-                <div className="d-flex justify-content-between align-items-center">
+                {/* <div className="d-flex justify-content-between align-items-center">
                     <h5 style={{ fontWeight: "bold" }}>Beans</h5>
                     <Selection className="d-flex">
                         <IconContainer className="text-center d-flex justify-content-center align-items-center" onClick={() => handleViewChange('xs')}><HambergerMenu size="20" /></IconContainer>
@@ -86,8 +118,8 @@ const FeaturedItems = ({theme}) => {
                         <IconContainer className="text-center d-flex justify-content-center align-items-center" onClick={() => handleViewChange('m')}><Grid2 size="20" /></IconContainer>
                         <IconContainer className="text-center d-flex justify-content-center align-items-center" onClick={() => handleViewChange('l')}><Grid5 size="20" /></IconContainer>
                     </Selection>
-                </div>
-                <div className="d-flex flex-wrap mt-2">
+                </div> */}
+                <div className="d-flex flex-wrap">
                     {loading ?
                         <>
                             <div className="col-12 col-sm-6 col-md-3 p-1">
@@ -105,12 +137,23 @@ const FeaturedItems = ({theme}) => {
                         </>
                         :
                         <>
-                            {items.length == 0 ?
-                                <Typography sx={{ color: `${Colors.primaryMain}`, textAlign: 'center' }}>No item found.</Typography>
+                            {sections.length == 0 ?
+                                <NoItemFound text={'no section found'} />
                                 :
                                 <>
-                                    {items.map((item) => {
-                                        return <ItemCard slider={false} view={view} itemImage={item.nft_image_path} itemID={item._id.$oid} theme={theme} name={item.title} price={item.price} creator={item.creator} />
+                                    {sections.map((section) => {
+                                        return (
+                                            <div className="d-flex flex-column w-100">
+                                                <Typography sx={{ fontWeight: 600 }}>{section.title}</Typography>
+                                                <Typography>{section.description !== ' ' ? section.description : undefined}</Typography>
+                                                {/* <div className="row p-0 w-100"> */}
+                                                <Scrollable className="d-flex p-0 w-100 mb-5">
+                                                    {section.nfts.map((item) => {
+                                                        return <ItemCard item={item} slider={false} view={'s'} itemImage={item.nft_image_path} itemID={item._id.$oid} theme={theme} name={item.title} price={item.price} creator={item.creator} />
+                                                    })}
+                                                </Scrollable>
+                                                {/* </div> */}
+                                            </div>)
                                     })}
                                 </>
                             }

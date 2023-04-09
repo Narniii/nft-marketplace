@@ -17,20 +17,34 @@ const InputBox = styled.div`
     width:auto;
     color: ${({ theme }) => theme.inputBox};
 `;
-const AddModals = ({ saveRoyalties, saveProperties, saveFunds, openRoyalties, openProperties, openFunds, handleClose, theme, prevProperties, prevRoyalties }) => {
+const AddModals = ({
+    openProperties,
+    saveProperties,
+    openRoyalties,
+    saveRoyalties,
+    openLevels,
+    saveLevels,
+    openStats,
+    saveStats,
+    prevProperties, prevRoyalties, prevLevels, prevStats,
+    handleClose, theme,
+}) => {
     const [properties, setProperties] = useState(prevProperties)
-    const [funds, setFunds] = useState([{ name: '', value: '', count: '' }])
+    const [levels, setLevels] = useState(prevLevels)
+    const [stats, setStats] = useState(prevStats)
     const [royalties, setRoyalties] = useState(prevRoyalties)
+
     function PropertyView({ property, setProperty, removeProperty }) {
+        console.log(property)
         return (
             <div className="d-flex justify-content-between mb-1">
                 <div className="d-flex flex-column col-7">
                     <InP className="d-flex p-2 me-2">
                         <InputBase
-                            value={property.name}
+                            value={property.name !== '' ? property.name : undefined}
                             sx={{ color: "inherit", padding: "0 !important" }}
-                            placeholder="Character"
-                            inputProps={{ 'aria-label': 'search google maps' }}
+                            placeholder={property.name !== '' ? property.name : "Character"}
+                            inputProps={{ 'aria-label': '' }}
                             onChange={e => {
                                 let p = { ...property };
                                 p.name = e.target.value;
@@ -43,9 +57,9 @@ const AddModals = ({ saveRoyalties, saveProperties, saveFunds, openRoyalties, op
                         <InP className="d-flex p-2 me-1">
                             <InputBase
                                 sx={{ color: "inherit", padding: "0 !important" }}
-                                placeholder="Male"
-                                inputProps={{ 'aria-label': 'search google maps' }}
-                                value={property.value} onChange={e => {
+                                placeholder={property.value !== '' ? property.value : "Man"}
+                                inputProps={{ 'aria-label': '' }}
+                                value={property.value !== '' ? property.value : undefined} onChange={e => {
                                     let p = { ...property };
                                     p.value = e.target.value;
                                     setProperty(p);
@@ -63,13 +77,13 @@ const AddModals = ({ saveRoyalties, saveProperties, saveFunds, openRoyalties, op
                 <div className="d-flex flex-column col-7">
                     <InP className="d-flex p-2 me-2">
                         <InputBase
-                            value={royalty.wallet_address}
+                            value={royalty.wallet_address !== ' ' ? royalty.wallet_address : undefined}
                             sx={{ color: "inherit", padding: "0 !important" }}
-                            placeholder="wallet address"
-                            inputProps={{ 'aria-label': 'search google maps' }}
+                            placeholder={royalty.wallet_address !== ' ' ? royalty.wallet_address : 'wallet address'}
+                            inputProps={{ 'aria-label': '' }}
                             onChange={e => {
                                 let p = { ...royalty };
-                                p.wallet_address = e.target.value;
+                                p.wallet_address = e.target.value.toString();
                                 setRoyalty(p);
                             }} />
                     </InP>
@@ -77,13 +91,15 @@ const AddModals = ({ saveRoyalties, saveProperties, saveFunds, openRoyalties, op
                 <div className="d-flex flex-column col-5">
                     <div className="d-flex justify-content-between align-items-center">
                         <InP className="d-flex p-2 me-1">
+                            {console.log(royalty.royalty !== '0')}
+
                             <InputBase
                                 sx={{ color: "inherit", padding: "0 !important" }}
-                                placeholder="5"
-                                inputProps={{ 'aria-label': 'search google maps' }}
-                                value={royalty.royalty} onChange={e => {
+                                placeholder={royalty.royalty !== '0' ? royalty.royalty : '5'}
+                                inputProps={{ 'aria-label': '' }}
+                                value={royalty.royalty !== '0' ? royalty.royalty : undefined} onChange={e => {
                                     let p = { ...royalty };
-                                    p.royalty = e.target.value;
+                                    p.royalty = e.target.value.toString();
                                     setRoyalty(p);
                                 }} />
                         </InP>
@@ -93,20 +109,20 @@ const AddModals = ({ saveRoyalties, saveProperties, saveFunds, openRoyalties, op
             </div>
         )
     }
-    function FundView({ fund, setFund, removeFund }) {
+    function LevelView({ level, setLevel, removeLevel }) {
         return (
             <div className="d-flex justify-content-between mb-1">
                 <div className="d-flex flex-column col-6">
                     <InP className="d-flex p-2 me-2">
                         <InputBase
-                            value={fund.name}
+                            value={level.name !== '' ? level.name : undefined}
                             sx={{ color: "inherit", padding: "0 !important" }}
-                            placeholder="Character"
-                            inputProps={{ 'aria-label': 'search google maps' }}
+                            placeholder="Speed"
+                            inputProps={{ 'aria-label': '' }}
                             onChange={e => {
-                                let p = { ...fund };
+                                let p = { ...level };
                                 p.name = e.target.value;
-                                setFund(p);
+                                setLevel(p);
                             }} />
                     </InP>
                 </div>
@@ -114,33 +130,87 @@ const AddModals = ({ saveRoyalties, saveProperties, saveFunds, openRoyalties, op
                     <div className="d-flex justify-content-between align-items-center">
                         <InP className="d-flex p-2 ">
                             <InputBase
+                                type="number"
                                 sx={{ color: "inherit", padding: "0 !important" }}
                                 placeholder="4"
-                                inputProps={{ 'aria-label': 'search google maps' }}
-                                value={fund.value} onChange={e => {
-                                    let p = { ...fund };
+                                inputProps={{ 'aria-label': '' }}
+                                value={level.value !== '' ? level.value : undefined} onChange={e => {
+                                    let p = { ...level };
                                     p.value = e.target.value;
-                                    setFund(p);
+                                    setLevel(p);
                                 }} />
                         </InP>
                         <span className="mx-1">Of</span>
                         <InP className="d-flex p-2 ">
                             <InputBase
+                                type="number"
                                 sx={{ color: "inherit", padding: "0 !important" }}
                                 placeholder="4"
-                                inputProps={{ 'aria-label': 'search google maps' }}
-                                value={fund.count} onChange={e => {
-                                    let p = { ...fund };
+                                inputProps={{ 'aria-label': '' }}
+                                value={level.count !== '' ? level.count : undefined} onChange={e => {
+                                    let p = { ...level };
                                     p.count = e.target.value;
-                                    setFund(p);
+                                    setLevel(p);
                                 }} />
                         </InP>
-                        <CloseCircle size="40" className="mx-1" onClick={e => removeFund({ ...fund })} />
+                        <CloseCircle size="40" className="mx-1" onClick={e => removeLevel({ ...level })} />
                     </div>
                 </div>
             </div>
         )
     }
+    function StatView({ stat, setStat, removeStat }) {
+        return (
+            <div className="d-flex justify-content-between mb-1">
+                <div className="d-flex flex-column col-6">
+                    <InP className="d-flex p-2 me-2">
+                        <InputBase
+                            value={stat.name !== '' ? stat.name : undefined}
+                            sx={{ color: "inherit", padding: "0 !important" }}
+                            placeholder="Speed"
+                            inputProps={{ 'aria-label': '' }}
+                            onChange={e => {
+                                let p = { ...stat };
+                                p.name = e.target.value;
+                                setStat(p);
+                            }} />
+                    </InP>
+                </div>
+                <div className="d-flex flex-column col-6">
+                    <div className="d-flex justify-content-between align-items-center">
+                        <InP className="d-flex p-2 ">
+                            <InputBase
+                                type="number"
+                                sx={{ color: "inherit", padding: "0 !important" }}
+                                placeholder="4"
+                                inputProps={{ 'aria-label': '' }}
+                                value={stat.value !== '' ? stat.value : undefined} onChange={e => {
+                                    let p = { ...stat };
+                                    p.value = e.target.value;
+                                    setStat(p);
+                                }} />
+                        </InP>
+                        <span className="mx-1">Of</span>
+                        <InP className="d-flex p-2 ">
+                            <InputBase
+                                type="number"
+                                sx={{ color: "inherit", padding: "0 !important" }}
+                                placeholder="4"
+                                inputProps={{ 'aria-label': '' }}
+                                value={stat.count !== '' ? stat.count : undefined} onChange={e => {
+                                    let p = { ...stat };
+                                    p.count = e.target.value;
+                                    setStat(p);
+                                }} />
+                        </InP>
+                        <CloseCircle size="40" className="mx-1" onClick={e => removeStat({ ...stat })} />
+                    </div>
+                </div>
+            </div>
+        )
+    }
+
+
     return (
 
         <>
@@ -182,7 +252,7 @@ const AddModals = ({ saveRoyalties, saveProperties, saveFunds, openRoyalties, op
                                 <p style={{ fontWeight: 600 }}>Name</p>
                             </div>
                         </div>
-                        {properties ? <>
+                        {properties && properties.length !== 0 ? <>
                             {properties.map((property, index) => {
                                 const setProperty = (p) => {
                                     let pr = [...properties];
@@ -197,7 +267,7 @@ const AddModals = ({ saveRoyalties, saveProperties, saveFunds, openRoyalties, op
                                 }
                                 return <PropertyView key={index} property={property} setProperty={setProperty} removeProperty={removeProperty} />
                             })}</> : <></>}
-                        <div className="d-flex justify-content-end mt-2 mb-5"><ButtonOutline onClick={() => {
+                        <div className="d-flex mt-2 mb-5 align-self-end"><ButtonOutline onClick={() => {
                             let p = [...properties];
                             let pr = {
                                 name: '',
@@ -253,25 +323,27 @@ const AddModals = ({ saveRoyalties, saveProperties, saveFunds, openRoyalties, op
                                 <p style={{ fontWeight: 600 }}>royalty</p>
                             </div>
                         </div>
-                        {royalties.map((royalty, index) => {
-                            const setRoyalty = (p) => {
-                                let pr = [...royalties];
-                                pr[index] = { ...p };
-                                setRoyalties(pr);
-                            };
-                            const removeRoyalty = (p) => {
-                                let pr = [...royalties];
-                                let indx = pr.indexOf(pr[index])
-                                pr.splice(indx, 1)
-                                setRoyalties(pr)
-                            }
-                            return <RoyaltyView key={index} royalty={royalty} setRoyalty={setRoyalty} removeRoyalty={removeRoyalty} />
-                        })}
-                        <div className="d-flex justify-content-end mt-2 mb-5"><ButtonOutline onClick={() => {
+                        {royalties ? <>
+                            {royalties.map((royalty, index) => {
+                                const setRoyalty = (p) => {
+                                    let pr = [...royalties];
+                                    pr[index] = { ...p };
+                                    setRoyalties(pr);
+                                };
+                                const removeRoyalty = (p) => {
+                                    let pr = [...royalties];
+                                    let indx = pr.indexOf(pr[index])
+                                    pr.splice(indx, 1)
+                                    setRoyalties(pr)
+                                }
+                                return <RoyaltyView key={index} royalty={royalty} setRoyalty={setRoyalty} removeRoyalty={removeRoyalty} />
+                            })}
+                        </> : undefined}
+                        <div className="d-flex mt-2 mb-5 align-self-end"><ButtonOutline onClick={() => {
                             let p = [...royalties];
                             let pr = {
-                                wallet_address: '',
-                                royalty: '',
+                                wallet_address: ' ',
+                                royalty: '0',
                             };;
                             p.push(pr);
                             setRoyalties(p);
@@ -285,9 +357,9 @@ const AddModals = ({ saveRoyalties, saveProperties, saveFunds, openRoyalties, op
             </Modal>
 
 
-            {/* add funds modal  */}
+            {/* add levels modal  */}
             <Modal
-                open={openFunds}
+                open={openLevels}
                 onClose={handleClose}
                 aria-labelledby="modal-modal-title"
                 aria-describedby="modal-modal-description"
@@ -313,9 +385,9 @@ const AddModals = ({ saveRoyalties, saveProperties, saveFunds, openRoyalties, op
                 }} className="d-flex flex-column justify-content-between">
                     <div className="d-flex flex-column">
                         <Box className="d-flex justify-content-between">
-                            <div className="mb-4 d-flex justify-content-start" ><p style={{ margin: 0, fontWeight: "bold" }}>add funds</p></div><div className="d-flex justify-content-end" style={{ cursor: "pointer" }} onClick={handleClose}><CloseSquare /></div>
+                            <div className="mb-4 d-flex justify-content-start" ><p style={{ margin: 0, fontWeight: "bold" }}>Add Levels</p></div><div className="d-flex justify-content-end" style={{ cursor: "pointer" }} onClick={handleClose}><CloseSquare /></div>
                         </Box>
-                        <p>Properties show up underneath your item, are clickable, and can be filtered in your collection's sidebar.</p>
+                        <p>Levels are numerical traits that show as a progress bar</p>
                         <div className="d-flex justify-content-between">
                             <div className="col-6">
                                 <p style={{ fontWeight: 600 }}>Name</p>
@@ -324,73 +396,107 @@ const AddModals = ({ saveRoyalties, saveProperties, saveFunds, openRoyalties, op
                                 <p style={{ fontWeight: 600 }}>Value</p>
                             </div>
                         </div>
-
-                        {funds.map((fund, index) => {
-                            const setFund = (p) => {
-                                let pr = [...funds];
-                                pr[index] = { ...p };
-                                setFunds(pr);
-                            };
-                            const removeFund = (p) => {
-                                let pr = [...funds];
-                                let indx = pr.indexOf(pr[index])
-                                pr.splice(indx, 1)
-                                setFunds(pr)
-                            }
-                            return <FundView key={index} fund={fund} setFund={setFund} removeFund={removeFund} />
-                        })}
-                        {/* <div className="d-flex justify-content-between">
-                        <div className="d-flex flex-column col-6">
-                            <InP className="d-flex p-2 me-2">
-                                <InputBase
-                                    sx={{ color: "inherit", padding: "0 !important" }}
-                                    placeholder="Character"
-                                    inputProps={{ 'aria-label': 'search google maps' }}
-                                // onChange={handleClick}
-                                // onChange={handleChange('top')}
-                                />
-                            </InP>
-                        </div>
-                        <div className="d-flex flex-column col-6">
-                            <div className="d-flex justify-content-between align-items-center">
-                                <InP className="d-flex p-2 ">
-                                    <InputBase
-                                        sx={{ color: "inherit", padding: "0 !important" }}
-                                        placeholder="4"
-                                        inputProps={{ 'aria-label': 'search google maps' }}
-                                    // onChange={handleClick}
-                                    // onChange={handleChange('top')}
-                                    />
-                                </InP>
-                                <span className="mx-1">Of</span>
-                                <InP className="d-flex p-2 ">
-                                    <InputBase
-                                        sx={{ color: "inherit", padding: "0 !important" }}
-                                        placeholder="4"
-                                        inputProps={{ 'aria-label': 'search google maps' }}
-                                    // onChange={handleClick}
-                                    // onChange={handleChange('top')}
-                                    />
-                                </InP>
-                                <CloseCircle size="40" className="mx-1" />
-                            </div>
-                        </div>
-                    </div> */}
-                        <div className="d-flex justify-content-end mt-2 mb-5"><ButtonOutline style={{ fontSize: "14px", padding: "5px 10px" }} onClick={() => {
-                            let p = [...funds];
+                        {levels ? <>
+                            {levels.map((level, index) => {
+                                const setLevel = (p) => {
+                                    let pr = [...levels];
+                                    pr[index] = { ...p };
+                                    setLevels(pr);
+                                };
+                                const removeLevel = (p) => {
+                                    let pr = [...levels];
+                                    let indx = pr.indexOf(pr[index])
+                                    pr.splice(indx, 1)
+                                    setLevels(pr)
+                                }
+                                return <LevelView key={index} level={level} setLevel={setLevel} removeLevel={removeLevel} />
+                            })}
+                        </> : <></>}
+                        <div className="d-flex mt-2 mb-5 align-self-end"><ButtonOutline onClick={() => {
+                            let p = [...levels];
                             let pr = {
                                 name: '',
                                 value: '',
                             };;
                             p.push(pr);
-                            setFunds(p);
+                            setLevels(p);
                         }}><AddSquare size="15" className="me-1" />Add More</ButtonOutline></div>
                     </div>
 
-                    <ButtonLarge onClick={() => saveFunds(funds)}>Save</ButtonLarge>
+                    <ButtonLarge onClick={() => saveLevels(levels)}>Save</ButtonLarge>
                 </Box>
             </Modal>
 
+
+            {/* add stats modal  */}
+            <Modal
+                open={openStats}
+                onClose={handleClose}
+                aria-labelledby="modal-modal-title"
+                aria-describedby="modal-modal-description"
+                // className="d-md-none"
+                // inputProps={{MenuProps: {disableScrollLock: true}}}
+                disableScrollLock={true}
+            >
+                <Box sx={{
+                    width: '50%',
+                    // height: '50%',
+                    borderRadius: "24px",
+                    position: "absolute",
+                    top: "25%",
+                    left: "25%",
+                    p: 4,
+                    bgcolor: theme == 'light' ? "#F9F9F9" : "#272448",
+                    '@media screen and (max-width: 768px)': {
+                        width: '90%',
+                        left: "5%",
+
+                    },
+
+                }} className="d-flex flex-column justify-content-between">
+                    <div className="d-flex flex-column">
+                        <Box className="d-flex justify-content-between">
+                            <div className="mb-4 d-flex justify-content-start" ><p style={{ margin: 0, fontWeight: "bold" }}>Add Stats</p></div><div className="d-flex justify-content-end" style={{ cursor: "pointer" }} onClick={handleClose}><CloseSquare /></div>
+                        </Box>
+                        <p>Stats are numerical traits that show as Numbers</p>
+                        <div className="d-flex justify-content-between">
+                            <div className="col-6">
+                                <p style={{ fontWeight: 600 }}>Name</p>
+                            </div>
+                            <div className="col-6">
+                                <p style={{ fontWeight: 600 }}>Value</p>
+                            </div>
+                        </div>
+                        {stats ? <>
+                            {stats.map((stat, index) => {
+                                const setStat = (p) => {
+                                    let pr = [...stats];
+                                    pr[index] = { ...p };
+                                    setStats(pr);
+                                };
+                                const removeStat = (p) => {
+                                    let pr = [...stats];
+                                    let indx = pr.indexOf(pr[index])
+                                    pr.splice(indx, 1)
+                                    setStats(pr)
+                                }
+                                return <StatView key={index} stat={stat} setStat={setStat} removeStat={removeStat} />
+                            })}
+                        </> : <></>}
+                        <div className="d-flex mt-2 mb-5 align-self-end"><ButtonOutline onClick={() => {
+                            let p = [...stats];
+                            let pr = {
+                                name: '',
+                                value: '',
+                            };;
+                            p.push(pr);
+                            setStats(p);
+                        }}><AddSquare size="15" className="me-1" />Add More</ButtonOutline></div>
+                    </div>
+
+                    <ButtonLarge onClick={() => saveStats(stats)}>Save</ButtonLarge>
+                </Box>
+            </Modal>
 
         </>);
 }

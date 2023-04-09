@@ -18,9 +18,13 @@ const SectionContainer = styled.div`
     display:flex;
     flex-direction:column;
     justify-content:space-between;
-    margin:50px auto;
+    margin-top:100px;
     // padding:0 32px;
     // height:80vh;
+    @media screen and (max-width: 992px) {
+        margin-top:54px;
+    }
+
 `;
 const TitlesContainer = styled.div`
     display: flex;
@@ -28,7 +32,8 @@ const TitlesContainer = styled.div`
     justify-content: space-between;
     align-items: center;
     color: ${({ theme }) => theme.trendingSectionSubTitles};
-    padding : 0 8px;
+    // padding : 0 8px;
+    font-size:14px;
     @media screen and (max-width: 600px) {
         // padding-right:0;
         margin-bottom:10px;
@@ -86,7 +91,7 @@ const TrendingSection = ({ theme }) => {
     const [value, setValue] = useState('trending');
     const [topColls, setTopColls] = useState(undefined)
     const [err, setErr] = useState(undefined)
-    const [timeSelect, setTimeSelect] = useState(undefined)
+    const [timeSelect, setTimeSelect] = useState('ALL')
     // const [from, setFrom] = useState(undefined)
     // const [to, setTo] = useState(undefined)
     // const classes = useStyles();
@@ -182,7 +187,7 @@ const TrendingSection = ({ theme }) => {
             apiCall.current = MARKET_API.request({
                 path: `/collection/trendings`,
                 method: "post",
-                body: { from: from ? from : null, to: to ? to : null, from_col: 0, to_col: 10 },
+                body: { from: from ? from : null, to: to ? to : null, from_col: 0, to_col: 10, cat: '' },
             });
             const response = await apiCall.current.promise;
             console.log('reeesp top', response)
@@ -211,7 +216,7 @@ const TrendingSection = ({ theme }) => {
             apiCall.current = MARKET_API.request({
                 path: `/collection/trendings`,
                 method: "post",
-                body: { from: from ? from : null, to: to ? to : null, from_col: 0, to_col: 10 },
+                body: { from: from ? from : null, to: to ? to : null, from_col: 0, to_col: 10, cat: '' },
             });
             let response = await apiCall.current.promise;
             console.log('reeesp', response)
@@ -235,8 +240,9 @@ const TrendingSection = ({ theme }) => {
     }
     useEffect(() => {
         var this_time = parseInt(new Date(Date.now()).getTime())
-        var last_hour = new Date(this_time - (1000 * 60 * 60));
-        var from = last_hour / 1000;
+        // var last_hour = new Date(this_time - (1000 * 60 * 60));
+        // var from = last_hour / 1000;
+        var from = undefined;
         var to = this_time / 1000;
         getTops({ from, to })
         getTrendings({ from, to })
@@ -259,7 +265,7 @@ const TrendingSection = ({ theme }) => {
                 {/* <div className="d-flex justify-content-between align-items-center p-0"> */}
 
                 <div style={{ transform: 'translateY(75%)' }} className="d-none d-sm-flex col-sm-6 justify-content-end justify-self-end align-self-end">
-                    <SSelection width={'200px'} theme={theme} tabs={tabs} handleSelect={handleTimeSelect} selectValue={timeSelect} />
+                    <SSelection id={'trending-landing'} width={'200px'} theme={theme} tabs={tabs} handleSelect={handleTimeSelect} selectValue={timeSelect} />
                 </div>
 
                 <div className="d-flex p-0 flex-column col-12">
@@ -273,7 +279,7 @@ const TrendingSection = ({ theme }) => {
                     >
                         <Tab eventKey="Trending" title="Trending">
                             <div className="d-flex justify-content-between">
-                                <div className="d-flex flex-column p-0 col-12 col-lg-6 justify-content-center">
+                                <div className="d-flex flex-column p-0 col-12 col-lg-6 justify-content-center p-0 pe-lg-4">
                                     <TitlesContainer>
                                         <div style={{
                                             display: "flex", flexDirection: "row", justifyContent: "start", alignItems: "center",
@@ -284,24 +290,24 @@ const TrendingSection = ({ theme }) => {
                                             display: "flex", flexDirection: "row", justifyContent: "end", alignItems: "center",
                                             width: "50%"
                                         }}>
-                                            <SSelection width={'100px'} theme={theme} tabs={tabs} handleSelect={handleTimeSelect} selectValue={timeSelect} />
+                                            <SSelection id={'trending-landing-mobile'} width={'100px'} theme={theme} tabs={tabs} handleSelect={handleTimeSelect} selectValue={timeSelect} />
                                         </div>
                                         <div className="d-none d-sm-flex" style={{
                                             display: "flex", flexDirection: "row", justifyContent: "start", alignItems: "center",
                                             // border: "1px solid blue",
-                                            width: "25%"
+                                            width: "150px"
                                         }}>
                                             Floor Price</div>
                                         <div className="d-none d-sm-flex" style={{
-                                            display: "flex", flexDirection: "row", justifyContent: "center", alignItems: "center",
-                                            width: "25%"
+                                            display: "flex", flexDirection: "row", justifyContent: "start", alignItems: "center",
+                                            width: "150px"
                                         }}>
                                             Volume</div>
                                     </TitlesContainer>
                                     {trendingLoading ?
                                         <>
                                             {loadingSkeletons.map((l) => {
-                                                return <div className="px-1"> <Skeleton variant="rounded" height={80} sx={{ width: "100%", borderRadius: "24px", my: 1, }} /></div>
+                                                return <Skeleton variant="rounded" height={80} sx={{ width: "100%", borderRadius: "24px", my: 1, }} />
 
                                             })}
                                         </> :
@@ -309,25 +315,23 @@ const TrendingSection = ({ theme }) => {
                                             {trendingColls.length < 5 ?
                                                 <>
                                                     {trendingColls.slice(0, trendingColls.length).map((collection, index) => {
-                                                        return <CollectionCard theme={theme} index={index + 1} collectionFloor={collection.floor_price} collectionName={collection.title} collectionVolume={collection.volume} collectionLogo={collection.logo_path} />
+                                                        return <CollectionCard key={collection._id.$oid} collection={collection} theme={theme} index={index + 1} collectionFloor={collection.floor_price} collectionName={collection.title} collectionVolume={collection.volume} collectionLogo={collection.logo_path} />
                                                     })}
                                                     {loadingSkeletons.slice(0, (5 - trendingColls.length)).map((l) => {
-                                                        return <div className="px-1"> <EmptyListingCard variant="rounded" height={80} sx={{ width: "100%", borderRadius: "24px", my: 1, }} /></div>
-
+                                                        return <EmptyListingCard variant="rounded" height={80} sx={{ width: "100%", borderRadius: "24px", my: 1, }} />
                                                     })}
                                                 </>
                                                 :
                                                 <>
                                                     {trendingColls.slice(0, 5).map((collection, index) => {
-                                                        return <CollectionCard theme={theme} index={index + 1} collectionFloor={collection.floor_price} collectionName={collection.title} collectionVolume={collection.volume} collectionLogo={collection.logo_path} />
+                                                        return <CollectionCard key={collection._id.$oid} collection={collection} theme={theme} index={index + 1} collectionFloor={collection.floor_price} collectionName={collection.title} collectionVolume={collection.volume} collectionLogo={collection.logo_path} />
                                                     })}
                                                 </>
                                             }
                                         </>
                                     }
                                 </div>
-                                <div className="d-none d-lg-flex flex-column p-0 col-12 col-lg-6 justify-content-center"
-                                >
+                                <div className="d-none d-lg-flex flex-column p-0 col-12 col-lg-6 justify-content-center">
                                     <TitlesContainer>
                                         <div style={{
                                             display: "flex", flexDirection: "row", justifyContent: "start", alignItems: "center",
@@ -336,19 +340,19 @@ const TrendingSection = ({ theme }) => {
                                             Collection</div>
                                         <div className="d-none d-sm-flex" style={{
                                             display: "flex", flexDirection: "row", justifyContent: "start", alignItems: "center",
-                                            width: "25%"
+                                            width: "150px"
                                         }}>
                                             Floor Price</div>
                                         <div className="d-none d-sm-flex" style={{
-                                            display: "flex", flexDirection: "row", justifyContent: "center", alignItems: "center",
-                                            width: "25%"
+                                            display: "flex", flexDirection: "row", justifyContent: "start", alignItems: "center",
+                                            width: "150px"
                                         }}>
                                             Volume</div>
                                     </TitlesContainer>
                                     {trendingLoading ?
                                         <>
                                             {loadingSkeletons.map((l) => {
-                                                return <div className="px-1"> <Skeleton variant="rounded" height={80} sx={{ width: "100%", borderRadius: "24px", my: 1, }} /></div>
+                                                return <Skeleton variant="rounded" height={80} sx={{ width: "100%", borderRadius: "24px", my: 1, }} />
 
                                             })}
                                         </>
@@ -358,23 +362,23 @@ const TrendingSection = ({ theme }) => {
                                                 trendingColls.length >= 10 ?
                                                     <>
                                                         {trendingColls.slice(5, 10).map((collection, index) => {
-                                                            return <CollectionCard theme={theme} index={index + 6} collectionFloor={collection.floor_price} collectionName={collection.title} collectionVolume={collection.volume} collectionLogo={collection.logo_path} />
+                                                            return <CollectionCard key={collection._id.$oid} collection={collection} theme={theme} index={index + 6} collectionFloor={collection.floor_price} collectionName={collection.title} collectionVolume={collection.volume} collectionLogo={collection.logo_path} />
                                                         })}
                                                     </>
                                                     : 5 < trendingColls.length < 10 ?
                                                         <>
                                                             {trendingColls.slice(5, trendingColls.length).map((collection, index) => {
-                                                                return <CollectionCard theme={theme} index={index + 6} collectionFloor={collection.floor_price} collectionName={collection.title} collectionVolume={collection.volume} collectionLogo={collection.logo_path} />
+                                                                return <CollectionCard key={collection._id.$oid} collection={collection} theme={theme} index={index + 6} collectionFloor={collection.floor_price} collectionName={collection.title} collectionVolume={collection.volume} collectionLogo={collection.logo_path} />
                                                             })}
                                                             {loadingSkeletons.slice(0, (10 - trendingColls.length)).map((l) => {
-                                                                return <div className="px-1"> <EmptyListingCard variant="rounded" height={80} sx={{ width: "100%", borderRadius: "24px", my: 1, }} /></div>
+                                                                return <EmptyListingCard variant="rounded" height={80} sx={{ width: "100%", borderRadius: "24px", my: 1, }} />
 
                                                             })}
                                                         </>
                                                         :
                                                         <>
                                                             {loadingSkeletons.map((l) => {
-                                                                return <div className="px-1"> <EmptyListingCard variant="rounded" height={80} sx={{ width: "100%", borderRadius: "24px", my: 1, }} /></div>
+                                                                return <EmptyListingCard variant="rounded" height={80} sx={{ width: "100%", borderRadius: "24px", my: 1, }} />
 
                                                             })}
                                                         </>
@@ -387,7 +391,7 @@ const TrendingSection = ({ theme }) => {
 
                         <Tab eventKey="Top" title="Top">
                             <div className="d-flex justify-content-between">
-                                <div className="d-flex flex-column p-0 col-12 col-lg-6 justify-content-center">
+                                <div className="d-flex flex-column p-0 col-12 col-lg-6 justify-content-center p-0 pe-lg-4">
                                     <TitlesContainer>
                                         <div style={{
                                             display: "flex", flexDirection: "row", justifyContent: "start", alignItems: "center",
@@ -398,24 +402,24 @@ const TrendingSection = ({ theme }) => {
                                             display: "flex", flexDirection: "row", justifyContent: "end", alignItems: "center",
                                             width: "50%"
                                         }}>
-                                            <SSelection width={'100px'} theme={theme} tabs={tabs} handleSelect={handleTimeSelect} selectValue={timeSelect} />
+                                            <SSelection id={'top-landing-mobile'} width={'100px'} theme={theme} tabs={tabs} handleSelect={handleTimeSelect} selectValue={timeSelect} />
                                         </div>
                                         <div className="d-none d-sm-flex" style={{
                                             display: "flex", flexDirection: "row", justifyContent: "start", alignItems: "center",
                                             // border: "1px solid blue",
-                                            width: "25%"
+                                            width: "150px"
                                         }}>
                                             Floor Price</div>
                                         <div className="d-none d-sm-flex" style={{
-                                            display: "flex", flexDirection: "row", justifyContent: "center", alignItems: "center",
-                                            width: "25%"
+                                            display: "flex", flexDirection: "row", justifyContent: "start", alignItems: "center",
+                                            width: "150px"
                                         }}>
                                             Volume</div>
                                     </TitlesContainer>
                                     {topLoading ?
                                         <>
                                             {loadingSkeletons.map((l) => {
-                                                return <div className="px-1"> <Skeleton variant="rounded" height={80} sx={{ width: "100%", borderRadius: "24px", my: 1, }} /></div>
+                                                return <Skeleton variant="rounded" height={80} sx={{ width: "100%", borderRadius: "24px", my: 1, }} />
 
                                             })}
                                         </> :
@@ -423,17 +427,17 @@ const TrendingSection = ({ theme }) => {
                                             {topColls.length < 5 ?
                                                 <>
                                                     {topColls.slice(0, topColls.length).map((collection, index) => {
-                                                        return <CollectionCard theme={theme} index={index + 1} collectionFloor={collection.floor_price} collectionName={collection.title} collectionVolume={collection.volume} collectionLogo={collection.logo_path} />
+                                                        return <CollectionCard key={collection._id.$oid} collection={collection} theme={theme} index={index + 1} collectionFloor={collection.floor_price} collectionName={collection.title} collectionVolume={collection.volume} collectionLogo={collection.logo_path} />
                                                     })}
                                                     {loadingSkeletons.slice(0, (5 - topColls.length)).map((l) => {
-                                                        return <div className="px-1"> <EmptyListingCard variant="rounded" height={80} sx={{ width: "100%", borderRadius: "24px", my: 1, }} /></div>
+                                                        return <EmptyListingCard variant="rounded" height={80} sx={{ width: "100%", borderRadius: "24px", my: 1, }} />
 
                                                     })}
                                                 </>
                                                 :
                                                 <>
                                                     {topColls.slice(0, 5).map((collection, index) => {
-                                                        return <CollectionCard theme={theme} index={index + 1} collectionFloor={collection.floor_price} collectionName={collection.title} collectionVolume={collection.volume} collectionLogo={collection.logo_path} />
+                                                        return <CollectionCard key={collection._id.$oid} collection={collection} theme={theme} index={index + 1} collectionFloor={collection.floor_price} collectionName={collection.title} collectionVolume={collection.volume} collectionLogo={collection.logo_path} />
                                                     })}
                                                 </>
                                             }
@@ -450,19 +454,19 @@ const TrendingSection = ({ theme }) => {
                                             Collection</div>
                                         <div className="d-none d-sm-flex" style={{
                                             display: "flex", flexDirection: "row", justifyContent: "start", alignItems: "center",
-                                            width: "25%"
+                                            width: "150px"
                                         }}>
                                             Floor Price</div>
                                         <div className="d-none d-sm-flex" style={{
-                                            display: "flex", flexDirection: "row", justifyContent: "center", alignItems: "center",
-                                            width: "25%"
+                                            display: "flex", flexDirection: "row", justifyContent: "start", alignItems: "center",
+                                            width: "150px"
                                         }}>
                                             Volume</div>
                                     </TitlesContainer>
                                     {topLoading ?
                                         <>
                                             {loadingSkeletons.map((l) => {
-                                                return <div className="px-1"> <Skeleton variant="rounded" height={80} sx={{ width: "100%", borderRadius: "24px", my: 1, }} /></div>
+                                                return <Skeleton variant="rounded" height={80} sx={{ width: "100%", borderRadius: "24px", my: 1, }} />
 
                                             })}
                                         </>
@@ -472,23 +476,23 @@ const TrendingSection = ({ theme }) => {
                                                 topColls.length >= 10 ?
                                                     <>
                                                         {topColls.slice(5, 10).map((collection, index) => {
-                                                            return <CollectionCard theme={theme} index={index + 6} collectionFloor={collection.floor_price} collectionName={collection.title} collectionVolume={collection.volume} collectionLogo={collection.logo_path} />
+                                                            return <CollectionCard key={collection._id.$oid} collection={collection} theme={theme} index={index + 6} collectionFloor={collection.floor_price} collectionName={collection.title} collectionVolume={collection.volume} collectionLogo={collection.logo_path} />
                                                         })}
                                                     </>
                                                     : 5 < topColls.length < 10 ?
                                                         <>
                                                             {topColls.slice(5, topColls.length).map((collection, index) => {
-                                                                return <CollectionCard theme={theme} index={index + 6} collectionFloor={collection.floor_price} collectionName={collection.title} collectionVolume={collection.volume} collectionLogo={collection.logo_path} />
+                                                                return <CollectionCard key={collection._id.$oid} collection={collection} theme={theme} index={index + 6} collectionFloor={collection.floor_price} collectionName={collection.title} collectionVolume={collection.volume} collectionLogo={collection.logo_path} />
                                                             })}
                                                             {loadingSkeletons.slice(0, (10 - topColls.length)).map((l) => {
-                                                                return <div className="px-1"> <EmptyListingCard variant="rounded" height={80} sx={{ width: "100%", borderRadius: "24px", my: 1, }} /></div>
+                                                                return <EmptyListingCard variant="rounded" height={80} sx={{ width: "100%", borderRadius: "24px", my: 1, }} />
 
                                                             })}
                                                         </>
                                                         :
                                                         <>
                                                             {loadingSkeletons.map((l) => {
-                                                                return <div className="px-1"> <EmptyListingCard variant="rounded" height={80} sx={{ width: "100%", borderRadius: "24px", my: 1, }} /></div>
+                                                                return <EmptyListingCard variant="rounded" height={80} sx={{ width: "100%", borderRadius: "24px", my: 1, }} />
 
                                                             })}
                                                         </>

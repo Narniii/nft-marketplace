@@ -44,7 +44,7 @@
 
 .nav-link {
     /* color:initial !important; */
-    color:#b3b3b3 !important;
+    color: #b3b3b3 !important;
     border-radius: 0;
     border-top: none !important;
     border-left: none !important;
@@ -54,13 +54,17 @@
     /* font-weight: 400 !important; */
     /* padding: 0 50px; */
 }
-.nav-fill .nav-item .nav-link, .nav-justified .nav-item .nav-link{
-    width: min-content !important;
+
+.nav-fill .nav-item .nav-link,
+.nav-justified .nav-item .nav-link {
+    width: max-content !important;
 }
 
-.nav-fill > .nav-link, .nav-fill .nav-item{
-    flex:0 !important;
+.nav-fill>.nav-link,
+.nav-fill .nav-item {
+    flex: 0 !important;
 }
+
 /* .nav-link span.active{
     color:#4D4D4D !important;
 } */
@@ -70,11 +74,21 @@
     scrollbar-width: 0;
     -ms-overflow-style: none;
 }
-.nav-item{
+
+.nav-item {
     height: min-content !important;
 }
+
+.nav-item button {
+    width: max-content;
+}
+
 .tab-scroll.nav::-webkit-scrollbar {
     display: none;
+}
+
+.MuiInputBase-input.Mui-disabled {
+    color: #999999;
 }
 
 .nav-link.active {
@@ -121,6 +135,7 @@
     transition: .4s;
     border: 0.5px solid #D9D9D9;
 }
+
 .sliderMenu {
     position: absolute;
     cursor: pointer;
@@ -150,6 +165,7 @@
     -webkit-transition: .4s;
     transition: .4s;
 }
+
 .togHold:before {
     position: absolute;
     content: "";
@@ -166,37 +182,42 @@
 }
 
 input:checked+.slider {
-    background-color: #FFFFFF;
+    background-color: #F9F9F9;
 
 }
+
 input:checked+.sliderMenu {
-    background-color: #FFFFFF;
+    background-color: #F9F9F9;
 
 }
 
 input:focus+.slider {
-    box-shadow: 0 0 1px #D9D9D9;
+    box-shadow: 0 0 1px #F9F9F9;
 
 }
+
 input:focus+.sliderMenu {
-    box-shadow: 0 0 1px #D9D9D9;
+    box-shadow: 0 0 1px #F9F9F9;
 
 }
 
 input:checked+.slider:before {
-    -webkit-transform: translateX(26px);
-    -ms-transform: translateX(26px);
-    transform: translateX(26px);
+    -webkit-transform: translateX(25px);
+    -ms-transform: translateX(25px);
+    transform: translateX(25px);
+    background: linear-gradient(276.27deg, #580DB7 0%, #AB69FF 82.5%);
 }
+
 input:checked+.sliderMenu:before {
-    -webkit-transform: translateX(26px);
-    -ms-transform: translateX(26px);
-    transform: translateX(26px);
+    -webkit-transform: translateX(25px);
+    -ms-transform: translateX(25px);
+    transform: translateX(25px);
 }
+
 input:-webkit-autofill,
-input:-webkit-autofill:hover, 
-input:-webkit-autofill:focus, 
-input:-webkit-autofill:active{
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active {
     -webkit-box-shadow: 0 0 0 30px white inset !important;
 }
 
@@ -209,6 +230,7 @@ input:-webkit-autofill:active{
 .slider.round:before {
     border-radius: 50%;
 }
+
 .togHold:before {
     border-radius: 50%;
 }
@@ -218,26 +240,29 @@ input:-webkit-autofill:active{
 }
 
 
-.css-6hp17o-MuiList-root-MuiMenu-list{
+.css-6hp17o-MuiList-root-MuiMenu-list {
     padding-top: 0 !important;
     padding-bottom: 0 !important;
     border-bottom-left-radius: 24px !important;
     border-bottom-right-radius: 24px !important;
     overflow: hidden !important;
     color: inherit !important;
-    border:1px solid #d9d9d9 !important;
+    border: 1px solid #d9d9d9 !important;
 }
-.css-1poimk-MuiPaper-root-MuiMenu-paper-MuiPaper-root-MuiPopover-paper{
+
+.css-1poimk-MuiPaper-root-MuiMenu-paper-MuiPaper-root-MuiPopover-paper {
     border-bottom-left-radius: 24px !important;
     border-bottom-right-radius: 24px !important;
     border-top-left-radius: 0 !important;
     border-top-right-radius: 0 !important;
-    border:1px solid #d9d9d9 !important;
+    border: 1px solid #d9d9d9 !important;
 }
-.css-1poimk-MuiPaper-root-MuiMenu-paper-MuiPaper-root-MuiPopover-paper{
+
+.css-1poimk-MuiPaper-root-MuiMenu-paper-MuiPaper-root-MuiPopover-paper {
     /* width:100%; */
     box-shadow: unset;
 }
+
 /* .css-1e0dufg-MuiInputBase-root-MuiOutlinedInput-root-MuiSelect-root{
     border-color:none !important;
     outline:none !important;
@@ -258,13 +283,13 @@ input:-webkit-autofill:active{
  */
 
 
-@media (max-width: 768px) {
+@media (max-width: 992px) {
     .pdng {
         padding: 0 24px;
     }
 }
 
-@media (max-width: 600px) {
+@media (max-width: 575px) {
     .pdng {
         padding: 0 16px;
     }
@@ -272,3 +297,12 @@ input:-webkit-autofill:active{
 
 
 
+/* .slick-slide {
+  padding: 0 12px;
+} */
+
+/* .slick-list {
+}
+.slick-slider{
+    padding: 0;
+} */

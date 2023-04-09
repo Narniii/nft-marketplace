@@ -21,6 +21,7 @@ import MyCollectionCard from '../components/Cards/MyCollectionCard';
 import { useSelector } from 'react-redux';
 import WalletConnect from '../components/Navbar/WalletConnect';
 import ImgHd from '../assets/mycollections-pic.svg'
+import WalletConnectModal from '../components/wallet/WalletConnectModal';
 const HeaderContainer = styled.div`
     background-color: ${({ theme }) => theme.collectionCardHover};
     background-image: url(${bgDes});
@@ -63,14 +64,7 @@ const MyCollections = ({ theme, themeToggler }) => {
         bottom: false,
         right: false,
     });
-
-    const walletDrawer = (anchor, open) => (event) => {
-        if (event.type === 'keydown' && (event.key === 'Tab' || event.key === 'Shift')) {
-            return;
-        }
-
-        setWalletMenu({ ...walletMenu, [anchor]: open });
-    };
+    const [walletConnect, setWalletConnect] = useState(false)
 
     const [view, setView] = useState('m')
     const handleViewChange = (v) => {
@@ -132,7 +126,7 @@ const MyCollections = ({ theme, themeToggler }) => {
                 <Navbar theme={theme} themeToggler={themeToggler} />
             </div>
             <div className='w-100 d-flex flex-column'>
-                <HeaderContainer className='my-5 py-1 px-4'>
+                <HeaderContainer className='my-5 py-1 pdng'>
                     <Typography sx={{ fontWeight: 600, fontSize: { xs: '20px', sm: '36px' } }} variant='h1'>My Collections</Typography>
                     <ImageH />
                 </HeaderContainer>
@@ -176,7 +170,7 @@ const MyCollections = ({ theme, themeToggler }) => {
                                             :
                                             <>
                                                 {collections.map((collection) => {
-                                                    return <MyCollectionCard itemImage={collection.banner_image_path} collectionName={collection.title} />
+                                                    return <MyCollectionCard theme={theme} collId={collection._id.$oid} itemImage={collection.banner_image_path} collectionName={collection.title} />
                                                 })}
                                             </>
                                         }
@@ -187,8 +181,8 @@ const MyCollections = ({ theme, themeToggler }) => {
                         :
                         <>
                             <div className='d-flex my-5'>
-                                <ButtonLarge onClick={walletDrawer('bottom', true)}>connect wallet</ButtonLarge>
-                                <WalletConnect toggleDrawer={walletDrawer} state={walletMenu} theme={theme} />
+                                <ButtonLarge onClick={() => { setWalletConnect(!walletConnect) }}>connect wallet</ButtonLarge>
+                                <WalletConnectModal open={walletConnect} handleClose={() => setWalletConnect(false)} theme={theme} />
                             </div>
                         </>
                     }

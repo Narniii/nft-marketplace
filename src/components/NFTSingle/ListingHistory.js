@@ -4,6 +4,8 @@ import { useEffect, useState } from "react";
 import { Colors } from "../design/Colors";
 import '../../styles.css'
 import { ButtonXSmall } from "../design/Buttons";
+import NoItemFound from "../NoItem";
+import { GetUSDExchangeRate } from "../../utils/exChange";
 
 
 const ItemsContainerDesktop = styled.div`
@@ -73,9 +75,47 @@ const Price = styled.p`
     }
 `
 
-const ListingHistory = () => {
+const ListingHistory = ({ listings }) => {
+    const shorten = (str) => {
+        return str.length > 10 ? str.substring(0, 7) + "..." : str;
+    }
+    const [usdExRate, setUsdExRate] = useState();
+    useEffect(() => {
+        GetUSDExchangeRate().then((res) => {
+            setUsdExRate(parseFloat(res));
+            console.log("usd", parseFloat(res));
+        });
+    }, []);
+
+    const countDifference = (expiration) => {
+        let this_time = new Date().getTime()
+        let expire_time = new Date(expiration).getTime()
+        let difference = (expire_time - this_time) / 1000
+        let days = Math.floor(difference / 86400);
+        let hours = Math.floor(difference / 3600) % 24;
+        let minutes = Math.floor(difference / 60) % 60;
+        let seconds = Math.floor(difference % 60);
+        // if (days > 0)
+        //     return <>{days} days</>
+        // else if (hours > 0)
+        //     return <>{hours} hours</>
+        // else return <>{minutes} mins</>
+        if (days > 0) {
+            return <span>{days + ' days'}</span>
+        } else if (hours > 0) {
+            return <span>{hours + ' hours'}</span>
+        } else if (minutes > 0) {
+            return <span>{minutes + ' mins'}</span>
+        }
+        else return <span>expired</span>
+
+
+    }
+
+
     return (
         <ItemsContainerDesktop className="my-2 d-flex">
+
             <div className="my-1 d-flex justify-content-between">
                 <Subtitle style={{ width: "150px", overflow: "hidden" }}>Price</Subtitle>
                 <Subtitle style={{ width: "150px", overflow: "hidden" }}>USD Price</Subtitle>
@@ -83,63 +123,20 @@ const ListingHistory = () => {
                 <Subtitle style={{ width: "100px", overflow: "hidden" }}>From</Subtitle>
                 <div style={{ width: "100px", overflow: "hidden" }}></div>
             </div>
-            <ProductCardDesktop className="my-1">
-                <Price style={{ width: "150px", overflow: "hidden" }}>0.5 WETH</Price>
-                <Subtitle style={{ width: "150px", overflow: "hidden" }}>101 ETH</Subtitle>
-                <Subtitle style={{ width: "100px", overflow: "hidden" }}>2 days</Subtitle>
-                <Recommend style={{ width: "100px", overflow: "hidden" }}>Na..987</Recommend>
-                <div style={{ width: "100px", overflow: "hidden" }}><ButtonXSmall>Buy</ButtonXSmall></div>
-
-            </ProductCardDesktop>
-
-            <ProductCardDesktop className="my-1">
-                <Price style={{ width: "150px", overflow: "hidden" }}>0.5 WETH</Price>
-                <Subtitle style={{ width: "150px", overflow: "hidden" }}>101 ETH</Subtitle>
-                <Subtitle style={{ width: "100px", overflow: "hidden" }}>2 days</Subtitle>
-                <Recommend style={{ width: "100px", overflow: "hidden" }}>Na..987</Recommend>
-                <div style={{ width: "100px", overflow: "hidden" }}><ButtonXSmall>Buy</ButtonXSmall></div>
-            </ProductCardDesktop>
-
-            <ProductCardDesktop className="my-1">
-                <Price style={{ width: "150px", overflow: "hidden" }}>0.5 WETH</Price>
-                <Subtitle style={{ width: "150px", overflow: "hidden" }}>101 ETH</Subtitle>
-                <Subtitle style={{ width: "100px", overflow: "hidden" }}>2 days</Subtitle>
-                <Recommend style={{ width: "100px", overflow: "hidden" }}>Na..987</Recommend>
-                <div style={{ width: "100px", overflow: "hidden" }}><ButtonXSmall>Buy</ButtonXSmall></div>
-            </ProductCardDesktop>
-
-            <ProductCardDesktop className="my-1">
-                <Price style={{ width: "150px", overflow: "hidden" }}>0.5 WETH</Price>
-                <Subtitle style={{ width: "150px", overflow: "hidden" }}>101 ETH</Subtitle>
-                <Subtitle style={{ width: "100px", overflow: "hidden" }}>2 days</Subtitle>
-                <Recommend style={{ width: "100px", overflow: "hidden" }}>Na..987</Recommend>
-                <div style={{ width: "100px", overflow: "hidden" }}><ButtonXSmall>Buy</ButtonXSmall></div>
-            </ProductCardDesktop>
-
-            <ProductCardDesktop className="my-1">
-                <Price style={{ width: "150px", overflow: "hidden" }}>0.5 WETH</Price>
-                <Subtitle style={{ width: "150px", overflow: "hidden" }}>101 ETH</Subtitle>
-                <Subtitle style={{ width: "100px", overflow: "hidden" }}>2 days</Subtitle>
-                <Recommend style={{ width: "100px", overflow: "hidden" }}>Na..987</Recommend>
-                <div style={{ width: "100px", overflow: "hidden" }}><ButtonXSmall>Buy</ButtonXSmall></div>
-            </ProductCardDesktop>
-
-            <ProductCardDesktop className="my-1">
-                <Price style={{ width: "150px", overflow: "hidden" }}>0.5 WETH</Price>
-                <Subtitle style={{ width: "150px", overflow: "hidden" }}>101 ETH</Subtitle>
-                <Subtitle style={{ width: "100px", overflow: "hidden" }}>2 days</Subtitle>
-                <Recommend style={{ width: "100px", overflow: "hidden" }}>Na..987</Recommend>
-                <div style={{ width: "100px", overflow: "hidden" }}><ButtonXSmall>Buy</ButtonXSmall></div>
-            </ProductCardDesktop>
-
-            <ProductCardDesktop className="my-1">
-                <Price style={{ width: "150px", overflow: "hidden" }}>0.5 WETH</Price>
-                <Subtitle style={{ width: "150px", overflow: "hidden" }}>101 ETH</Subtitle>
-                <Subtitle style={{ width: "100px", overflow: "hidden" }}>2 days</Subtitle>
-                <Recommend style={{ width: "100px", overflow: "hidden" }}>Na..987</Recommend>
-                <div style={{ width: "100px", overflow: "hidden" }}><ButtonXSmall>Buy</ButtonXSmall></div>
-            </ProductCardDesktop>
-
+            {listings.length == 0 ?
+                <NoItemFound text={'no history found'} /> :
+                <>
+                    {listings.map((listing) => {
+                        return <ProductCardDesktop className="my-1">
+                            <Price style={{ width: "150px", overflow: "hidden" }}>{listing.price} ETH</Price>
+                            <Subtitle style={{ width: "150px", overflow: "hidden" }}>{listing.price == '--' ? '0' : (listing.price * usdExRate).toFixed(2) == 'NaN' ? '0' : (listing.price * usdExRate).toFixed(2)} $</Subtitle>
+                            <Subtitle style={{ width: "100px", overflow: "hidden" }}>{countDifference(listing.expiration)}</Subtitle>
+                            <Recommend style={{ width: "100px", overflow: "hidden" }}>{shorten(listing.from_wallet_address)}</Recommend>
+                            <div style={{ width: "100px", overflow: "hidden" }}><ButtonXSmall>Buy</ButtonXSmall></div>
+                        </ProductCardDesktop>
+                    })}
+                </>
+            }
         </ItemsContainerDesktop>
 
     );

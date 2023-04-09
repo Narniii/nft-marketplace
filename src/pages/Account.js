@@ -1,4 +1,5 @@
 import { InputBase, LinearProgress, useScrollTrigger } from "@mui/material";
+import { useWeb3React } from "@web3-react/core";
 import { Add, Additem, Notification, NotificationBing, PercentageCircle, Profile, SecuritySafe, UsdCoin } from "iconsax-react";
 import { useEffect, useRef, useState } from "react";
 import { useSelector } from "react-redux";
@@ -8,12 +9,14 @@ import { Colors } from "../components/design/Colors";
 import Footer from "../components/Footer";
 import Navbar from "../components/Navbar/Navbar";
 import WalletConnect from "../components/Navbar/WalletConnect";
+import AccountFeaturedItems from "../components/Profile/AccountFeaturedItems";
 import AccountSupport from "../components/Profile/AccountSupportTab";
 import Earnings from "../components/Profile/EarningsTab";
 import FeaturedItems from "../components/Profile/FeaturedItems";
 import NotificationSettings from "../components/Profile/NotificationsTab";
 import OffersTab from "../components/Profile/OffersTab";
 import ProfileDetails from "../components/Profile/ProfileDetailsTab";
+import WalletConnectModal from "../components/wallet/WalletConnectModal";
 import { API_CONFIG } from "../config";
 import '../styles.css'
 import { AUTH_API } from "../utils/data/auth_api";
@@ -34,7 +37,7 @@ const BannerContainer = styled.label`
 height:150px;
 background:${Colors.gradientPurpleStandard};
 border-radius:12px;
-margin-bottom:60px;
+// margin-bottom:60px;
 position:relative;
 background-size:cover;
 background-repeat:no-repeat;
@@ -53,9 +56,15 @@ background-size:cover;
 background-repeat:no-repeat;
 background-position:center;
 position:absolute;
-left:5%;
-bottom:-30%;
+left:20%;
+top:-50%;
 // z-index:1;
+`
+const RelativeLogoContainer = styled.div`
+position:relative;
+width:100px;
+height:100px;
+
 `
 const Logo = styled.div`
 width:100%;
@@ -97,13 +106,13 @@ background: ${({ theme }) => theme.profilePageGradient};
 border-radius: 24px;
 display:flex;
 flex-direction:column;
-// justify-content:between;
+// justify-content:start;
 overflow-y:scroll;
 scrollbar-width: none;
 height:80vh;
 -ms-overflow-style: none;
 @media screen and (max-width: 600px) {
-    align-items:center;
+    align-items:start;
 }
   
 &::-webkit-scrollbar {
@@ -138,6 +147,7 @@ const Account = ({ theme, themeToggler }) => {
     const [user, setUser] = useState(undefined)
     const [loading, setLoading] = useState(true)
     const [apiLoading, setApiLoading] = useState(false)
+    const [walletConnect, setWalletConnect] = useState(false)
     const apiCall = useRef(undefined)
 
     useEffect(() => {
@@ -152,7 +162,6 @@ const Account = ({ theme, themeToggler }) => {
         if (user)
             setLoading(false)
     }, [user])
-
     const getUser = async () => {
         try {
             apiCall.current = AUTH_API.request({
@@ -165,13 +174,17 @@ const Account = ({ theme, themeToggler }) => {
             if (!response.isSuccess)
                 throw response
             setUser(response.data)
-            var AVATAR_PATH = response.data.avatar_path ? response.data.avatar_path.replace('root/NFTMarketplace-Backend/auth/media/', '') : undefined;
-            var BANNER_PATH = response.data.banner_path ? response.data.banner_path.replace('root/NFTMarketplace-Backend/auth/media/', '') : undefined;
-            var bg_AVATAR = BG_URL(PUBLIC_URL(`${API_CONFIG.AUTH_MEDIA_API_URL}${AVATAR_PATH}`))
-            var bg_BANNER = BG_URL(PUBLIC_URL(`${API_CONFIG.AUTH_MEDIA_API_URL}${BANNER_PATH}`))
             console.log(BANNER_PATH)
-            setAvatar(bg_AVATAR)
-            setBanner(bg_BANNER)
+            if (response.data.avatar_path) {
+                var AVATAR_PATH = response.data.avatar_path ? response.data.avatar_path.replace('root/dortzio/auth/media/', '') : undefined;
+                var bg_AVATAR = BG_URL(PUBLIC_URL(`${API_CONFIG.AUTH_MEDIA_API_URL}${AVATAR_PATH}`))
+                setAvatar(bg_AVATAR)
+            }
+            if (response.data.banner_path) {
+                var BANNER_PATH = response.data.banner_path ? response.data.banner_path.replace('root/dortzio/auth/media/', '') : undefined;
+                var bg_BANNER = BG_URL(PUBLIC_URL(`${API_CONFIG.AUTH_MEDIA_API_URL}${BANNER_PATH}`))
+                setBanner(bg_BANNER)
+            }
         }
         catch (err) {
             if (err.status == 404)
@@ -179,13 +192,12 @@ const Account = ({ theme, themeToggler }) => {
             else if (err.status == 500) {
                 setLoadErr("Internal server error occured, please try again later.")
             }
-            else {
-                setLoadErr('something went wrong , please try again later')
-            }
+            // else {
+            //     setLoadErr('something went wrong , please try again later')
+            // }
             setLoading(false)
         }
     }
-
     const walletDrawer = (anchor, open) => (event) => {
         if (event.type === 'keydown' && (event.key === 'Tab' || event.key === 'Shift')) {
             return;
@@ -195,9 +207,7 @@ const Account = ({ theme, themeToggler }) => {
     };
     const onLogoChange = (e) => {
         e.preventDefault()
-
         var u = { ...user };
-
         if (e.target.files && e.target.files[0] && e.target.files[0].type.indexOf("image") !== -1) {
             setAvatarError(undefined)
             u.avatar = e.target.files[0];
@@ -205,6 +215,7 @@ const Account = ({ theme, themeToggler }) => {
             // setAvatarChanged(true)
             let avtTemp = URL.createObjectURL(file)
             // setAvatar();
+            console.log('logo changed', file)
             setAvatar(`url(${avtTemp})`)
             setUser(u)
         }
@@ -224,6 +235,7 @@ const Account = ({ theme, themeToggler }) => {
             u.banner = e.target.files[0];
             const [file] = e.target.files;
             let bnTemp = URL.createObjectURL(file)
+            console.log('banner changed', file)
             setBanner(`url(${bnTemp})`)
             setUser(u)
         }
@@ -234,8 +246,6 @@ const Account = ({ theme, themeToggler }) => {
             setBannerError("Selected file is not an image")
         }
     }
-
-
     useEffect(() => {
         if (value == "profile") {
             setTitle("Profile Details")
@@ -261,18 +271,17 @@ const Account = ({ theme, themeToggler }) => {
         setValue(e.target.id)
     }
 
+    const { active, account, library, connector, activate, deactivate } = useWeb3React()
 
     return (
         <>
             <div className="pdng">
                 <Navbar theme={theme} themeToggler={themeToggler} />
 
-                {globalUser.isLoggedIn ?
+                {globalUser.isLoggedIn && active ?
                     <>
                         {loading ?
-                            <div className="my-5">
-                                <LinearProgress color="secondary" />
-                            </div>
+                            <LinearProgress color="secondary" sx={{ my: 55, mx: 5 }} />
                             :
                             <>
                                 <SectionContainer className="row my-4">
@@ -287,19 +296,26 @@ const Account = ({ theme, themeToggler }) => {
                                     <InfoContainer className="d-flex flex-column col-12 col-lg-9">
                                         <h2 style={{ fontWeight: 600 }}>{title}</h2>
                                         {value == "profile" ?
-                                            <BannerContainer onChange={onBannerChange} style={{ backgroundImage: banner ? banner : `${Colors.gradientPurpleStandard}` }}>
-                                                <input type="file" name="banner" id="banner" hidden />
+                                            <>
+                                                <BannerContainer for="banner" onChange={onBannerChange} style={{ backgroundImage: banner ? banner : `${Colors.gradientPurpleStandard}` }}>
+                                                    <input type="file" name="banner" id="banner" hidden />
+                                                    <AddBannerButt><Add /></AddBannerButt>
+                                                </BannerContainer>
+                                                <RelativeLogoContainer>
+                                                    <LogoContainer for="avatar" onChange={onLogoChange} style={{ backgroundImage: avatar ? avatar : `${Colors.gradientPurpleStandard}` }}>
+                                                        {console.log('avatar', avatar, 'banner', banner)}
+                                                        <input type="file" name="avatar" id="avatar" hidden />
+                                                        <Logo>
+                                                            <AddPicButt><Add /></AddPicButt>
+                                                        </Logo>
+                                                    </LogoContainer>
+                                                </RelativeLogoContainer>
 
-                                                <LogoContainer onChange={onLogoChange} style={{ backgroundImage: avatar ? avatar : `${Colors.gradientPurpleStandard}` }}>
-                                                    <input type="file" name="avatar" id="avatar" hidden />
-                                                    <Logo>
-                                                        <AddPicButt><Add /></AddPicButt>
-                                                    </Logo>
-                                                </LogoContainer>
-                                                <AddBannerButt><Add /></AddBannerButt>
-                                            </BannerContainer> : undefined}
+
+                                            </>
+                                            : undefined}
                                         <DetailsContainer className="p-3">
-                                            {value == "profile" ? <ProfileDetails globalUser={globalUser} user={user} setUser={setUser} avatar={avatar} banner={banner} /> : value == "support" ? <AccountSupport theme={theme} /> : value == "featured" ? <FeaturedItems /> : value == "offers" ? <OffersTab /> : value == "notifications" ? <NotificationSettings theme={theme} /> : value == "earning" ? <Earnings theme={theme} /> : undefined}
+                                            {value == "profile" ? <ProfileDetails globalUser={globalUser} user={user} setUser={setUser} avatar={avatar} banner={banner} /> : value == "support" ? <AccountSupport theme={theme} /> : value == "featured" ? <AccountFeaturedItems theme={theme} /> : value == "offers" ? <OffersTab /> : value == "notifications" ? <NotificationSettings theme={theme} /> : value == "earning" ? <Earnings theme={theme} /> : undefined}
                                         </DetailsContainer>
                                     </InfoContainer>
                                 </SectionContainer>
@@ -307,8 +323,8 @@ const Account = ({ theme, themeToggler }) => {
                         }</>
                     :
                     <SectionContainer className="d-flex my-5 justify-content-center align-items-center">
-                        <ButtonLarge onClick={walletDrawer('bottom', true)}>connect wallet</ButtonLarge>
-                        <WalletConnect toggleDrawer={walletDrawer} state={walletMenu} theme={theme} />
+                        <ButtonLarge onClick={() => { setWalletConnect(!walletConnect) }}>connect wallet</ButtonLarge>
+                        <WalletConnectModal open={walletConnect} handleClose={() => setWalletConnect(false)} theme={theme} />
                     </SectionContainer>
                 }
             </div>

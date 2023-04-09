@@ -13,7 +13,10 @@ const SectionContainer = styled.div`
     display:flex;
     flex-direction:column;
     justify-content:space-between;
-    margin:50px auto;
+    margin-top:120px;
+    @media screen and (max-width: 992px) {
+        margin-top:54px;
+    }
 
 `;
 const Card = styled.div`
@@ -28,18 +31,24 @@ const BasicsSection = ({ theme }) => {
     console.log(informartions)
     return (
         <SectionContainer className="pdng">
-            <div className="d-flex p-2 justify-content-between">
+            <div style={{ marginBottom: "20px" }} className=" d-flex justify-content-between">
                 <div className="d-flex col-sx-11 col-sm-9 col-md-6 justify-content-start align-items-center">
-                    <h3 style={{ margin: 0, fontWeight: "600" }}>
+                    <h4 className="d-none d-lg-flex" style={{ margin: 0, fontWeight: 500 }}>
                         Get Comfortable With The Basics
-                    </h3>
+                    </h4>
+                    <h5 className="d-none d-sm-flex d-lg-none" style={{ margin: 0, fontWeight: 500 }}>
+                        Get Comfortable With The Basics
+                    </h5>
+                    <h6 className="d-flex d-sm-none" style={{ margin: 0, fontWeight: 500 }}>
+                        Get Comfortable With The Basics
+                    </h6>
                 </div>
-                <div className="d-none d-sm-flex col-sm-3 col-md-6 justify-content-end align-items-center" style={{ cursor: "pointer" }}>
+                <div className="d-none d-sm-flex col-sm-3 col-md-6 justify-content-end align-items-center" style={{ cursor: "pointer", fontSize: "14px" }}>
                     Show more
-                    <div style={{ width: "auto", padding: "0" }}><ArrowRight2 /></div>
+                    <div style={{ width: "auto", padding: "0" }}><ArrowRight2 size="20" /></div>
                 </div>
                 <div className="d-flex d-sm-none col-1 justify-content-end align-items-center" style={{ cursor: "pointer" }}>
-                    <div style={{ width: "auto", padding: "0" }}><ArrowRight2 /></div>
+                    <div style={{ width: "auto", padding: "0" }}><ArrowRight2 size="20" /></div>
                 </div>
             </div>
             {informartions.length == 0 ?
@@ -49,33 +58,20 @@ const BasicsSection = ({ theme }) => {
                     <CustomSlider
                         theme={theme}
                         slidesCount={informartions.length}>
-                        {informartions.map((info) => {
-                            return <InfoCard slider={true} image={info.card_image} title={info.title} id={info.id} />
+                        {informartions.map((info, index) => {
+                            return <InfoCard key={info.id} nextInfo={index + 1} slider={true} image={info.card_image} title={info.title} id={info.id} />
                         })}
                     </CustomSlider>
                     :
                     <CustomSlider
                         theme={theme}
                     >
-                        {informartions.map((info) => {
-                            return <InfoCard slider={true} image={info.card_image} title={info.title} id={info.id} />
+                        {informartions.map((info, index) => {
+                            return <InfoCard key={info.id} nextInfo={index + 1} slider={true} image={info.card_image} title={info.title} id={info.id} />
                         })}
                     </CustomSlider>
             }
 
-            {/* 
-            <div className="d-none d-md-flex row justify-content-between">
-                <InfoCard image={infoImage1} className="p-2 col-xs-12 col-sm-6 col-md-4 align-items-center align-self-center" />
-                <InfoCard image={infoImage2} className="p-2 col-xs-12 col-sm-6 col-md-4 align-items-center align-self-center" />
-                <InfoCard image={infoImage3} className="p-2 col-xs-12 col-sm-6 col-md-4 align-items-center align-self-center" />
-            </div>
-            <div className="d-none d-sm-flex d-md-none row justify-content-between">
-                <InfoCard image={infoImage1} className="p-2 col-xs-12 col-sm-6 col-md-4 align-items-center align-self-center" />
-                <InfoCard image={infoImage2} className="p-2 col-xs-12 col-sm-6 col-md-4 align-items-center align-self-center" />
-            </div>
-            <div className="d-flex d-sm-none row justify-content-between">
-                <InfoCard image={infoImage1} className="p-2 col-xs-12 col-sm-6 col-md-4 align-items-center align-self-center" />
-            </div> */}
         </SectionContainer>
 
     );

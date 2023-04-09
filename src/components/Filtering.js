@@ -27,31 +27,31 @@ const Selectionn = styled.div`
     font-size:14px;
 `;
 
-export const Filtering = ({ theme, handleFilter, handleViewChange, selectOptions, id }) => {
+export const Filtering = ({ theme, handleFilter, handleViewChange, selectOptions, id, selectionId, view, searchingWhat, handleSelection, selectValue }) => {
     return (
         <div className="p-0 d-flex w-100 justify-content-center align-items-center mb-4">
             <div className="d-flex w-100 p-0 justify-content-between align-items-center">
-                <div className="col-8 col-sm-4 col-md-5 p-0"><SearchBox theme={theme} id={id} /></div>
+                <div className="col-8 col-sm-4 col-md-5 p-0"><SearchBox theme={theme} id={id} searchingWhat={searchingWhat} /></div>
                 <div className="d-none d-sm-block col-4 col-md-3 p-0">
                     <div className="mx-1">
-                        <SSelection width={'100%'} theme={theme} tabs={selectOptions} />
+                        <SSelection id={selectionId} width={'100%'} theme={theme} tabs={selectOptions} handleSelect={handleSelection} selectValue={selectValue} />
                     </div>
                 </div>
                 <div className="d-none d-sm-block col-3 p-0">
                     <Selectionn className="mx-1 d-flex ">
-                        <IconContainer className="col-3 p-1 p-md-2 text-center d-flex justify-content-center align-items-center" onClick={() => handleViewChange('xs')}><HambergerMenu /></IconContainer>
-                        <IconContainer className="col-3 p-1 p-md-2 text-center d-flex justify-content-center align-items-center" onClick={() => handleViewChange('s')}><Grid1 /></IconContainer>
-                        <IconContainer className="col-3 p-1 p-md-2 text-center d-flex justify-content-center align-items-center" onClick={() => handleViewChange('m')}><Grid2 /></IconContainer>
-                        <IconContainer className="col-3 p-1 p-md-2 text-center d-flex justify-content-center align-items-center" onClick={() => handleViewChange('l')}><Grid5 /></IconContainer>
+                        <IconContainer className="col-3 p-1 p-md-2 text-center d-flex justify-content-center align-items-center" style={{ backgroundColor: view == 'xs' ? theme == 'light' ? '#d9d9d9' : '#332E5F' : 'unset' }} onClick={() => handleViewChange('xs')}><HambergerMenu /></IconContainer>
+                        <IconContainer className="col-3 p-1 p-md-2 text-center d-flex justify-content-center align-items-center" style={{ backgroundColor: view == 's' ? theme == 'light' ? '#d9d9d9' : '#332E5F' : 'unset' }} onClick={() => handleViewChange('s')}><Grid1 /></IconContainer>
+                        <IconContainer className="col-3 p-1 p-md-2 text-center d-flex justify-content-center align-items-center" style={{ backgroundColor: view == 'm' ? theme == 'light' ? '#d9d9d9' : '#332E5F' : 'unset' }} onClick={() => handleViewChange('m')}><Grid2 /></IconContainer>
+                        <IconContainer className="col-3 p-1 p-md-2 text-center d-flex justify-content-center align-items-center" style={{ backgroundColor: view == 'l' ? theme == 'light' ? '#d9d9d9' : '#332E5F' : 'unset' }} onClick={() => handleViewChange('l')}><Grid5 /></IconContainer>
                     </Selectionn>
                 </div>
-                <div className="d-block d-sm-none col-2 col-sm-1 p-0" style={{width:"max-content" }}>
-                    <Selectionn style={{ borderRadius: "12px" , }} className="mx-1 d-flex p-3 p-sm-2 p-md-3 d-flex justify-content-center">
+                <div className="d-block d-sm-none col-2 col-sm-1 p-0" style={{ width: "max-content" }}>
+                    <Selectionn style={{ borderRadius: "12px", }} className="mx-1 d-flex p-3 p-sm-2 p-md-3 d-flex justify-content-center">
                         <div style={{ width: "auto" }}><ArrowSwapVertical /></div>
                     </Selectionn>
                 </div>
-                <div className="col-2 col-sm-1 p-0" style={{width:"max-content" }}>
-                    <Selectionn style={{ borderRadius: "12px" , }} className="mx-1 d-flex p-3 p-sm-2 p-md-3 d-flex justify-content-center" onClick={handleFilter}>
+                <div className="col-2 col-sm-1 p-0" style={{ width: "max-content" }}>
+                    <Selectionn style={{ borderRadius: "12px", }} className="mx-1 d-flex p-3 p-sm-2 p-md-3 d-flex justify-content-center" onClick={handleFilter}>
                         <div style={{ width: "auto" }}><FilterSearch size="20" /></div>
                     </Selectionn>
                 </div>
