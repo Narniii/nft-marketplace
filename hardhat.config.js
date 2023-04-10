@@ -8,7 +8,7 @@ module.exports = {
   networks: {
     hardhat: {
       allowUnlimitedContractSize: true,
-      url: process.env.LOCAL_NET,
+      // url: process.env.LOCAL_NET,
       chainId: 31337,
     },
     ropsten: {

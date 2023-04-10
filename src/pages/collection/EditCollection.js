@@ -6,7 +6,7 @@ import Navbar from "../../components/Navbar/Navbar";
 import imageBG from '../../assets/image.png'
 import SearchBox from "../../components/Navbar/SearchBox";
 import { Add, ArrowDown2, Chart, Chart1, HambergerMenu, InfoCircle, Lock, Lock1, Menu, NotificationBing, PercentageCircle, PercentageSquare, Star, Star1 } from "iconsax-react";
-import { ButtonLarge } from "../../components/design/Buttons";
+import { ButtonLarge, ButtonOutlineLarge } from "../../components/design/Buttons";
 import '../../styles.css'
 import { useSelector } from "react-redux";
 import AddModals from "../../components/NFTSingle/AddModals";
@@ -191,7 +191,7 @@ const EditCollection = ({ theme, themeToggler }) => {
                 n.banner = response.data.data.banner_image_path;
                 n.description = response.data.data.description;
                 n.category = response.data.data.category;
-                n.links = JSON.parse(response.data.data.links);
+                n.links = response.data.data.links == "" ? response.data.data.links : JSON.parse(response.data.data.links);
                 setCategoryValue(response.data.data.category !== " " ? response.data.data.category : "choose category")
                 setCollection(n)
                 setLinks(n.links)
@@ -395,6 +395,33 @@ const EditCollection = ({ theme, themeToggler }) => {
 
         } catch (error) {
             console.log(error)
+            setErr('something went wrong , please try again later')
+            setApiLoading(false)
+        }
+
+    }
+    const deleteColection = async () => {
+        console.log(id)
+        setApiLoading(true)
+        try {
+            apiCall.current = MARKET_API.request({
+                path: `/collection/delete/`,
+                method: "post",
+                body: {
+                    collection_id: id
+                },
+                headers: {
+                    'Content-Type': 'multipart/form-data'
+                }
+            });
+            let resp = await apiCall.current.promise;
+            console.log('delete response', resp)
+            if (!resp.isSuccess)
+                throw resp
+            setSuccessMesssage('collection deleted !')
+            setApiLoading(false)
+        }
+        catch (err) {
             setErr('something went wrong , please try again later')
             setApiLoading(false)
         }
@@ -644,7 +671,18 @@ const EditCollection = ({ theme, themeToggler }) => {
                                     {apiLoading ? <ButtonLarge className="mt-5 mb-3" >
                                         {/* <CircularProgress sx={{ color: "white" }} /> */}...
                                     </ButtonLarge> :
-                                        <ButtonLarge className="mt-5 mb-3" onClick={handleSubmit}>Save</ButtonLarge>}
+                                        // <ButtonLarge className="mt-5 mb-3" onClick={handleSubmit}>Save</ButtonLarge>
+
+                                        <div className="d-flex justify-content-between align-items-center w-100">
+                                            <div className="mt-5 mb-3 col-8">
+                                                <ButtonLarge className="" onClick={handleSubmit}>save</ButtonLarge>
+                                            </div>
+                                            <div className="mt-5 mb-3 col-3">
+                                                <ButtonOutlineLarge onClick={deleteColection}>Delete</ButtonOutlineLarge>
+                                            </div>
+                                        </div>
+
+                                    }
 
 
                                 </div>

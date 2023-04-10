@@ -36,7 +36,11 @@ const ProfileDetails = ({ globalUser, user, setUser, avatar, banner }) => {
 
     useEffect(() => {
         if (user) {
-            setExtras(JSON.parse(user.extra))
+            if (typeof (user.extra) == "object") {
+                setExtras(user.extra)
+            } else {
+                setExtras(JSON.parse(user.extra))
+            }
             setLoading(false)
         }
     }, [user])

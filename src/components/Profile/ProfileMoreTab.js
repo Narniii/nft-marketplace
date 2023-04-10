@@ -355,7 +355,7 @@ const ProfileMoreTab = ({ theme, tab, userWallet }) => {
                                                 {madeOffers.map((offer) => {
                                                     return (
                                                         <ProductCardDesktop className="my-1">
-                                                            <Recommend style={{ width: "250px", overflow: "hidden" }}><ItemImage style={{ backgroundImage: BG_URL(PUBLIC_URL(`${API_CONFIG.MARKET_MEDIA_API_URL}${offer.nft_media.replace('root/dortzio/market/media/', '')}`)) }} />{offer.nft_title}</Recommend>
+                                                            <Recommend style={{ width: "250px", overflow: "hidden" }}><ItemImage className="me-1" style={{ backgroundImage: BG_URL(PUBLIC_URL(`${API_CONFIG.MARKET_MEDIA_API_URL}${offer.nft_media.replace('root/dortzio/market/media/', '')}`)) }} />{offer.nft_title}</Recommend>
                                                             <Subtitle style={{ width: "150px", overflow: "hidden" }}>{offer.price} ETH</Subtitle>
                                                             <Subtitle style={{ width: "200px", }}>{(parseFloat(offer.price) * usdExRate).toFixed(2) !== 'NaN' ? (parseFloat(offer.price) * usdExRate).toFixed(2) : "0"} $</Subtitle>
                                                             <Subtitle style={{ width: "200px", }}>floor difference</Subtitle>
@@ -425,7 +425,7 @@ const ProfileMoreTab = ({ theme, tab, userWallet }) => {
                                                     {receivedOffers.map((offer) => {
                                                         return (
                                                             <ProductCardDesktop className="my-1">
-                                                                <Recommend style={{ width: "250px", overflow: "hidden" }}><ItemImage style={{ backgroundImage: BG_URL(PUBLIC_URL(`${API_CONFIG.MARKET_MEDIA_API_URL}${offer.nft_media.replace('root/dortzio/market/media/', '')}`)) }} />{offer.nft_title}</Recommend>
+                                                                <Recommend style={{ width: "250px", overflow: "hidden" }}><ItemImage className="me-1" style={{ backgroundImage: BG_URL(PUBLIC_URL(`${API_CONFIG.MARKET_MEDIA_API_URL}${offer.nft_media.replace('root/dortzio/market/media/', '')}`)) }} />{offer.nft_title}</Recommend>
                                                                 <Subtitle style={{ width: "150px", overflow: "hidden" }}>{offer.price} ETH</Subtitle>
                                                                 <Subtitle style={{ width: "200px", }}>{(parseFloat(offer.price) * usdExRate).toFixed(2) !== 'NaN' ? (parseFloat(offer.price) * usdExRate).toFixed(2) : "0"} $</Subtitle>
                                                                 <Subtitle style={{ width: "200px", }}>floor difference</Subtitle>

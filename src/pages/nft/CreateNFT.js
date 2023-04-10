@@ -517,8 +517,8 @@ const CreateNFT = ({ theme, themeToggler }) => {
                 ipfsFileUrlForMint = `https://${ipfsFileCidForMint}.ipfs.dweb.link/`
             }
             mintNFTFunc(resp.data._id.$oid, ipfsUrlForMint)
-            setSuccessMesssage('NFT created successfully')
-            setApiLoading(false)
+            // setSuccessMesssage('NFT created successfully')
+            // setApiLoading(false)
         }
         catch (err) {
             console.log('create nft err', err)
@@ -528,10 +528,11 @@ const CreateNFT = ({ theme, themeToggler }) => {
         }
     }
     const mintNFTFunc = async (id, tokenURIm) => {
-        // {console.log(handleMint())}
+        { console.log(tokenURIm) }
         const recipient = account;
-        const tokenURI = tokenURIm;
+        const tokenURI = tokenURIm ? tokenURIm : ' ';
         let tx = await mintNFT(recipient, tokenURI)
+        console.log(tx)
         let tx_hash = tx.hash
         console.log(tx_hash)
         let this_time = new Date(Date.now())
@@ -563,7 +564,8 @@ const CreateNFT = ({ theme, themeToggler }) => {
                 console.log('backend mint error:', err)
             }
         } else {
-            setErr('nft is created but not minted')
+            console.log('nft is created but not minted')
+            deleteNFT(id)
         }
     }
     const editAssetActivity = async (event, copies, id, nft) => {
@@ -602,7 +604,8 @@ const CreateNFT = ({ theme, themeToggler }) => {
             console.log('edit activity resp', resp)
             if (!resp.isSuccess)
                 throw resp
-            setSuccessMesssage('NFT minted successfully')
+            setSuccessMesssage('NFT created and minted successfully')
+            setApiLoading(false)
         } catch (error) {
             setErr(err.statusText)
             setApiLoading(false)
@@ -648,6 +651,30 @@ const CreateNFT = ({ theme, themeToggler }) => {
         catch (err) {
             console.log(err)
         }
+    }
+    const deleteNFT = async (id) => {
+        try {
+            apiCall.current = MARKET_API.request({
+                path: `/nft/delete/`,
+                method: "post",
+                body: {
+                    nft_id: id
+                },
+                headers: {
+                    'Content-Type': 'multipart/form-data'
+                }
+            });
+            let resp = await apiCall.current.promise;
+            console.log('delete response', resp)
+            if (!resp.isSuccess)
+                throw resp
+            setErr('minting canceled !')
+            setApiLoading(false)
+        }
+        catch (err) {
+            console.log('backend delete error:', err)
+        }
+
     }
 
     const { active, } = useWeb3React()

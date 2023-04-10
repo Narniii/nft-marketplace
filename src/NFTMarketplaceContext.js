@@ -53,6 +53,7 @@ export const NFTMarketplaceProvider = ({ children }) => {
         return tx
       } catch (error) {
         console.error("Error minting NFT:", error);
+        return error
       }
     }
   };

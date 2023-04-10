@@ -6,7 +6,7 @@ import Navbar from "../../components/Navbar/Navbar";
 import imageBG from '../../assets/image.png'
 import SearchBox from "../../components/Navbar/SearchBox";
 import { Add, ArrowDown2, Chart, Chart1, HambergerMenu, InfoCircle, Lock, Lock1, NotificationBing, PercentageCircle, PercentageSquare, Star, Star1 } from "iconsax-react";
-import { ButtonLarge } from "../../components/design/Buttons";
+import { ButtonLarge, ButtonOutline, ButtonOutlineLarge } from "../../components/design/Buttons";
 import '../../styles.css'
 import { useSelector } from "react-redux";
 import AddModals from "../../components/NFTSingle/AddModals";
@@ -125,6 +125,31 @@ margin:0;
 }
 
 `;
+
+const DeleteButton = styled.button`
+display: flex;
+flex-direction: row;
+justify-content: center;
+align-items: center;
+padding: 16px 12px;
+// gap: 8px;
+// width: 348px;
+width:100px;
+height: 56px;
+background: ${Colors.errorDark};
+mix-blend-mode: normal;
+box-shadow: 0px 1px 6px rgba(0, 0, 0, 0.15);
+border-radius: 24px;
+flex: none;
+border:none;
+color: white;
+order: 1;
+flex-grow: 0;
+&:hover{
+    background: ${Colors.errorMain};
+}
+
+`
 
 const EditNft = ({ theme, themeToggler }) => {
     const controller = new AbortController();
@@ -553,6 +578,33 @@ const EditNft = ({ theme, themeToggler }) => {
         else { setIsFreezed(0) }
     }
 
+    const deleteNFT = async () => {
+        setApiLoading(true)
+        try {
+            apiCall.current = MARKET_API.request({
+                path: `/nft/delete/`,
+                method: "post",
+                body: {
+                    nft_id: id
+                },
+                headers: {
+                    'Content-Type': 'multipart/form-data'
+                }
+            });
+            let resp = await apiCall.current.promise;
+            console.log('delete response', resp)
+            if (!resp.isSuccess)
+                throw resp
+            setSuccessMesssage('nft deleted !')
+            setApiLoading(false)
+        }
+        catch (err) {
+            setErr('something went wrong , please try again later')
+            setApiLoading(false)
+        }
+
+    }
+
     return (
         <>
             <div className="pdng mb-5">
@@ -664,12 +716,6 @@ const EditNft = ({ theme, themeToggler }) => {
                                                     <SSelection id={'edit-nft-collections'} theme={theme} width={'100%'} tabs={['no collection']} />
                                                 }
                                             </div>
-
-
-
-
-
-
                                         </div>
                                     </div>
 
@@ -782,11 +828,20 @@ const EditNft = ({ theme, themeToggler }) => {
                                         {apiLoading ? <ButtonLarge className="mt-5 mb-3" >
                                             {/* <CircularProgress sx={{ color: "white" }} /> */}...
                                         </ButtonLarge> :
-                                            <ButtonLarge className="mt-5 mb-3" onClick={handleSubmit}>save</ButtonLarge>}
+                                            <div className="d-flex justify-content-between align-items-center w-100">
+                                                <div className="mt-5 mb-3 col-8">
+                                                    <ButtonLarge className="" onClick={handleSubmit}>save</ButtonLarge>
+                                                </div>
+                                                <div className="mt-5 mb-3 col-3">
+                                                    <ButtonOutlineLarge onClick={deleteNFT}>Delete</ButtonOutlineLarge>
+                                                </div>
+                                            </div>
+
+                                            // <ButtonLarge className="" onClick={handleSubmit}>Save</ButtonLarge>
+                                        }
 
 
                                     </div>
-
 
                                     {/* error and success messages */}
                                     <div className="col-12 col-sm-9 col-lg-6 col-xl-5 d-flex flex-column justify-content-between align-items-center">
@@ -797,7 +852,9 @@ const EditNft = ({ theme, themeToggler }) => {
                                 </FieldsContainer>
                             </div>
                             <AddModals prevProperties={properties} saveLevels={saveLevels} saveStats={saveStats} prevLevels={levels} prevStats={stats} saveProperties={saveProperties} saveRoyalties={saveRoyalties} openRoyalties={addRoyalties} openStats={addStats} openLevels={addLevels} openProperties={addProperties} handleClose={handleClose} theme={theme} />
-                        </>}</>
+                        </>
+                    }
+                    </>
                     : <div className="d-flex my-5 justify-content-center align-items-center">
                         <ButtonLarge onClick={() => { setWalletConnect(!walletConnect) }}>connect wallet</ButtonLarge>
                         <WalletConnectModal open={walletConnect} handleClose={() => setWalletConnect(false)} theme={theme} />

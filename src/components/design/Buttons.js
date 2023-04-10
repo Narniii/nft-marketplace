@@ -152,6 +152,19 @@ align-items: center;
 padding:10px 20px;
 width:100%;
 `
+export const ButtonOutlineLarge = styled.button`
+color:#9951F4;
+border:solid 1px #9951F4;
+background-color:transparent;
+border-radius:24px;
+display: flex;
+flex-direction: row;
+justify-content: center;
+align-items: center;
+padding:10px 20px;
+width:100%;
+height:56px;
+`
 
 export const ButtonOutlineLight = styled.button`
 color:#f9f9f9;

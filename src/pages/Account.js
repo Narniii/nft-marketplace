@@ -173,8 +173,6 @@ const Account = ({ theme, themeToggler }) => {
             console.log('uuuuseeeeeer', response)
             if (!response.isSuccess)
                 throw response
-            setUser(response.data)
-            console.log(BANNER_PATH)
             if (response.data.avatar_path) {
                 var AVATAR_PATH = response.data.avatar_path ? response.data.avatar_path.replace('root/dortzio/auth/media/', '') : undefined;
                 var bg_AVATAR = BG_URL(PUBLIC_URL(`${API_CONFIG.AUTH_MEDIA_API_URL}${AVATAR_PATH}`))
@@ -185,6 +183,7 @@ const Account = ({ theme, themeToggler }) => {
                 var bg_BANNER = BG_URL(PUBLIC_URL(`${API_CONFIG.AUTH_MEDIA_API_URL}${BANNER_PATH}`))
                 setBanner(bg_BANNER)
             }
+            setUser(response.data)
         }
         catch (err) {
             if (err.status == 404)
