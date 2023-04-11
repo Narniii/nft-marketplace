@@ -16,6 +16,7 @@ import useSWR from "swr"
 import { formatEther } from "@ethersproject/units"
 import detectEthereumProvider from '@metamask/detect-provider';
 import Web3 from "web3";
+// import MetaMaskSDK from "@metamask/sdk";
 
 const ItemCard = styled(Box)`
   background-color:${({ theme }) => theme.itemCardsBackground};
@@ -109,6 +110,17 @@ const WalletConnect = ({ theme, state, toggleDrawer, open, handleClose, anchorEl
                 web3b.eth.getBalance(account).then((val) => {
                     setEthBalance(formatEther(val))
                 })
+                // const MMSDK = new MetaMaskSDK({
+                //     injectProvider: false,
+                //     useDeeplink: false,
+                //     communicationLayerPreference: "socket",
+                // });
+
+                // const ethereum = MMSDK.getProvider(); // You can also access via window.ethereum
+
+                // ethereum.request({ method: 'eth_requestAccounts', params: [] });
+
+
             } catch (ex) {
                 console.log(ex)
             }

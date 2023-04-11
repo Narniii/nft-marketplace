@@ -58,7 +58,8 @@ export const lightTheme = {
 
     boxShadow: '0px 3px 10px rgba(0, 0, 0, 0.07)',
     deeperBoxShadow: '0px 0px 14px rgba(0, 0, 0, 0.1)',
-    hoverBoxShadow: "0px 6px 20px rgba(0, 0, 0, 0.12)",
+    catBoxShadow: '0px 0px 14px rgba(0, 0, 0, 0.1)',
+    hoverBoxShadow: "0px 6px 20px rgba(0, 0, 0, 0.08)",
 
     collectionCard: '#ffffff',
     collectionCardHover: Colors.gray0,
@@ -160,8 +161,9 @@ export const darkTheme = {
 
     // boxShadow: '0px 3px 4px rgba(190, 138, 255, 0.32)',
     boxShadow: '0px 3px 10px rgba(0, 0, 0, 0.07)',
+    catBoxShadow: '0px 3px 10px rgba(0, 0, 0, 0.07)',
     deeperBoxShadow: '0px 0px 14px rgba(190, 138, 255, 0.32)',
-    hoverBoxShadow: "0px 3px 4px rgba(190, 138, 255, 0.32)",
+    hoverBoxShadow: "0px 0px 12px rgba(190, 138, 255, 0.32)",
 
 
 

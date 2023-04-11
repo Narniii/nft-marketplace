@@ -19,6 +19,8 @@ import '../../styles.css'
 import WalletConnectModal from "../../components/wallet/WalletConnectModal";
 import { useWeb3React } from "@web3-react/core";
 import { useNFTMarketplace } from "../../NFTMarketplaceContext";
+import { ethers } from 'ethers';
+
 const SwitchS = styled.label`
 position: relative;
 display: inline-block;
@@ -172,13 +174,27 @@ const CreateNFT = ({ theme, themeToggler }) => {
     const [unlockableContent, setunlockableContent] = useState(false)
     const [sensetiveContent, setsensetiveContent] = useState(false)
     const [copies, setCopies] = useState(1)
-    const { mintNFT, account } = useNFTMarketplace();
+    // const { account, mintNFT, setOnTokenMinted } = useNFTMarketplace();
+    const { account, mintNFT, owner } = useNFTMarketplace();
 
-    const handleMint = () => {
-        const recipient = account;
-        const tokenURI = "https://example.com/tokenURI";
-        mintNFT(recipient, tokenURI)
-    };
+
+
+    // const [mintedTokenId, setMintedTokenId] = useState(null);
+
+    // const handleTokenMinted = (tokenId, recipient) => {
+    //     console.log("TokenMinted event received:", tokenId, recipient);
+    //     setMintedTokenId(tokenId);
+    //     // Do something with tokenId and recipient, like updating your component's state
+    // };
+    // useEffect(() => {
+    //     setOnTokenMinted(handleTokenMinted);
+
+    //     return () => {
+    //         setOnTokenMinted(null);
+    //     };
+    // }, [setOnTokenMinted]);
+
+
 
     const handleChainSelect = (e) => {
         e.preventDefault()
@@ -435,10 +451,6 @@ const CreateNFT = ({ theme, themeToggler }) => {
     const createNFT = async (collection_id) => {
         // var ipfsFileCid = ' '
         // var ipfsFileUrl = ' '
-
-
-
-
         var ipfsFileCid = undefined
         var ipfsFileUrl = undefined
 
@@ -528,15 +540,40 @@ const CreateNFT = ({ theme, themeToggler }) => {
         }
     }
     const mintNFTFunc = async (id, tokenURIm) => {
+        // setMintedTokenId(null); // Reset tokenId state
+
         { console.log(tokenURIm) }
         const recipient = account;
+        // const recipient = owner;
         const tokenURI = tokenURIm ? tokenURIm : ' ';
+        // let tx = await mintNFT(recipient, tokenURI, parseInt(id))
         let tx = await mintNFT(recipient, tokenURI)
-        console.log(tx)
-        let tx_hash = tx.hash
+        let tx_hash = tx.tx.hash ? tx.tx.hash : undefined
+        let tokenId = tx.tokenId
         console.log(tx_hash)
+        console.log(tokenId)
+        console.log(tx)
         let this_time = new Date(Date.now())
         if (tx_hash) {
+
+
+            console.log(tx_hash)
+
+
+            // const waitForTokenId = async () => {
+            //     while (mintedTokenId === null) {
+            //         await new Promise((resolve) => setTimeout(resolve, 100));
+            //     }
+            //     return mintedTokenId;
+            // };
+
+            // const tokenId = await waitForTokenId();
+
+            // // Use tokenId in your logic
+            // console.log("Token ID from event:", tokenId);
+
+
+
             try {
                 apiCall.current = MARKET_API.request({
                     path: `/nft/mint/`,
@@ -908,8 +945,8 @@ const CreateNFT = ({ theme, themeToggler }) => {
 
                             {/* error and success messages */}
                             <div className="col-12 col-sm-9 col-lg-6 col-xl-5 d-flex flex-column justify-content-between align-items-center">
-                                {err ? <Typography sx={{ fontSize: "12px", color: `${Colors.errorDark}` }}>{err}</Typography> : undefined}
-                                {successMesssage ? <Typography sx={{ fontSize: "12px", color: `${Colors.successDark}` }}>{successMesssage}</Typography> : undefined}
+                                {err ? <Typography sx={{ fontSize: "12px", textTransform: `${Colors.subtitleFont}`, color: `${Colors.errorDark}` }}>{err}</Typography> : undefined}
+                                {successMesssage ? <Typography sx={{ fontSize: "12px", textTransform: `${Colors.subtitleFont}`, color: `${Colors.successDark}` }}>{successMesssage}</Typography> : undefined}
                             </div>
 
                         </FieldsContainer>

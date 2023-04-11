@@ -21,13 +21,13 @@ const Card = styled.div`
 
 const InnerDiv = styled.div`
     background: ${({ theme }) => theme.itemCardsBackground};
-    box-shadow: ${({ theme }) => theme.boxShadow};
+    box-shadow: ${({ theme }) => theme.catBoxShadow};
     border-radius: 24px;
     height:200px;
     overflow:hidden;
 
     &:hover{
-        box-shadow: ${({ theme }) => theme.deeperBoxShadow};
+        box-shadow: ${({ theme }) => theme.hoverBoxShadow};
     }
     padding-left:20px;
     &:hover .imgTwo{

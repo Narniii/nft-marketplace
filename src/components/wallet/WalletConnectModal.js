@@ -12,6 +12,7 @@ import { injected } from "./Connectors";
 import { shorten } from '../../utils/countingFunctions'
 import Web3 from "web3";
 import { formatEther } from "ethers/lib/utils";
+// import MetaMaskSDK from "@metamask/sdk";
 
 const ItemCard = styled(Box)`
   background-color:${({ theme }) => theme.itemCardsBackground};
@@ -69,6 +70,16 @@ const WalletConnectModal = ({ open, handleClose, theme }) => {
                 web3b.eth.getBalance(account).then((val) => {
                     setEthBalance(formatEther(val))
                 })
+                // const MMSDK = new MetaMaskSDK({
+                //     injectProvider: false,
+                //     useDeeplink: false,
+                //     communicationLayerPreference: "socket",
+                // });
+
+                // const ethereum = MMSDK.getProvider(); // You can also access via window.ethereum
+
+                // ethereum.request({ method: 'eth_requestAccounts', params: [] });
+
             } catch (ex) {
                 console.log(ex)
             }

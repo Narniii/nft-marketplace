@@ -278,7 +278,7 @@ const SellModal = ({ collection, open, handleClose, theme, id, userWallet, nft }
             if (!resp.isSuccess)
                 throw resp
             setApiLoading(false)
-            // window.location.reload()
+            window.location.reload()
 
 
         } catch (error) {

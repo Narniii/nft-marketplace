@@ -13,18 +13,20 @@ const Home = ({ theme, themeToggler }) => {
     const navigate = useNavigate();
     const refresh = () => window.location.reload(true)
 
-    useEffect(()=>{
+    useEffect(() => {
         // window.location.reload()
         // refresh()
-    },[])
+        console.log('heeloo')
+
+    }, [])
     return (
         <div className="container-fluid p-0 position-relative">
             <Header theme={theme} themeToggler={themeToggler} />
             <SlideSection theme={theme} />
             <TrendingSection theme={theme} />
-            <NotableCollections theme={theme}/>
-            <BasicsSection theme={theme}/>
-            <CategorySection theme={theme}/>
+            <NotableCollections theme={theme} />
+            <BasicsSection theme={theme} />
+            <CategorySection theme={theme} />
             <Footer />
         </div>
     );

@@ -745,7 +745,7 @@ const NFTSingle = ({ theme, themeToggler }) => {
                                                 <div className="d-flex flex-column">
                                                     <div className="d-flex justify-content-between w-100 align-items-center">
                                                         <TT className="m-0">Contract Address</TT>
-                                                        <LL className="m-0">546gdrs54341...</LL>
+                                                        <LL className="m-0">{shortenMedium(process.env.MARKET_ADDRESS)}</LL>
                                                     </div>
                                                     <div className="d-flex justify-content-between w-100 align-items-center">
                                                         <TT className="m-0">Token ID</TT>
@@ -753,7 +753,7 @@ const NFTSingle = ({ theme, themeToggler }) => {
                                                     </div>
                                                     <div className="d-flex justify-content-between w-100 align-items-center">
                                                         <TT className="m-0">Token Standard</TT>
-                                                        <P className="m-0">ERC-1155</P>
+                                                        <P className="m-0">ERC-721</P>
                                                     </div>
                                                     <div className="d-flex justify-content-between w-100 align-items-center">
                                                         <TT className="m-0">Chain</TT>
