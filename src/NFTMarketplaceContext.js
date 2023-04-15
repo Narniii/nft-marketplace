@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { ethers } from 'ethers';
+import { BigNumber, ethers } from 'ethers';
 import NFTMarketplace from './artifacts/contracts/Market.sol/NFTMarketplace.json';
 
 const NFTMarketplaceContext = createContext();
@@ -14,26 +14,6 @@ export const NFTMarketplaceProvider = ({ children }) => {
   const [marketContract, setMarketContract] = useState();
   const [account, setAccount] = useState();
   const [owner, setOwner] = useState()
-
-
-  // const [onTokenMinted, setOnTokenMinted] = useState(null);
-  // useEffect(() => {
-  //   if (marketContract && onTokenMinted) {
-  //     const filter = marketContract.filters.TokenMinted();
-  //     const handleTokenMinted = (tokenId, recipient) => {
-  //       onTokenMinted(tokenId.toNumber(), recipient);
-  //     };
-
-  //     marketContract.on(filter, handleTokenMinted);
-
-  //     return () => {
-  //       marketContract.off(filter, handleTokenMinted);
-  //     };
-  //   }
-  // }, [marketContract, onTokenMinted]);
-
-
-
 
   useEffect(() => {
 
@@ -67,8 +47,6 @@ export const NFTMarketplaceProvider = ({ children }) => {
       };
     }
   }, []);
-
-
   useEffect(() => {
     const getAccount = async () => {
       if (signer) {
@@ -79,7 +57,6 @@ export const NFTMarketplaceProvider = ({ children }) => {
 
     getAccount();
   }, [signer]);
-
   useEffect(() => {
     if (provider) {
       console.log(provider)
@@ -95,9 +72,8 @@ export const NFTMarketplaceProvider = ({ children }) => {
     }
   }, [provider, account]);
 
-
   // Add your functions like mintNFT, createOffer, cancelOffer, etc.
-  const mintNFT = async (recipient, tokenURI) => {
+  const mintNFT = async (recipient, tokenURI, tokenIn) => {
     const provider = new ethers.providers.Web3Provider(window.ethereum, "any");
     const signer = new ethers.Wallet(process.env.REACT_APP_PRIVATE_KEY, provider);
     const onlyOwnerContrasct = new ethers.Contract(
@@ -105,21 +81,41 @@ export const NFTMarketplaceProvider = ({ children }) => {
       NFTMarketplace.abi,
       signer
     );
+
     console.log('ghable if')
     if (onlyOwnerContrasct) {
       try {
         var txObj = {}
-        console.log('try e  if')
-        // const tx = await onlyOwnerContrasct.mintNFT(recipient, tokenURI, parseInt(NFTtokenId));
-        const tx = await onlyOwnerContrasct.mintNFT(recipient, tokenURI);
-        const txReceipt = await tx.wait();
-        const [transferEvent] = txReceipt.events;
-        const { tokenId } = transferEvent.args;
+
+        // step 1) create uudi nft id to a 32 bytes (64 chras) hex string
+        // step 2) build the big number from above step using BigNumber.fromHexString(nft_id_hex)
+        // step 3) pass the created big number to contract 
+
+        let newTokenIn = tokenIn + 10
+        let bigNumberTokenId = BigNumber.from(tokenIn)
+        console.log('bigNumberTokenId', bigNumberTokenId)
+        const tx = await onlyOwnerContrasct.mintNFT(recipient, tokenURI, bigNumberTokenId);
         console.log("NFT minted successfully", tx);
-        console.log("txReceipt", txReceipt);
-        console.log("tokenId", tokenId);
+
+        //another way to get token id ====>
+
+
+        // const txReceipt = await tx.wait();
+        // console.log("txReceipt", txReceipt);
+        // const [transferEvent] = txReceipt.events;
+        // const { tokenId } = transferEvent.args;
+        // console.log("tokenId", tokenId);
+
+        //another way to get token id ====>
+
+
+
+        // onlyOwnerContrasct.on("TokenMinted", (tokenId, recipient, event) => {
+        //   console.log("TokenMinted event received:", tokenId, recipient);
+        // });
         txObj.tx = tx
-        txObj.tokenId = tokenId._hex
+        txObj.tokenId_BigNumber = bigNumberTokenId
+        txObj.tokenId = bigNumberTokenId
         return txObj
 
       } catch (error) {
@@ -129,9 +125,12 @@ export const NFTMarketplaceProvider = ({ children }) => {
     }
   };
   const listNFT = async (tokenId, price) => {
+    console.log('price parseetger', price)
     if (marketContract) {
       try {
-        const tx = await marketContract.listNFT(tokenId, price);
+        let bigNumberTokenId = BigNumber.from(tokenId)
+
+        const tx = await marketContract.listNFT(bigNumberTokenId, price);
         await tx.wait();
         console.log("NFT listed successfully", tx);
         return tx
@@ -141,14 +140,19 @@ export const NFTMarketplaceProvider = ({ children }) => {
       }
     }
   };
-  const createAuction = async (tokenId, price, royalty) => {
+  const createAuction = async (tokenId, duration) => {
     if (marketContract) {
       try {
-        const tx = await marketContract.createAuction(tokenId, price, royalty);
+
+        let bigNumberTokenId = BigNumber.from(tokenId)
+
+        const tx = await marketContract.createAuction(bigNumberTokenId, duration);
         await tx.wait();
-        console.log("Offer created successfully");
+        console.log("auction created successfully", tx);
+        return tx
       } catch (error) {
-        console.error("Error creating offer:", error);
+        console.error("Error creating auction:", error);
+        return error
       }
     }
   };
@@ -196,13 +200,44 @@ export const NFTMarketplaceProvider = ({ children }) => {
       }
     }
   };
+  const tokensOfOwner = async (_owner) => {
+    console.log('ghable if ...')
+    if (marketContract) {
+      console.log('tuye if ...v')
+      try {
+        const tx = await marketContract.tokensOfOwner(process.env.REACT_APP_MARKET_ADDRESS, _owner);
+        // await tx.wait();
+        console.log("tokens ................", tx);
+      } catch (error) {
+        console.error("Error tokens:", error);
+      }
+    }
+  };
+  const placeBid = async (tokenId, bidValue) => {
+    if (marketContract) {
+      try {
+        let bigNumberTokenId = BigNumber.from(tokenId)
+        const tx = await marketContract.placeBid(bigNumberTokenId, {
+          value: ethers.utils.parseEther(bidValue),
+        });
+        await tx.wait();
+        console.log("Bid placed successfully", tx);
+        return tx;
+      } catch (error) {
+        console.error("Error placing bid:", error);
+        return error;
+      }
+    }
+  };
 
   const value = {
     account,
     marketContract,
     mintNFT,
     listNFT,
-    owner
+    owner,
+    tokensOfOwner,
+    createAuction,
     // onTokenMinted,
     // setOnTokenMinted,
 

@@ -269,10 +269,16 @@ const Navbar = ({ theme, themeToggler }) => {
     }
   }
   useEffect(() => {
-    if (globalUser.isLoggedIn)
+    if (globalUser.isLoggedIn) {
       setInterval(() => {
         fetchNotifications()
       }, 60000);
+    }
+    return () => {
+      if (apiCall.current != undefined)
+        apiCall.current.cancel();
+    }
+
   }, [])
   const [openNotif, setOpenNotif] = useState(false)
   const navigate = useNavigate()

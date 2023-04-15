@@ -318,7 +318,7 @@ const Notifications = ({ theme, themeToggler }) => {
                                 }} className="d-flex flex-column">
                                     <Box className="d-flex justify-content-between"><div className="d-flex justify-content-start"> <FilterSearch className="me-2" /><p style={{ margin: 0, fontWeight: "bold" }}>Filter</p></div><div className="d-flex justify-content-end" style={{ cursor: "pointer" }} onClick={handleClose}><CloseSquare /></div>  </Box>
                                     <ModalLine className="my-2" />
-                                    <Accordion className="py-1 px-3" sx={{
+                                    <Accordion className="p-0" sx={{
                                         width: '100%',
                                         bgcolor: 'transparent',
                                         color: theme == 'light' ? "#333333" : "#e6e6e6",

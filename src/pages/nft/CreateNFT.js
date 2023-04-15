@@ -175,7 +175,8 @@ const CreateNFT = ({ theme, themeToggler }) => {
     const [sensetiveContent, setsensetiveContent] = useState(false)
     const [copies, setCopies] = useState(1)
     // const { account, mintNFT, setOnTokenMinted } = useNFTMarketplace();
-    const { account, mintNFT, owner } = useNFTMarketplace();
+    const { account, mintNFT, owner, tokensOfOwner } = useNFTMarketplace();
+    console.log('owner market',owner)
 
 
 
@@ -194,6 +195,15 @@ const CreateNFT = ({ theme, themeToggler }) => {
     //     };
     // }, [setOnTokenMinted]);
 
+    const anToot = async () => {
+        let tx = await tokensOfOwner(globalUser.walletAddress)
+        console.log('toooooooooookeeeeeeeeeeeeeeeeeeeennnnnnnnnnnnnnnnnssssssssssssss', tx)
+    }
+
+    useEffect(() => {
+        anToot()
+
+    }, [])
 
 
     const handleChainSelect = (e) => {
@@ -528,7 +538,7 @@ const CreateNFT = ({ theme, themeToggler }) => {
                 ipfsFileCidForMint = await ipfsFileUpload()
                 ipfsFileUrlForMint = `https://${ipfsFileCidForMint}.ipfs.dweb.link/`
             }
-            mintNFTFunc(resp.data._id.$oid, ipfsUrlForMint)
+            mintNFTFunc(resp.data._id.$oid, ipfsUrlForMint , resp.data.nft_index)
             // setSuccessMesssage('NFT created successfully')
             // setApiLoading(false)
         }
@@ -539,7 +549,7 @@ const CreateNFT = ({ theme, themeToggler }) => {
             setApiLoading(false)
         }
     }
-    const mintNFTFunc = async (id, tokenURIm) => {
+    const mintNFTFunc = async (id, tokenURIm , tokenIn) => {
         // setMintedTokenId(null); // Reset tokenId state
 
         { console.log(tokenURIm) }
@@ -547,7 +557,7 @@ const CreateNFT = ({ theme, themeToggler }) => {
         // const recipient = owner;
         const tokenURI = tokenURIm ? tokenURIm : ' ';
         // let tx = await mintNFT(recipient, tokenURI, parseInt(id))
-        let tx = await mintNFT(recipient, tokenURI)
+        let tx = await mintNFT(recipient, tokenURI , tokenIn)
         let tx_hash = tx.tx.hash ? tx.tx.hash : undefined
         let tokenId = tx.tokenId
         console.log(tx_hash)
@@ -595,7 +605,7 @@ const CreateNFT = ({ theme, themeToggler }) => {
 
                 if (!resp.isSuccess)
                     throw resp
-                editAssetActivity('mint', resp.data.copies, resp.data._id.$oid, resp.data)
+                editAssetActivity('mint', resp.data.copies, resp.data._id.$oid, resp.data, tokenId)
             }
             catch (err) {
                 console.log('backend mint error:', err)
@@ -605,7 +615,7 @@ const CreateNFT = ({ theme, themeToggler }) => {
             deleteNFT(id)
         }
     }
-    const editAssetActivity = async (event, copies, id, nft) => {
+    const editAssetActivity = async (event, copies, id, nft, tokenId) => {
         var this_time = parseFloat(new Date(Date.now()).getTime()) / 1000
         var tommorrow = parseFloat(new Date(Date.now()).getTime() + (24 * 60 * 60 * 1000));
         var defaultExp = tommorrow / 1000
@@ -631,7 +641,8 @@ const CreateNFT = ({ theme, themeToggler }) => {
                 method: "post",
                 body: {
                     nft_id: id,
-                    asset_activity: JSON.stringify(assetTemp)
+                    asset_activity: JSON.stringify(assetTemp),
+                    contract_id: tokenId
                 },
                 headers: {
                     'Content-Type': 'multipart/form-data'
@@ -646,7 +657,7 @@ const CreateNFT = ({ theme, themeToggler }) => {
         } catch (error) {
             setErr(err.statusText)
             setApiLoading(false)
-
+            deleteNFT(id)
         }
     }
     const ipfsUpload = async () => {
@@ -705,7 +716,7 @@ const CreateNFT = ({ theme, themeToggler }) => {
             console.log('delete response', resp)
             if (!resp.isSuccess)
                 throw resp
-            setErr('minting canceled !')
+            setErr('minting canceled ! Please Try Again Later')
             setApiLoading(false)
         }
         catch (err) {

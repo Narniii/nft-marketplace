@@ -15,6 +15,8 @@ import { GetUSDExchangeRate } from "../../utils/exChange";
 import Bullet from "../design/Bullet";
 import { Colors } from "../design/Colors";
 import { convertDate, convertThisDate, convertThisHour, countCreatorFee, percentage } from "../../utils/countingFunctions";
+import { useNFTMarketplace } from "../../NFTMarketplaceContext";
+import { ethers } from "ethers";
 
 const OptionRow = styled.div`
 display:flex;
@@ -122,6 +124,8 @@ const SellModal = ({ collection, open, handleClose, theme, id, userWallet, nft }
     const [auctionMethod, setAuctionMethod] = useState('highest')
     const [startingPrice, setStartingPrice] = useState('--')
     const [endingPrice, setEndingPrice] = useState('--')
+    const { account, listNFT, createAuction } = useNFTMarketplace();
+
     useEffect(() => {
         let offers = []
         if (nft.offers.length > 0) {
@@ -153,32 +157,47 @@ const SellModal = ({ collection, open, handleClose, theme, id, userWallet, nft }
                 setApiLoading(false)
                 return
             }
-            const NFTData = new FormData();
-            NFTData.append('nft_id', nft._id.$oid);
-            NFTData.append('price', myPrice);
-            NFTData.append('owner', userWallet);
-            try {
-                apiCall.current = MARKET_API.request({
-                    path: `/nft/edit/price`,
-                    method: "post",
-                    body: NFTData,
-                    headers: {
-                        'Content-Type': 'multipart/form-data'
-                    }
-                });
-                let resp = await apiCall.current.promise;
-                console.log('submit resp', resp)
 
-                if (!resp.isSuccess)
-                    throw resp
+            const integerPrice = Math.round(parseFloat(myPrice) * 100);
+            const bigNumberPrice = ethers.BigNumber.from(integerPrice);
+
+            const priceToList = ethers.utils.parseEther(parseFloat(myPrice))
+
+            let tx = await listNFT(nft.nft_index, priceToList)
+            let tx_hash = tx.hash ? tx.hash : undefined
+
+            if (tx_hash) {
+                const NFTData = new FormData();
+                NFTData.append('nft_id', nft._id.$oid);
+                NFTData.append('price', myPrice);
+                NFTData.append('owner', userWallet);
+    
+                try {
+                    apiCall.current = MARKET_API.request({
+                        path: `/nft/edit/price`,
+                        method: "post",
+                        body: NFTData,
+                        headers: {
+                            'Content-Type': 'multipart/form-data'
+                        }
+                    });
+                    let resp = await apiCall.current.promise;
+                    console.log('submit resp', resp)
+
+                    if (!resp.isSuccess)
+                        throw resp
 
 
-                editAssetActivity('list', myPrice)
-                setSuccessMesssage('listed successfully')
-                // setApiLoading(false)
-            }
-            catch (err) {
-                setErr(err.statusText)
+                    editAssetActivity('list', myPrice)
+                    setSuccessMesssage('listed successfully')
+                    // setApiLoading(false)
+                }
+                catch (err) {
+                    setErr(err.statusText)
+                    setApiLoading(false)
+                }
+            } else {
+                setErr("something went wrong,please try again later")
                 setApiLoading(false)
             }
         }
@@ -192,30 +211,41 @@ const SellModal = ({ collection, open, handleClose, theme, id, userWallet, nft }
                 setApiLoading(false)
                 return
             }
-            try {
-                apiCall.current = MARKET_API.request({
-                    path: `/nft/auc/`,
-                    method: "post",
-                    body: {
-                        from_wallet_address: userWallet,
-                        nft_id: nft._id.$oid,
-                        auction: JSON.stringify([{ nft_id: nft._id.$oid, is_ended: false, start_time: this_time, duration: difference, starting_price: startingPrice, reserve_price: '', include_reserve_price: false, bids: [{}], }])
-                    },
-                });
-                let resp = await apiCall.current.promise;
-                console.log('submit resp', resp)
+            console.log('difference', difference)
+            let tx = await createAuction(nft.nft_index, difference)
+            let tx_hash = tx.hash ? tx.hash : undefined
+            if (tx_hash) {
 
-                if (!resp.isSuccess)
-                    throw resp
+                try {
+                    apiCall.current = MARKET_API.request({
+                        path: `/nft/auc/`,
+                        method: "post",
+                        body: {
+                            from_wallet_address: userWallet,
+                            nft_id: nft._id.$oid,
+                            auction: JSON.stringify([{ nft_id: nft._id.$oid, is_ended: false, start_time: this_time, duration: difference, starting_price: startingPrice, reserve_price: '', include_reserve_price: false, bids: [{}], }])
+                        },
+                    });
+                    let resp = await apiCall.current.promise;
+                    console.log('submit resp', resp)
+
+                    if (!resp.isSuccess)
+                        throw resp
 
 
-                editAssetActivity('list', startingPrice)
-                // setSuccessMesssage('auction created successfully')
-                // setApiLoading(false)
+                    editAssetActivity('list', startingPrice)
+                    // setSuccessMesssage('auction created successfully')
+                    // setApiLoading(false)
+                }
+                catch (err) {
+                    setErr(err.statusText)
+                    setApiLoading(false)
+                }
             }
-            catch (err) {
-                setErr(err.statusText)
+            else {
                 setApiLoading(false)
+                setErr("something went wrong,please try again later")
+
             }
 
         }

@@ -49,6 +49,7 @@
     "swr": "^2.0.4",
     "typechain": "^8.1.1",
     "typescript": "^5.0.4",
+    "uuid-to-hex": "^1.1.1",
     "web-vitals": "^2.1.4",
     "web3": "^1.8.1",
     "web3-react": "^5.0.5"

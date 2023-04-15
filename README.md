@@ -11,8 +11,9 @@
 * example output is 
 ```
 Deploying contracts with the account: 0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266
-Account balance: 9999979606595087570751
-NFT Contract deployed at: 0x8A791620dd6260079BF849Dc5567aDC3F2FdC318
+Account balance: 9999995137043125000000
+NFT Contract deployed at: 0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512
+
 ```
 
 

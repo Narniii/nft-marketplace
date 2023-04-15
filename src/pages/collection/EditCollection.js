@@ -366,7 +366,7 @@ const EditCollection = ({ theme, themeToggler }) => {
         formData.append('perpetual_royalties', JSON.stringify(_royalties));
         if (bannerChanged) {
             console.log(collection.banner)
-            formData.append('banner', collection.banner);
+            formData.append('banner_image', collection.banner);
         }
         if (logoChanged) {
             formData.append('logo', collection.logo);

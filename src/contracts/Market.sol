@@ -76,9 +76,9 @@ contract NFTMarketplace is ERC721, Ownable, ERC721URIStorage  {
         emit MarketFeePercentageChanged(newMarketFeePercentage);
     }
 
-    function mintNFT(address recipient, string memory tokenURI) public onlyOwner returns (uint256){
-        _tokenIds.increment();
-        uint256 tokenId = _tokenIds.current();
+    function mintNFT(address recipient, string memory tokenURI, uint256 tokenId) public returns (uint256){
+        // _tokenIds.increment();
+        // uint256 tokenId = _tokenIds.current();
         _mint(recipient, tokenId);
         _setTokenURI(tokenId, tokenURI);
         emit TokenMinted(tokenId, recipient);
