@@ -23,15 +23,16 @@ NFT Contract deployed at: 0x5FbDB2315678afecb367f032d93F642f64180aa3
 
 1. Install packages.
 ```bash
-npm install
+npm install (--force)
 ```
+2. clean artifacts and cash folders
 
-2. Compile Smart Contract
+3. Compile Smart Contract
 ```bash
 npx hardhat compile
 ```
 
-3. Deploy Smart Contarct
+4. Deploy Smart Contarct
 ```bash
 npx hardhat run --network localhost scripts/deploy.ts
 ```
