@@ -96,7 +96,7 @@ const Notifications = ({ theme, themeToggler }) => {
         if (openFilter) setOpenFilter(false)
         else setOpenFilter(true)
     }
-    const apiCall = useRef(undefined)
+    const apiCall = useRef(null)
     const [notifications, setNotifications] = useState(undefined)
     const [allNotifications, setAllNotifications] = useState(undefined)
     const [err, setErr] = useState(undefined)
@@ -106,8 +106,9 @@ const Notifications = ({ theme, themeToggler }) => {
         if (globalUser.isLoggedIn)
             fetchNotifications()
         return () => {
-            if (apiCall.current != undefined)
+            if (apiCall.current) {
                 apiCall.current.cancel();
+            }
         }
     }, [])
 

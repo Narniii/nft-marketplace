@@ -168,7 +168,7 @@ contract NFTMarketplace is ERC721, Ownable, ERC721URIStorage  {
     }
     function depositForOffer(uint256 tokenId) public payable {
         Offer storage offer = tokenIdToOffer[tokenId];
-        require(offer.isForSale, "Token not for sale");
+        // require(offer.isForSale, "Token not for sale");
         require(msg.value >= offer.askingPrice, "Insufficient funds");
         pendingWithdrawals[_msgSender()] += msg.value;
     }

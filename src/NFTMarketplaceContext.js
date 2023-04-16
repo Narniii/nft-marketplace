@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { BigNumber, ethers } from 'ethers';
 import NFTMarketplace from './artifacts/contracts/Market.sol/NFTMarketplace.json';
+import { parseEther } from 'ethers/lib/utils';
 
 const NFTMarketplaceContext = createContext();
 
@@ -130,7 +131,11 @@ export const NFTMarketplaceProvider = ({ children }) => {
       try {
         let bigNumberTokenId = BigNumber.from(tokenId)
 
-        const tx = await marketContract.listNFT(bigNumberTokenId, price);
+        const integerPrice = Math.round(parseFloat(price) * 100);
+        const bigNumberPrice = BigNumber.from(integerPrice);
+        const priceToList = parseEther(price)
+
+        const tx = await marketContract.listNFT(bigNumberTokenId, priceToList);
         await tx.wait();
         console.log("NFT listed successfully", tx);
         return tx
@@ -192,11 +197,21 @@ export const NFTMarketplaceProvider = ({ children }) => {
   const depositForOffer = async (tokenId, value) => {
     if (marketContract) {
       try {
-        const tx = await marketContract.depositForOffer(tokenId, { value });
+        let bigNumberTokenId = BigNumber.from(tokenId)
+        const priceToOffer = parseEther(value)
+
+
+        // const gasPrice = signer.gasPrice();
+        // const gasLimit = marketContract.estimateGas.depositForOffer(bigNumberTokenId, { value:priceToOffer });
+        // const tx = await marketContract.depositForOffer(bigNumberTokenId,{gasLimit:gasLimit,gasPrice:gasPrice});
+  
+        const tx = await marketContract.depositForOffer(bigNumberTokenId, { value:priceToOffer });
         await tx.wait();
-        console.log("NFT bought successfully");
+        console.log("deposit successfully", tx);
+        return tx
       } catch (error) {
-        console.error("Error buying NFT:", error);
+        console.error("Error deposit:", error);
+        return error
       }
     }
   };
@@ -217,8 +232,9 @@ export const NFTMarketplaceProvider = ({ children }) => {
     if (marketContract) {
       try {
         let bigNumberTokenId = BigNumber.from(tokenId)
+        const priceToBid = parseEther(bidValue)
         const tx = await marketContract.placeBid(bigNumberTokenId, {
-          value: ethers.utils.parseEther(bidValue),
+          value: priceToBid,
         });
         await tx.wait();
         console.log("Bid placed successfully", tx);
@@ -229,15 +245,35 @@ export const NFTMarketplaceProvider = ({ children }) => {
       }
     }
   };
+  const addOffer = async (tokenId, price) => {
+    if (marketContract) {
+      try {
+        let bigNumberTokenId = BigNumber.from(tokenId)
+        const priceToOffer = parseEther(price)
+        const tx = await marketContract.addOffer(bigNumberTokenId, priceToOffer);
+        await tx.wait();
+        console.log("offer placed successfully", tx);
+        return tx;
+      } catch (error) {
+        console.error("Error placing offer:", error);
+        return error;
+      }
+    }
+  };
+
 
   const value = {
     account,
     marketContract,
+    owner,
+
     mintNFT,
     listNFT,
-    owner,
     tokensOfOwner,
     createAuction,
+    placeBid,
+    depositForOffer,
+    addOffer,
     // onTokenMinted,
     // setOnTokenMinted,
 

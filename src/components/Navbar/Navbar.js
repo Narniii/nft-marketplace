@@ -166,9 +166,17 @@ const Navbar = ({ theme, themeToggler }) => {
 
 
   //notifications ====================>
-  const apiCall = useRef(undefined)
+  const apiCall = useRef(null)
   const [notifications, setNotifications] = useState([])
   const [err, setErr] = useState(undefined)
+  useEffect(() => {
+    return () => {
+      if (apiCall.current) {
+        apiCall.current.cancel();
+      }
+    }
+  }, [])
+
   const fetchNotifications = async () => {
     try {
       apiCall.current = MARKET_API.request({
@@ -177,7 +185,7 @@ const Navbar = ({ theme, themeToggler }) => {
         body: { wallet_address: globalUser.walletAddress },
       });
       const response = await apiCall.current.promise;
-      // console.log(response)
+      console.log(response)
 
       if (!response.isSuccess)
         throw response
@@ -269,17 +277,14 @@ const Navbar = ({ theme, themeToggler }) => {
     }
   }
   useEffect(() => {
-    if (globalUser.isLoggedIn) {
-      setInterval(() => {
+    if (active && globalUser.isLoggedIn) {
+      let fetchInterval = setInterval(() => {
         fetchNotifications()
       }, 60000);
+      return () => clearInterval(fetchInterval)
     }
-    return () => {
-      if (apiCall.current != undefined)
-        apiCall.current.cancel();
-    }
-
   }, [])
+
   const [openNotif, setOpenNotif] = useState(false)
   const navigate = useNavigate()
   return (

@@ -30,6 +30,7 @@ import LevelsTab from "../../components/NFTSingle/LevelsTab";
 import StatsTab from "../../components/NFTSingle/StatsTab";
 import { addItem } from "../../redux/actions";
 import { Link } from "react-router-dom";
+import { BigNumber } from "ethers";
 const NFT = styled.div`
   background-size:cover;
   background-repeat:no-repeat;
@@ -264,6 +265,7 @@ const NFTSingle = ({ theme, themeToggler }) => {
     const [nftPrice, setnftPrice] = useState(undefined);
     const [isOnAuc, setIsOnAuc] = useState(false)
     const [thisOffer, setThisOffer] = useState(undefined)
+    const [tokenId, setTokenId] = useState(undefined)
     useEffect(() => {
         GetUSDExchangeRate().then((res) => {
             setUsdExRate(parseFloat(res));
@@ -334,6 +336,11 @@ const NFTSingle = ({ theme, themeToggler }) => {
                     setIsOnCart(true)
                 }
             }
+
+            let bigNumber = BigNumber.from(response.data[1].nft.nft_index)
+            let bigNumberTokenId = bigNumber._hex
+            setTokenId(bigNumberTokenId)
+
 
             setLoading(false)
             // setLikeCount(response.data[1].likes.length)
@@ -745,11 +752,11 @@ const NFTSingle = ({ theme, themeToggler }) => {
                                                 <div className="d-flex flex-column">
                                                     <div className="d-flex justify-content-between w-100 align-items-center">
                                                         <TT className="m-0">Contract Address</TT>
-                                                        <LL className="m-0">{shortenMedium(process.env.MARKET_ADDRESS)}</LL>
+                                                        <LL className="m-0">{shortenMedium(process.env.REACT_APP_MARKET_ADDRESS)}</LL>
                                                     </div>
                                                     <div className="d-flex justify-content-between w-100 align-items-center">
                                                         <TT className="m-0">Token ID</TT>
-                                                        <LL className="m-0">{shortenMedium(id)}</LL>
+                                                        <LL className="m-0">{shortenMedium(tokenId)}</LL>
                                                     </div>
                                                     <div className="d-flex justify-content-between w-100 align-items-center">
                                                         <TT className="m-0">Token Standard</TT>

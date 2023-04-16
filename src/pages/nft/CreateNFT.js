@@ -176,7 +176,7 @@ const CreateNFT = ({ theme, themeToggler }) => {
     const [copies, setCopies] = useState(1)
     // const { account, mintNFT, setOnTokenMinted } = useNFTMarketplace();
     const { account, mintNFT, owner, tokensOfOwner } = useNFTMarketplace();
-    console.log('owner market',owner)
+    console.log('owner market', owner)
 
 
 
@@ -538,7 +538,7 @@ const CreateNFT = ({ theme, themeToggler }) => {
                 ipfsFileCidForMint = await ipfsFileUpload()
                 ipfsFileUrlForMint = `https://${ipfsFileCidForMint}.ipfs.dweb.link/`
             }
-            mintNFTFunc(resp.data._id.$oid, ipfsUrlForMint , resp.data.nft_index)
+            mintNFTFunc(resp.data._id.$oid, ipfsUrlForMint, resp.data.nft_index)
             // setSuccessMesssage('NFT created successfully')
             // setApiLoading(false)
         }
@@ -549,7 +549,7 @@ const CreateNFT = ({ theme, themeToggler }) => {
             setApiLoading(false)
         }
     }
-    const mintNFTFunc = async (id, tokenURIm , tokenIn) => {
+    const mintNFTFunc = async (id, tokenURIm, tokenIn) => {
         // setMintedTokenId(null); // Reset tokenId state
 
         { console.log(tokenURIm) }
@@ -557,7 +557,7 @@ const CreateNFT = ({ theme, themeToggler }) => {
         // const recipient = owner;
         const tokenURI = tokenURIm ? tokenURIm : ' ';
         // let tx = await mintNFT(recipient, tokenURI, parseInt(id))
-        let tx = await mintNFT(recipient, tokenURI , tokenIn)
+        let tx = await mintNFT(recipient, tokenURI, tokenIn)
         let tx_hash = tx.tx.hash ? tx.tx.hash : undefined
         let tokenId = tx.tokenId
         console.log(tx_hash)
@@ -893,7 +893,7 @@ const CreateNFT = ({ theme, themeToggler }) => {
                                         <div className="col-11 p-0">
                                             <InputBase
                                                 sx={{ color: "inherit", width: "100%", height: "100%" }}
-                                                placeholder="0"
+                                                placeholder="1"
                                                 inputProps={{ 'aria-label': 'enter copies' }}
                                                 onChange={(e) => setCopies(e.target.value)}
                                                 type="number"
@@ -950,12 +950,13 @@ const CreateNFT = ({ theme, themeToggler }) => {
                                 </ButtonLarge> :
                                     <ButtonLarge className="mt-5 mb-3" onClick={handleSubmit}>save</ButtonLarge>}
 
-
                             </div>
 
 
                             {/* error and success messages */}
                             <div className="col-12 col-sm-9 col-lg-6 col-xl-5 d-flex flex-column justify-content-between align-items-center">
+                                {apiLoading ? <Typography sx={{ fontSize: "12px", textTransform: `${Colors.subtitleFont}`, color: `${Colors.primaryMain}` }}>This May Take A While,Please Wait</Typography>
+                                    : undefined}
                                 {err ? <Typography sx={{ fontSize: "12px", textTransform: `${Colors.subtitleFont}`, color: `${Colors.errorDark}` }}>{err}</Typography> : undefined}
                                 {successMesssage ? <Typography sx={{ fontSize: "12px", textTransform: `${Colors.subtitleFont}`, color: `${Colors.successDark}` }}>{successMesssage}</Typography> : undefined}
                             </div>

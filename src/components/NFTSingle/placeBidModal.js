@@ -13,6 +13,7 @@ import { BG_URL, PUBLIC_URL } from "../../utils/utils";
 import { API_CONFIG } from "../../config";
 import { GetUSDExchangeRate } from "../../utils/exChange";
 import { Colors } from "../design/Colors";
+import { useNFTMarketplace } from "../../NFTMarketplaceContext";
 
 
 const ItemRow = styled.div`
@@ -128,40 +129,44 @@ const PlaceBidModal = ({ collection, open, handleClose, theme, id, userWallet, n
     const [highestOffer, setHighestOffer] = useState(undefined)
     const [startingPrice, setStartingPrice] = useState(undefined)
     const [userLastBid, setUserLastBid] = useState(undefined)
+    const { placeBid } = useNFTMarketplace();
+
     useEffect(() => {
-        let offers = []
-        if (nft.auction.length > 0) {
-            if (nft.auction[nft.auction.length - 1].is_ended == false) {
-                if (nft.auction[nft.auction.length - 1].bids.length > 0) {
-                    for (let o = 0; o < nft.auction[nft.auction.length - 1].bids.length; o++) {
-                        if (nft.auction[nft.auction.length - 1].bids[o].status == "waiting") {
-                            offers.push(parseFloat(nft.auction[nft.auction.length - 1].bids[o].price))
+        if (nft) {
+            let offers = []
+            if (nft.auction.length > 0) {
+                if (nft.auction[nft.auction.length - 1].is_ended == false) {
+                    if (nft.auction[nft.auction.length - 1].bids.length > 0) {
+                        for (let o = 0; o < nft.auction[nft.auction.length - 1].bids.length; o++) {
+                            if (nft.auction[nft.auction.length - 1].bids[o].status == "waiting") {
+                                offers.push(parseFloat(nft.auction[nft.auction.length - 1].bids[o].price))
+                            }
+                            if (nft.auction[nft.auction.length - 1].bids[o].from_wallet_address == userWallet && nft.auction[nft.auction.length - 1].bids[o].status == "waiting") {
+                                setUserLastBid(nft.auction[nft.auction.length - 1].bids[o].price)
+                            }
                         }
-                        if (nft.auction[nft.auction.length - 1].bids[o].from_wallet_address == userWallet && nft.auction[nft.auction.length - 1].bids[o].status == "waiting") {
-                            setUserLastBid(nft.auction[nft.auction.length - 1].bids[o].price)
+                        if (offers.length > 0) {
+                            setHighestOffer(Math.max(...offers))
+                            setStartingPrice(Math.max(...offers))
+                        } else {
+                            // setHighestOffer(parseFloat(nft.auction[nft.auction.length - 1].starting_price))
+                            setStartingPrice(parseFloat(nft.auction[nft.auction.length - 1].starting_price))
                         }
-                    }
-                    if (offers.length > 0) {
-                        setHighestOffer(Math.max(...offers))
-                        setStartingPrice(Math.max(...offers))
+
                     } else {
                         // setHighestOffer(parseFloat(nft.auction[nft.auction.length - 1].starting_price))
                         setStartingPrice(parseFloat(nft.auction[nft.auction.length - 1].starting_price))
                     }
-
-                } else {
-                    // setHighestOffer(parseFloat(nft.auction[nft.auction.length - 1].starting_price))
-                    setStartingPrice(parseFloat(nft.auction[nft.auction.length - 1].starting_price))
                 }
             }
+            else setHighestOffer('--')
         }
-        else setHighestOffer('--')
     }, [nft])
     const handleSubmit = async () => {
         var tommorrow = parseFloat(new Date(Date.now()).getTime() + (24 * 60 * 60 * 1000));
         var defaultExp = tommorrow / 1000
         var this_time = parseFloat(new Date(Date.now()).getTime()) / 1000
-
+        setErr(undefined)
         setApiLoading(true)
         if (myPrice < 0 || myPrice == '--') {
             setErr('please select a valid price for your bid')
@@ -173,35 +178,42 @@ const PlaceBidModal = ({ collection, open, handleClose, theme, id, userWallet, n
             setApiLoading(false)
             return
         }
-        try {
-            apiCall.current = MARKET_API.request({
-                path: `/nft/auc/add/bid/`,
-                method: "post",
-                body: {
-                    nft_id: nft._id.$oid,
-                    auction_bid: JSON.stringify([{ price: myPrice, from_wallet_address: userWallet }])
-                },
-                headers: {
-                    'Content-Type': 'multipart/form-data'
-                }
-            });
-            let resp = await apiCall.current.promise;
-            console.log('submit resp ------------', resp)
+        let tx = await placeBid(nft.nft_index, myPrice)
+        let tx_hash = tx.hash ? tx.hash : undefined
+        if (tx_hash) {
+            try {
+                apiCall.current = MARKET_API.request({
+                    path: `/nft/auc/add/bid/`,
+                    method: "post",
+                    body: {
+                        nft_id: nft._id.$oid,
+                        auction_bid: JSON.stringify([{ price: myPrice, from_wallet_address: userWallet }])
+                    },
+                    headers: {
+                        'Content-Type': 'multipart/form-data'
+                    }
+                });
+                let resp = await apiCall.current.promise;
+                console.log('submit resp ------------', resp)
 
-            if (!resp.isSuccess)
-                throw resp
+                if (!resp.isSuccess)
+                    throw resp
 
-            setErr(undefined)
-            editAssetActivity('offer', myPrice)
-            setSuccessMesssage('bid submited successfully')
-            setApiLoading(false)
+                setErr(undefined)
+                editAssetActivity('offer', myPrice)
+                setSuccessMesssage('bid submited successfully')
+                setApiLoading(false)
+            }
+            catch (err) {
+                setErr(err.statusText)
+                setApiLoading(false)
+            }
         }
-        catch (err) {
-            setErr(err.statusText)
+        else {
+            setErr("something went wrong,please try again later")
             setApiLoading(false)
         }
     }
-
     const editAssetActivity = async (event, price) => {
         var this_time = parseFloat(new Date(Date.now()).getTime()) / 1000
         var tommorrow = parseFloat(new Date(Date.now()).getTime() + (24 * 60 * 60 * 1000));
@@ -242,16 +254,20 @@ const PlaceBidModal = ({ collection, open, handleClose, theme, id, userWallet, n
             });
             let resp = await apiCall.current.promise;
             console.log('edit activity resp', resp)
+            if (!resp.isSuccess)
+                throw resp
+            setApiLoading(false)
+            window.location.reload()
 
 
         } catch (error) {
-            setErr(err.statusText)
+            setErr(error.statusText)
             setApiLoading(false)
 
         }
+
     }
     var ITEM_IMAGE = nft.nft_image_path.replace('root/dortzio/market/media/', '');
-
     const selectDuration = (e) => {
         var this_time = parseInt(new Date(Date.now()).getTime())
         var tommorrow = parseInt(new Date(Date.now()).getTime() + (24 * 60 * 60 * 1000));

@@ -136,121 +136,6 @@ const SellModal = ({ collection, open, handleClose, theme, id, userWallet, nft }
         }
         else setHighestOffer('--')
     }, [nft])
-    const handleSubmit = async () => {
-        var tommorrow = parseFloat(new Date(Date.now()).getTime() + (24 * 60 * 60 * 1000));
-        var defaultExp = tommorrow / 1000
-        var this_time = parseFloat(new Date(Date.now()).getTime()) / 1000
-        var difference;
-        if (expiration) {
-            difference = expiration - this_time
-        } else { difference = defaultExp - this_time }
-
-        console.log(difference)
-
-
-        if (isListing) {
-            // when puting on sale
-
-            setApiLoading(true)
-            if (myPrice < 0 || myPrice == '--') {
-                setErr('please select a valid price for your listing')
-                setApiLoading(false)
-                return
-            }
-
-            const integerPrice = Math.round(parseFloat(myPrice) * 100);
-            const bigNumberPrice = ethers.BigNumber.from(integerPrice);
-
-            const priceToList = ethers.utils.parseEther(parseFloat(myPrice))
-
-            let tx = await listNFT(nft.nft_index, priceToList)
-            let tx_hash = tx.hash ? tx.hash : undefined
-
-            if (tx_hash) {
-                const NFTData = new FormData();
-                NFTData.append('nft_id', nft._id.$oid);
-                NFTData.append('price', myPrice);
-                NFTData.append('owner', userWallet);
-    
-                try {
-                    apiCall.current = MARKET_API.request({
-                        path: `/nft/edit/price`,
-                        method: "post",
-                        body: NFTData,
-                        headers: {
-                            'Content-Type': 'multipart/form-data'
-                        }
-                    });
-                    let resp = await apiCall.current.promise;
-                    console.log('submit resp', resp)
-
-                    if (!resp.isSuccess)
-                        throw resp
-
-
-                    editAssetActivity('list', myPrice)
-                    setSuccessMesssage('listed successfully')
-                    // setApiLoading(false)
-                }
-                catch (err) {
-                    setErr(err.statusText)
-                    setApiLoading(false)
-                }
-            } else {
-                setErr("something went wrong,please try again later")
-                setApiLoading(false)
-            }
-        }
-        else {
-            // when setting an auction
-
-            console.log(difference, this_time)
-            setApiLoading(true)
-            if (startingPrice < 0 || startingPrice == '--') {
-                setErr('please select a valid price')
-                setApiLoading(false)
-                return
-            }
-            console.log('difference', difference)
-            let tx = await createAuction(nft.nft_index, difference)
-            let tx_hash = tx.hash ? tx.hash : undefined
-            if (tx_hash) {
-
-                try {
-                    apiCall.current = MARKET_API.request({
-                        path: `/nft/auc/`,
-                        method: "post",
-                        body: {
-                            from_wallet_address: userWallet,
-                            nft_id: nft._id.$oid,
-                            auction: JSON.stringify([{ nft_id: nft._id.$oid, is_ended: false, start_time: this_time, duration: difference, starting_price: startingPrice, reserve_price: '', include_reserve_price: false, bids: [{}], }])
-                        },
-                    });
-                    let resp = await apiCall.current.promise;
-                    console.log('submit resp', resp)
-
-                    if (!resp.isSuccess)
-                        throw resp
-
-
-                    editAssetActivity('list', startingPrice)
-                    // setSuccessMesssage('auction created successfully')
-                    // setApiLoading(false)
-                }
-                catch (err) {
-                    setErr(err.statusText)
-                    setApiLoading(false)
-                }
-            }
-            else {
-                setApiLoading(false)
-                setErr("something went wrong,please try again later")
-
-            }
-
-        }
-
-    }
     const editAssetActivity = async (event, price) => {
         var this_time = parseFloat(new Date(Date.now()).getTime()) / 1000
         console.log(this_time)
@@ -376,6 +261,115 @@ const SellModal = ({ collection, open, handleClose, theme, id, userWallet, nft }
             return isListing ? listingEarning : auctionEarning
         }
     }
+
+    const handleSubmit = async () => {
+        var tommorrow = parseFloat(new Date(Date.now()).getTime() + (24 * 60 * 60 * 1000));
+        var defaultExp = tommorrow / 1000
+        var this_time = parseFloat(new Date(Date.now()).getTime()) / 1000
+        var difference;
+        if (expiration) {
+            difference = expiration - this_time
+        } else { difference = defaultExp - this_time }
+
+        if (isListing) {
+            // when puting on sale
+
+            setApiLoading(true)
+            if (myPrice < 0 || myPrice == '--') {
+                setErr('please select a valid price for your listing')
+                setApiLoading(false)
+                return
+            }
+
+
+            let tx = await listNFT(nft.nft_index, myPrice)
+            let tx_hash = tx.hash ? tx.hash : undefined
+
+            if (tx_hash) {
+                const NFTData = new FormData();
+                NFTData.append('nft_id', nft._id.$oid);
+                NFTData.append('price', myPrice);
+                NFTData.append('owner', userWallet);
+
+                try {
+                    apiCall.current = MARKET_API.request({
+                        path: `/nft/edit/price`,
+                        method: "post",
+                        body: NFTData,
+                        headers: {
+                            'Content-Type': 'multipart/form-data'
+                        }
+                    });
+                    let resp = await apiCall.current.promise;
+                    console.log('submit resp', resp)
+
+                    if (!resp.isSuccess)
+                        throw resp
+
+
+                    editAssetActivity('list', myPrice)
+                    setSuccessMesssage('listed successfully')
+                    // setApiLoading(false)
+                }
+                catch (err) {
+                    setErr(err.statusText)
+                    setApiLoading(false)
+                }
+            } else {
+                setErr("something went wrong,please try again later")
+                setApiLoading(false)
+            }
+        }
+        else {
+            // when setting an auction
+
+            console.log(difference, this_time)
+            setApiLoading(true)
+            if (startingPrice < 0 || startingPrice == '--') {
+                setErr('please select a valid price')
+                setApiLoading(false)
+                return
+            }
+            let tx = await createAuction(nft.nft_index, difference)
+            let tx_hash = tx.hash ? tx.hash : undefined
+            if (tx_hash) {
+
+                try {
+                    apiCall.current = MARKET_API.request({
+                        path: `/nft/auc/`,
+                        method: "post",
+                        body: {
+                            from_wallet_address: userWallet,
+                            nft_id: nft._id.$oid,
+                            auction: JSON.stringify([{ nft_id: nft._id.$oid, is_ended: false, start_time: this_time, duration: difference, starting_price: startingPrice, reserve_price: '', include_reserve_price: false, bids: [{}], }])
+                        },
+                    });
+                    let resp = await apiCall.current.promise;
+                    console.log('submit resp', resp)
+
+                    if (!resp.isSuccess)
+                        throw resp
+
+
+                    editAssetActivity('list', startingPrice)
+                    // setSuccessMesssage('auction created successfully')
+                    // setApiLoading(false)
+                }
+                catch (err) {
+                    setErr(err.statusText)
+                    setApiLoading(false)
+                }
+            }
+            else {
+                setApiLoading(false)
+                setErr("something went wrong,please try again later")
+
+            }
+
+        }
+
+    }
+
     return (
         <>
             <Modal
