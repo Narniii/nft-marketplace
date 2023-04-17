@@ -31,6 +31,7 @@ import StatsTab from "../../components/NFTSingle/StatsTab";
 import { addItem } from "../../redux/actions";
 import { Link } from "react-router-dom";
 import { BigNumber } from "ethers";
+import { useNFTMarketplace } from "../../NFTMarketplaceContext";
 const NFT = styled.div`
   background-size:cover;
   background-repeat:no-repeat;
@@ -218,6 +219,7 @@ const NFTSingle = ({ theme, themeToggler }) => {
     const shoppingCart = useSelector(state => state.cartReducer);
 
     const { active, account, library, connector, activate, deactivate } = useWeb3React()
+    const { cancelAuction, removeOffer } = useNFTMarketplace();
 
     const [addOfferOpen, setAddOfferOpen] = useState(false)
     const [sellModalOpen, setSellModalOpen] = useState(false)
@@ -420,25 +422,62 @@ const NFTSingle = ({ theme, themeToggler }) => {
             let tempa = []
             tempa.push(thisOffer)
             console.log('-----------------------------------', tempa)
-
-            try {
-                apiCall.current = MARKET_API.request({
-                    path: `/nft/offer/cancel/`,
-                    method: "post",
-                    body: { nft_id: id, offer: JSON.stringify(tempa) },
-                });
-                let response = await apiCall.current.promise;
-                console.log('nft offer canceled??', response)
-                if (!response.isSuccess)
-                    throw response
-                setHasOffered(false)
-            }
-            catch (err) {
-                console.log(err)
-                if (err.status == 404) {
+            let nftOffers = []
+            nftOffers = thisNFT.offers
+            console.log('hel;;;ppp ??')
+            console.log('indddd........................', nftOffers.indexOf(thisOffer))
+            console.log('indddd........................', nftOffers, thisOffer)
+            let tx = await removeOffer(thisNFT.nft_index, parseInt(nftOffers.indexOf(thisOffer)))
+            let tx_hash = tx.hash ? tx.hash : undefined
+            if (tx_hash) {
+                try {
+                    apiCall.current = MARKET_API.request({
+                        path: `/nft/offer/cancel/`,
+                        method: "post",
+                        body: { nft_id: id, offer: JSON.stringify(tempa) },
+                    });
+                    let response = await apiCall.current.promise;
+                    console.log('nft offer canceled??', response)
+                    if (!response.isSuccess)
+                        throw response
+                    setHasOffered(false)
                 }
-                else if (err.status == 500) {
-                    setLoadErr("Internal server error occured, please try again later.")
+                catch (err) {
+                    console.log(err)
+                    if (err.status == 404) {
+                    }
+                    else if (err.status == 500) {
+                        setLoadErr("Internal server error occured, please try again later.")
+                    }
+                }
+            }
+        }
+    }
+    const cancelAuctionn = async () => {
+        if (globalUser.isLoggedIn && active && isOnAuc) {
+
+            let tx = await cancelAuction(thisNFT.nft_index)
+            let tx_hash = tx.hash ? tx.hash : undefined
+            if (tx_hash) {
+                try {
+                    apiCall.current = MARKET_API.request({
+                        path: `/nft/auc/end/`,
+                        method: "post",
+                        body: { nft_id: id, wallet_address: globalUser.walletAddress },
+                    });
+                    let response = await apiCall.current.promise;
+                    console.log('nft auction canceled??', response)
+                    if (!response.isSuccess)
+                        throw response
+                    setIsOnAuc(false)
+                }
+                catch (err) {
+                    console.log(err)
+                    if (err.status == 404) {
+                    }
+                    else if (err.status == 500) {
+                        setLoadErr("Internal server error occured, please try again later.")
+                    }
                 }
             }
         }
@@ -474,6 +513,9 @@ const NFTSingle = ({ theme, themeToggler }) => {
     }
 
 
+    const helloFunction = async () => {
+
+    }
 
 
 
@@ -584,14 +626,22 @@ const NFTSingle = ({ theme, themeToggler }) => {
                                                 <div className="d-flex flex-column flex-lg-row justify-content-between">
                                                     {isOwner ?
                                                         <>
+
                                                             {isListed || isOnAuc ?
-                                                                <div className="col-12 col-lg-6 pe-lg-1"><ButtonMedium className="mb-1 mb-lg-0" onClick={() => setSellModalOpen(true)}>Edit Listing</ButtonMedium></div>
+                                                                <>
+                                                                    {isOnAuc ?
+                                                                        <div className="col-12 col-lg-6 ps-lg-1"><ButtonOutline style={{ width: "100%", }} onClick={cancelAuctionn}>Cancel Auction</ButtonOutline></div>
+                                                                        :
+                                                                        <div className="col-12 col-lg-6 pe-lg-1"><ButtonMedium className="mb-1 mb-lg-0" onClick={() => setSellModalOpen(true)}>Edit Listing</ButtonMedium></div>
+                                                                    }
+                                                                </>
                                                                 :
                                                                 <div className="col-12 col-lg-6 pe-lg-1"><ButtonMedium className="mb-1 mb-lg-0" onClick={() => setSellModalOpen(true)}>Sell</ButtonMedium></div>
                                                             }
                                                         </>
                                                         :
                                                         <>
+
                                                             {isListed ?
                                                                 <>
                                                                     {isOnAuc ?
@@ -626,6 +676,7 @@ const NFTSingle = ({ theme, themeToggler }) => {
                                                                     }
                                                                     {hasOffered ?
                                                                         <>
+
                                                                             <div className="col-12 col-lg-6 ps-lg-1"><ButtonOutline style={{ width: "100%", }} onClick={cancelOffer}>Cancel Offer</ButtonOutline></div>
                                                                         </>
                                                                         :
@@ -649,7 +700,7 @@ const NFTSingle = ({ theme, themeToggler }) => {
                                                                         </> : undefined
                                                                     }
                                                                     {hasOffered ?
-                                                                        <div className="col-12 col-lg-6 ps-lg-1"><ButtonOutline style={{ width: "100%", }} onClick={cancelOffer}>Cancel Offer</ButtonOutline></div>
+                                                                        <div className="col-12 col-lg-6 ps-lg-1"><ButtonOutline style={{ width: "100%", }} onClick={helloFunction}>Cancel Offer</ButtonOutline></div>
                                                                         :
                                                                         <div className="col-12 col-lg-6 ps-lg-1"><ButtonOutline style={{ width: "100%", }} onClick={() => setAddOfferOpen(true)}>Make Offer</ButtonOutline></div>
                                                                     }

@@ -557,7 +557,7 @@ const CreateNFT = ({ theme, themeToggler }) => {
         // const recipient = owner;
         const tokenURI = tokenURIm ? tokenURIm : ' ';
         // let tx = await mintNFT(recipient, tokenURI, parseInt(id))
-        let tx = await mintNFT(recipient, tokenURI, tokenIn)
+        let tx = await mintNFT(recipient, tokenURI, tokenIn , parseInt(copies))
         let tx_hash = tx.tx.hash ? tx.tx.hash : undefined
         let tokenId = tx.tokenId
         console.log(tx_hash)

@@ -2,6 +2,7 @@ import React, { createContext, useContext, useState, useEffect } from 'react';
 import { BigNumber, ethers } from 'ethers';
 import NFTMarketplace from './artifacts/contracts/Market.sol/NFTMarketplace.json';
 import { parseEther } from 'ethers/lib/utils';
+import Web3 from 'web3';
 
 const NFTMarketplaceContext = createContext();
 
@@ -74,7 +75,7 @@ export const NFTMarketplaceProvider = ({ children }) => {
   }, [provider, account]);
 
   // Add your functions like mintNFT, createOffer, cancelOffer, etc.
-  const mintNFT = async (recipient, tokenURI, tokenIn) => {
+  const mintNFT = async (recipient, tokenURI, tokenIn, copies) => {
     const provider = new ethers.providers.Web3Provider(window.ethereum, "any");
     const signer = new ethers.Wallet(process.env.REACT_APP_PRIVATE_KEY, provider);
     const onlyOwnerContrasct = new ethers.Contract(
@@ -95,7 +96,7 @@ export const NFTMarketplaceProvider = ({ children }) => {
         let newTokenIn = tokenIn + 10
         let bigNumberTokenId = BigNumber.from(tokenIn)
         console.log('bigNumberTokenId', bigNumberTokenId)
-        const tx = await onlyOwnerContrasct.mintNFT(recipient, tokenURI, bigNumberTokenId);
+        const tx = await onlyOwnerContrasct.mintNFT(recipient, tokenURI, bigNumberTokenId, copies);
         console.log("NFT minted successfully", tx);
 
         //another way to get token id ====>
@@ -172,10 +173,11 @@ export const NFTMarketplaceProvider = ({ children }) => {
       }
     }
   };
-  const cancelOffer = async (tokenId) => {
+  const removeOffer = async (tokenId, index) => {
     if (marketContract) {
       try {
-        const tx = await marketContract.cancelOffer(tokenId);
+        let bigNumberTokenId = BigNumber.from(tokenId)
+        const tx = await marketContract.removeOffer(bigNumberTokenId, index);
         await tx.wait();
         console.log("Offer canceled successfully");
       } catch (error) {
@@ -204,8 +206,8 @@ export const NFTMarketplaceProvider = ({ children }) => {
         // const gasPrice = signer.gasPrice();
         // const gasLimit = marketContract.estimateGas.depositForOffer(bigNumberTokenId, { value:priceToOffer });
         // const tx = await marketContract.depositForOffer(bigNumberTokenId,{gasLimit:gasLimit,gasPrice:gasPrice});
-  
-        const tx = await marketContract.depositForOffer(bigNumberTokenId, { value:priceToOffer });
+
+        const tx = await marketContract.depositForOffer(bigNumberTokenId, { value: priceToOffer });
         await tx.wait();
         console.log("deposit successfully", tx);
         return tx
@@ -260,6 +262,79 @@ export const NFTMarketplaceProvider = ({ children }) => {
       }
     }
   };
+  const cancelAuction = async (tokenId) => {
+    if (marketContract) {
+      try {
+        let bigNumberTokenId = BigNumber.from(tokenId)
+        const tx = await marketContract.addOffer(bigNumberTokenId);
+        await tx.wait();
+        console.log("auction canceled successfully", tx);
+        return tx;
+      } catch (error) {
+        console.error("Error canceling auction:", error);
+        return error;
+      }
+    }
+  };
+  const completePurchase = async (product, product2) => {
+    var web3 = new Web3(window.ethereum)
+
+    var buyNFTsContract = new web3.eth.Contract(
+      NFTMarketplace.abi,
+      process.env.REACT_APP_MARKET_ADDRESS,
+      // signer
+    );
+    console.log(buyNFTsContract)
+
+    // if (marketContract) {
+    //   try {
+    //     const batcherAddress = process.env.REACT_APP_MARKET_ADDRESS
+
+    //     let bigNumberTokenId = BigNumber.from(product.nft_index)
+    //     const priceToBuy = parseEther(product.price)
+
+
+    //     let batcher = new Batcher({ web3, batcherAddress })
+
+
+    //     const tx1 = marketContract.buyNFT(bigNumberTokenId, product.royaltyRecs, product.royaltyAmounts, parseInt(product.quantity), { value: priceToBuy })
+    //     const tx2 = marketContract.buyNFT(bigNumberTokenId, product2.royaltyRecs, product2.royaltyAmounts, parseInt(product2.quantity), { value: priceToBuy })
+
+    //     const receipt = await batcher.sendTransaction([tx1, tx2])
+    //     console.log(receipt.events)
+
+
+    //   } catch (error) {
+    //     console.error("Error canceling buying:", error);
+    //     return error;
+    //   }
+    // }
+
+
+    // if (buyNFTsContract) {
+    //   try {
+    //     let bigNumberTokenId = BigNumber.from(product.nft_index)
+    //     const priceToBuy = parseEther(product.price)
+    //     var batch = new web3.BatchRequest();
+    //     batch.add(buyNFTsContract.methods.buyNFT(bigNumberTokenId, product.royaltyRecs, product.royaltyAmounts, parseInt(product.quantity)).call.request({ from: account }, (err, res) => {
+    //       console.log('err batch ??', err)
+    //       console.log('res batch ??', res)
+    //     }));
+    //     batch.execute();
+    //   } catch (error) {
+    //     console.error("Error canceling buying:", error);
+    //     return error;
+    //   }
+    // }
+    //----------
+    // if (marketContract) {
+    // let bigNumberTokenId = BigNumber.from(tokenId)
+    // const tx = await marketContract.addOffer(bigNumberTokenId);
+    // await tx.wait();
+    // console.log("auction canceled successfully", tx);
+    // return tx;
+    // }
+  };
 
 
   const value = {
@@ -274,6 +349,9 @@ export const NFTMarketplaceProvider = ({ children }) => {
     placeBid,
     depositForOffer,
     addOffer,
+    removeOffer,
+    cancelAuction,
+    completePurchase,
     // onTokenMinted,
     // setOnTokenMinted,
 

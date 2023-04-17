@@ -41,10 +41,16 @@ contract NFTMarketplace is ERC721, Ownable, ERC721URIStorage  {
         uint256 price;
     }
 
+    struct OwnerCopies{
+        address owner;
+        uint256 copies;
+    }
+
     mapping(uint256 => Offer) public tokenIdToOffer;
     mapping(uint256 => Auction) public tokenIdToAuction;
     mapping(address => uint256) public pendingWithdrawals;  
     mapping(uint256 => OfferRequest) public tokenIdToOfferRequest;
+    mapping(uint256 => OwnerCopies) public tokenOwnerCopies;
     mapping(uint256 => UserOffer[]) public userOffers;
 
     event MarketFeePercentageChanged(uint256 newMarketFeePercentage);
@@ -76,11 +82,15 @@ contract NFTMarketplace is ERC721, Ownable, ERC721URIStorage  {
         emit MarketFeePercentageChanged(newMarketFeePercentage);
     }
 
-    function mintNFT(address recipient, string memory tokenURI, uint256 tokenId) public returns (uint256){
+    function mintNFT(address recipient, string memory tokenURI, uint256 tokenId, uint256 copies) public returns (uint256){
         // _tokenIds.increment();
         // uint256 tokenId = _tokenIds.current();
         _mint(recipient, tokenId);
         _setTokenURI(tokenId, tokenURI);
+        tokenOwnerCopies[tokenId] = OwnerCopies({
+            owner: recipient,
+            copies: copies
+        });
         emit TokenMinted(tokenId, recipient);
         return tokenId;
     }
@@ -172,10 +182,10 @@ contract NFTMarketplace is ERC721, Ownable, ERC721URIStorage  {
         require(msg.value >= offer.askingPrice, "Insufficient funds");
         pendingWithdrawals[_msgSender()] += msg.value;
     }
-    function buyNFT(uint256 tokenId, address[] memory _Royaltyrecipients, uint256[] memory _Royaltyamounts) public payable {
+    function buyNFT(uint256 tokenId, address[] memory _Royaltyrecipients, uint256[] memory _Royaltyamounts, uint256 quantity) public payable {
         Offer memory offer = tokenIdToOffer[tokenId];
         require(offer.isForSale, "Token not for sale");
-        require(msg.value >= offer.askingPrice, "Insufficient funds");
+        require(msg.value >= offer.askingPrice * quantity, "Insufficient funds");
 
         uint256 total_royalties;
         uint royalties = _Royaltyrecipients.length;
@@ -203,6 +213,18 @@ contract NFTMarketplace is ERC721, Ownable, ERC721URIStorage  {
     
          tokenIdToAuction[tokenId] = Auction(true, tokenId, address(0), 0, endTime);
         emit AuctionCreated(tokenId, endTime);
+    }
+    function cancelAuction(uint256 tokenId) public {
+        Auction storage auction = tokenIdToAuction[tokenId];
+        require(auction.isActive, "Auction not active");
+        require(_isApprovedOrOwner(_msgSender(), tokenId), "Not approved or owner");
+
+        if (auction.highestBidder != address(0)) {
+            pendingWithdrawals[auction.highestBidder] += auction.highestBid;
+        }
+
+        auction.isActive = false;
+        emit AuctionEnded(tokenId, address(0), 0);
     }
 
     function placeBid(uint256 tokenId) public payable {

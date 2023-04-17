@@ -370,7 +370,7 @@ const PlaceBidModal = ({ collection, open, handleClose, theme, id, userWallet, n
                                     <Subtitle style={{ fontSize: "14px" }}>your last bid:</Subtitle>
                                     <div className="d-flex align-items-center"><Num>{userLastBid}</Num><Subtitle style={{ fontSize: "14px" }}>&nbsp;ETH</Subtitle></div>
                                 </div>
-                                <div className="col-auto d-flex align-items-center"><ButtonOutline onClick={cancelLastBid} style={{ fontSize: "14px", fontWeight: 500, padding: "9px 16px" }}><Trash className="me-1" size="16" />Clear</ButtonOutline></div>
+                                {/* <div className="col-auto d-flex align-items-center"><ButtonOutline onClick={cancelLastBid} style={{ fontSize: "14px", fontWeight: 500, padding: "9px 16px" }}><Trash className="me-1" size="16" />Clear</ButtonOutline></div> */}
                             </Det>
                             : undefined}
                         <ItemRow className="mb-3">

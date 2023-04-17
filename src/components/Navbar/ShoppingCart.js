@@ -14,6 +14,7 @@ import { BG_URL, PUBLIC_URL } from "../../utils/utils";
 import { API_CONFIG } from "../../config";
 import { shortenMedium } from "../../utils/countingFunctions";
 import { MARKET_API } from "../../utils/data/market_api";
+import { useNFTMarketplace } from "../../NFTMarketplaceContext";
 
 
 const ItemImage = styled(Box)`
@@ -178,6 +179,8 @@ export const Cart = ({ theme, state, toggleDrawer, open, onClose, anchorEl, cart
     const [priceIsChanged, setPriceIsChanged] = useState(false)
     const [loading, setLoading] = useState(true)
     const shoppingCart = useSelector(state => state.cartReducer);
+    const { completePurchase } = useNFTMarketplace();
+
     console.log(shoppingCart)
     const handleClose = () => setOpenReview(false)
     // const getTotalQuantity = () => {
@@ -262,6 +265,19 @@ export const Cart = ({ theme, state, toggleDrawer, open, onClose, anchorEl, cart
 
     const removeAll = () => dispatch(emptyCart());
 
+    const completePurchases = async () => {
+        console.log('????')
+        let product = { nft_index: 12, royaltyRecs: ['0x70997970C51812dc3A010C7d01b50e0d17dc79C8'], royaltyAmounts: [5], quantity: 1, price: '0.2' }
+        let tx = await completePurchase(product)
+        let tx_hash = tx.hash ? tx.hash : undefined
+
+        if (tx_hash) {
+            console.log(tx_hash)
+        } else {
+            console.log('riiiidiiii')
+        }
+    }
+
     const list = (anchor) => (
         <Box
             sx={{
@@ -269,7 +285,7 @@ export const Cart = ({ theme, state, toggleDrawer, open, onClose, anchorEl, cart
                 // boxShadow: theme == 'light' ? "2px 5px 13px 1px rgba(77,77,77,0.54)" : "-2px 5px 13px 1px rgba(153,81,244,0.54)",
                 bgcolor: theme == 'light' ? "#ffffff" : "#272448", color: theme == 'light' ? "#333333" : "#e6e6e6",
                 width: anchor === 'top' || anchor === 'bottom' ? 'auto' : 400, borderRadius: anchor === 'right' ? "24px" : "0", borderTopLeftRadius: "24px", borderTopRightRadius: "24px",
-                overflow: "hidden",display:"flex",flexDirection:"column",
+                overflow: "hidden", display: "flex", flexDirection: "column",
                 // height: 600,
             }}
         // onClick={toggleDrawer(anchor, false)}
@@ -392,7 +408,7 @@ export const Cart = ({ theme, state, toggleDrawer, open, onClose, anchorEl, cart
                     <p className="d-flex m-0 align-items-center" style={{ fontWeight: 500, }}><CardSend size="18" />&nbsp; Send to a different wallet</p>
                     <p className="m-0"><ArrowUp2 size="15" /></p>
                 </div>
-                <ButtonLarge>Complete Purchase</ButtonLarge>
+                <ButtonLarge onClick={completePurchases}>Complete Purchase</ButtonLarge>
             </CartDetail>
         </Box >
     );
