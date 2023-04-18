@@ -15,6 +15,7 @@ import { API_CONFIG } from "../../config";
 import { shortenMedium } from "../../utils/countingFunctions";
 import { MARKET_API } from "../../utils/data/market_api";
 import { useNFTMarketplace } from "../../NFTMarketplaceContext";
+import { BigNumber } from "ethers";
 
 
 const ItemImage = styled(Box)`
@@ -179,7 +180,7 @@ export const Cart = ({ theme, state, toggleDrawer, open, onClose, anchorEl, cart
     const [priceIsChanged, setPriceIsChanged] = useState(false)
     const [loading, setLoading] = useState(true)
     const shoppingCart = useSelector(state => state.cartReducer);
-    const { completePurchase } = useNFTMarketplace();
+    const { buyNFTs } = useNFTMarketplace();
 
     console.log(shoppingCart)
     const handleClose = () => setOpenReview(false)
@@ -408,11 +409,37 @@ export const Cart = ({ theme, state, toggleDrawer, open, onClose, anchorEl, cart
                     <p className="d-flex m-0 align-items-center" style={{ fontWeight: 500, }}><CardSend size="18" />&nbsp; Send to a different wallet</p>
                     <p className="m-0"><ArrowUp2 size="15" /></p>
                 </div>
-                <ButtonLarge onClick={completePurchases}>Complete Purchase</ButtonLarge>
+                <ButtonLarge onClick={completePurchase}>Complete Purchase</ButtonLarge>
             </CartDetail>
         </Box >
     );
 
+    const completePurchase = async () => {
+        const tokenIds = [14, 15];
+        const quantities = [1, 2];
+        const royaltyRecipients = [
+            ['0xBcd4042DE499D14e55001CcbB24a551F3b954096', '0x70997970C51812dc3A010C7d01b50e0d17dc79C8'],
+            ['0xBcd4042DE499D14e55001CcbB24a551F3b954096'],
+        ];
+        const royaltyAmounts = [
+            [5, 5],
+            [6],
+        ];
+        const totalValue = getTotalPrice(shoppingCart.products).toString(); // The total value in Ether for this transaction (replace with actual value)
+        const bigNumberTokenIds = []
+        for (var i = 0; i < tokenIds.length; i++) {
+            bigNumberTokenIds.push(BigNumber.from(tokenIds[i]))
+        }
+
+        let tx = await buyNFTs(tokenIds, quantities, royaltyRecipients, royaltyAmounts, totalValue);
+        let tx_hash = tx.hash ? tx.hash : undefined
+
+        if (tx_hash) {
+            console.log('yoohoooooo')
+        } else {
+            console.log('ooh oooh ')
+        }
+    }
     return (
         <>
             {/* tablet and mobile basket */}

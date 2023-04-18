@@ -276,64 +276,23 @@ export const NFTMarketplaceProvider = ({ children }) => {
       }
     }
   };
-  const completePurchase = async (product, product2) => {
-    var web3 = new Web3(window.ethereum)
+  const buyNFTs = async (tokenIds, quantities, royaltyRecipients, royaltyAmounts, totalValue) => {
+    if (marketContract) {
+      try {
+        const priceToPay = parseEther(totalValue)
 
-    var buyNFTsContract = new web3.eth.Contract(
-      NFTMarketplace.abi,
-      process.env.REACT_APP_MARKET_ADDRESS,
-      // signer
-    );
-    console.log(buyNFTsContract)
-
-    // if (marketContract) {
-    //   try {
-    //     const batcherAddress = process.env.REACT_APP_MARKET_ADDRESS
-
-    //     let bigNumberTokenId = BigNumber.from(product.nft_index)
-    //     const priceToBuy = parseEther(product.price)
-
-
-    //     let batcher = new Batcher({ web3, batcherAddress })
-
-
-    //     const tx1 = marketContract.buyNFT(bigNumberTokenId, product.royaltyRecs, product.royaltyAmounts, parseInt(product.quantity), { value: priceToBuy })
-    //     const tx2 = marketContract.buyNFT(bigNumberTokenId, product2.royaltyRecs, product2.royaltyAmounts, parseInt(product2.quantity), { value: priceToBuy })
-
-    //     const receipt = await batcher.sendTransaction([tx1, tx2])
-    //     console.log(receipt.events)
-
-
-    //   } catch (error) {
-    //     console.error("Error canceling buying:", error);
-    //     return error;
-    //   }
-    // }
-
-
-    // if (buyNFTsContract) {
-    //   try {
-    //     let bigNumberTokenId = BigNumber.from(product.nft_index)
-    //     const priceToBuy = parseEther(product.price)
-    //     var batch = new web3.BatchRequest();
-    //     batch.add(buyNFTsContract.methods.buyNFT(bigNumberTokenId, product.royaltyRecs, product.royaltyAmounts, parseInt(product.quantity)).call.request({ from: account }, (err, res) => {
-    //       console.log('err batch ??', err)
-    //       console.log('res batch ??', res)
-    //     }));
-    //     batch.execute();
-    //   } catch (error) {
-    //     console.error("Error canceling buying:", error);
-    //     return error;
-    //   }
-    // }
-    //----------
-    // if (marketContract) {
-    // let bigNumberTokenId = BigNumber.from(tokenId)
-    // const tx = await marketContract.addOffer(bigNumberTokenId);
-    // await tx.wait();
-    // console.log("auction canceled successfully", tx);
-    // return tx;
-    // }
+        const tx = await marketContract.buyNFTs(tokenIds, quantities, royaltyRecipients, royaltyAmounts, {
+          // value: ethers.utils.parseEther(totalValue),
+          value: priceToPay,
+        });
+        await tx.wait();
+        console.log("NFTs bought successfully", tx);
+        return tx;
+      } catch (error) {
+        console.error("Error buying NFTs:", error);
+        return error;
+      }
+    }
   };
 
 
@@ -351,7 +310,7 @@ export const NFTMarketplaceProvider = ({ children }) => {
     addOffer,
     removeOffer,
     cancelAuction,
-    completePurchase,
+    buyNFTs,
     // onTokenMinted,
     // setOnTokenMinted,
 

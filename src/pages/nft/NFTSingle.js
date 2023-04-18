@@ -245,12 +245,18 @@ const NFTSingle = ({ theme, themeToggler }) => {
     const add = (item) => {
         console.log(shoppingCart.products)
         var itemInCart = shoppingCart.products.find((i) => i.nft_id === item._id.$oid);
-        console.log(itemInCart)
+        // console.log(itemInCart)
         if (itemInCart) {
+            console.log('tu if')
             if (itemInCart.quantity < item.copies) {
+                console.log('tu if e if')
                 dispatch(addItem(item))
             }
-        } else dispatch(addItem(item))
+        } else {
+            console.log('tu else')
+
+            dispatch(addItem(item))
+        }
     };
 
     const navigate = useNavigate()

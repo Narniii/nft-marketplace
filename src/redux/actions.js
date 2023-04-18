@@ -93,12 +93,15 @@ export const addItem = (item) => {
         tempObj.description = item.description
         tempObj.copies = item.copies ? item.copies : 0
         tempObj.price = item.price
+        // tempObj.token_index = item.nft_index
         tempObj.quantity = 1
 
         tempNfts.push(tempObj)
+        console.log(tempNfts)
 
         return async dispatch => {
             if (localStorage.getItem('basket_id')) {
+                console.log('tu if dige ?')
                 const response = await axios.post(`${API_CONFIG.MARKET_API_URL}/basket/add/`, { nft_info: tempNfts, basket_id: localStorage.getItem('basket_id') })
                 console.log('responseeeeeee add to cart', response)
                 if (response.status >= 200 && response.status < 300) {
@@ -108,6 +111,7 @@ export const addItem = (item) => {
                     });
                 }
             } else {
+                console.log('yani tu in else ????')
                 const reg = await axios.post(`${API_CONFIG.MARKET_API_URL}/basket/register/`, {
                     buyer_info: {
                         wallet_address: "",
