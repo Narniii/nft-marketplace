@@ -5,13 +5,14 @@ import { useEffect } from "react";
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import testPic from '../../assets/MetaMask_Fox.svg.png'
-import { logOutUser } from "../../redux/actions";
+import { getuser, logOutUser } from "../../redux/actions";
 import { ButtonMedium, ButtonOutline } from "../design/Buttons";
 import { Colors } from "../design/Colors";
 import { injected } from "./Connectors";
 import { shorten } from '../../utils/countingFunctions'
 import Web3 from "web3";
 import { formatEther } from "ethers/lib/utils";
+import { useNavigate } from "react-router";
 // import MetaMaskSDK from "@metamask/sdk";
 
 const ItemCard = styled(Box)`
@@ -43,24 +44,27 @@ const Line = styled(Box)`
     align-self:center;
     width:80%;
 `;
-const WalletConnectModal = ({ open, handleClose, theme }) => {
-    const { active, account, library, connector, activate, deactivate } = useWeb3React()
+const WalletConnectModal = ({ open, handleClose, theme, nextLink }) => {
+    const [web3, setWeb3] = useState(undefined)
     const dispatch = useDispatch();
     const logOut = () => dispatch(logOutUser());
-    const [alertOpen, setAlertOpen] = useState(false)
-    const globalUser = useSelector(state => state.userReducer)
+    const { active, account, library, connector, activate, deactivate, } = useWeb3React()
     const [ethBalance, setEthBalance] = useState(undefined)
-
+    const fetchUser = (walletAddress) => dispatch(getuser(walletAddress));
+    const globalUser = useSelector(state => state.userReducer);
+    const [myActive, setMyActive] = useState(false)
+    const navigate = useNavigate()
     useEffect(() => {
-        if (ethBalance)
-            console.log(ethBalance)
-    }, [ethBalance])
-
-
-
+        if (active) {
+            fetchUser(account)
+            let web3b = new Web3(window.ethereum)
+            web3b.eth.getBalance(account).then((val) => {
+                setEthBalance(formatEther(val))
+            })
+        }
+    }, [active])
     const [fundsModal, setFundsModal] = useState(false)
-
-
+    const [alertOpen, setAlertOpen] = useState(false)
     async function connect() {
         if (typeof window.ethereum !== 'undefined') {
             try {
@@ -80,6 +84,7 @@ const WalletConnectModal = ({ open, handleClose, theme }) => {
 
                 // ethereum.request({ method: 'eth_requestAccounts', params: [] });
 
+
             } catch (ex) {
                 console.log(ex)
             }
@@ -88,7 +93,6 @@ const WalletConnectModal = ({ open, handleClose, theme }) => {
             setAlertOpen(true)
         }
     }
-
     async function disconnect() {
         setAlertOpen(false)
         try {
@@ -100,10 +104,6 @@ const WalletConnectModal = ({ open, handleClose, theme }) => {
             console.log(ex)
         }
     }
-
-
-
-
     const list = (anchor) => (
         <Box
             sx={{
@@ -215,7 +215,17 @@ const WalletConnectModal = ({ open, handleClose, theme }) => {
 
         </Box>
     );
-
+    useEffect(() => {
+        if (active && globalUser && globalUser.isLoggedIn && nextLink) {
+            if (nextLink == '/profile/username') {
+                navigate('/' + 'profile/' + globalUser.username)
+            } else if (nextLink == '/profile/username/#favorited') {
+                navigate('/' + 'profile/' + globalUser.username + '/#favorited')
+            } else {
+                navigate(nextLink)
+            }
+        }
+    }, [active, globalUser, nextLink])
     return (
         <Modal
             open={open}

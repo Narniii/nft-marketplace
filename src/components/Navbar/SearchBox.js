@@ -69,6 +69,7 @@ const SearchBox = ({ theme, id, phrase, searchingWhat }) => {
         setPlacement(newPlacement);
     };
     const Search = async (phrase) => {
+        setLoading(true)
         try {
             apiCall.current = MARKET_API.request({
                 path: `/search/`,
@@ -95,6 +96,7 @@ const SearchBox = ({ theme, id, phrase, searchingWhat }) => {
                     setNFTs(response.data[s].nfts)
                 }
             }
+            setLoading(false)
 
 
         }
@@ -115,8 +117,8 @@ const SearchBox = ({ theme, id, phrase, searchingWhat }) => {
 
     return (
         <>
-            <Box className="d-flex p-2" id={id} style={{ boxShadow: theme == 'light' && window.location.pathname !== '/' ? 'inset 0px 0px 4px rgba(0, 0, 0, 0.2)' : "unset", border: theme == 'light' && window.location.pathname !== '/' ? "none" : "1px solid #b3b3b3" }}>
-                <div className="col-2 p-0 d-flex align-items-center" style={{ width: "auto", color: theme == 'light' && window.location.pathname !== '/' ? `${Colors.gray6}` : "white" }}>
+            <Box className="d-flex py-2 align-items-center" id={id} style={{ paddingLeft: "12px", boxShadow: theme == 'light' && window.location.pathname !== '/' ? 'inset 0px 0px 4px rgba(0, 0, 0, 0.2)' : "unset", border: theme == 'light' && window.location.pathname !== '/' ? "none" : "1px solid #b3b3b3" }}>
+                <div className="col-2 p-0 d-flex align-items-center" style={{ height: "max-content", width: "auto", color: theme == 'light' && window.location.pathname !== '/' ? `${Colors.gray6}` : "white" }}>
                     <SearchNormal1
                         size="24"
                     // color="#E6E6E6"
@@ -132,7 +134,7 @@ const SearchBox = ({ theme, id, phrase, searchingWhat }) => {
                     />
                 </div>
             </Box>
-            <ResPop theme={theme} open={open} anchorEl={anchorEl} id={id} searchResults={searchResults} collections={collections} NFTs={NFTs} users={users} searchingWhat={searchingWhat} setOpen={setOpen} />
+            <ResPop loading={loading} theme={theme} open={open} anchorEl={anchorEl} id={id} searchResults={searchResults} collections={collections} NFTs={NFTs} users={users} searchingWhat={searchingWhat} setOpen={setOpen} />
         </>
     );
 }
@@ -140,7 +142,7 @@ const SearchBox = ({ theme, id, phrase, searchingWhat }) => {
 export default SearchBox;
 
 
-export const ResPop = ({ setOpen, theme, open, anchorEl, id, searchResults, collections, NFTs, users, searchingWhat }) => {
+export const ResPop = ({ loading, setOpen, theme, open, anchorEl, id, searchResults, collections, NFTs, users, searchingWhat }) => {
     const pWidth = window.document.getElementById(id)?.offsetWidth
     return (
         <ClickAwayListener onClickAway={() => setOpen(false)}>
@@ -162,113 +164,117 @@ export const ResPop = ({ setOpen, theme, open, anchorEl, id, searchResults, coll
                 }}
                 sx={{ padding: '10px 0', width: `${pWidth}px`, borderRadius: "24px", bgcolor: theme == 'light' ? '#ffffff' : '#1E0E36', overflow: "hidden", boxShadow: "0px 4px 18px rgba(0, 0, 0, 0.2)", }}
             >
-                {searchResults && searchResults.length != 0 ?
+                {loading ?
+                    <MenuItem id="title" sx={{ color: theme == 'light' ? '#4d4d4d' : '#999999', bgcolor: theme == 'light' ? '#ffffff' : '#1E0E36', cursor: "context-menu", fontWeight: 500, fontSize: "14px", '&:hover': { bgcolor: theme == 'light' ? '#ffffff' : '#1E0E36', } }}>Loading...</MenuItem>
+                    :
                     <>
-                        {id == 'navSearch' || id == 'navSearchTablet' ?
+                        {searchResults && searchResults.length != 0 ?
                             <>
-
-                                {/* <======== search among collections , items , users in navbar  ========> */}
-
-                                {collections ?
+                                {id == 'navSearch' || id == 'navSearchTablet' ?
                                     <>
-                                        <MenuItem id="title" sx={{ color: theme == 'light' ? '#4d4d4d' : '#999999', bgcolor: theme == 'light' ? '#ffffff' : '#1E0E36', cursor: "context-menu", fontWeight: 600, fontSize: "14px", '&:hover': { bgcolor: theme == 'light' ? '#ffffff' : '#1E0E36', } }}>Collection</MenuItem>
-                                        {collections.map((collection) => {
-                                            return <MenuItem key={collection._id.$oid} id="result" sx={{
-                                                color: theme == 'light' ? '#808080' : '#f9f9f9', bgcolor: theme == 'light' ? '#ffffff' : '#1E0E36',
-                                                '&:hover': {
-                                                    bgcolor: theme == 'light' ? `${Colors.gray1}` : `${Colors.dark3}`,
-                                                }
-                                            }}
-                                            >
-                                                <CollectionBrief image={collection.logo_path} id={collection._id.$oid} title={collection.title} price={collection.floor_price} itemsLength={collection.nft_ids.length} />
-                                            </MenuItem>
-                                        })}
-                                    </>
-                                    : undefined}
 
-                                {users ?
+                                        {/* <======== search among collections , items , users in navbar  ========> */}
+
+                                        {collections ?
+                                            <>
+                                                <MenuItem id="title" sx={{ color: theme == 'light' ? '#4d4d4d' : '#999999', bgcolor: theme == 'light' ? '#ffffff' : '#1E0E36', cursor: "context-menu", fontWeight: 600, fontSize: "14px", '&:hover': { bgcolor: theme == 'light' ? '#ffffff' : '#1E0E36', } }}>Collection</MenuItem>
+                                                {collections.map((collection) => {
+                                                    return <MenuItem key={collection._id.$oid} id="result" sx={{
+                                                        color: theme == 'light' ? '#808080' : '#f9f9f9', bgcolor: theme == 'light' ? '#ffffff' : '#1E0E36',
+                                                        '&:hover': {
+                                                            bgcolor: theme == 'light' ? `${Colors.gray1}` : `${Colors.dark3}`,
+                                                        }
+                                                    }}
+                                                    >
+                                                        <CollectionBrief image={collection.logo_path} id={collection._id.$oid} title={collection.title} price={collection.floor_price} itemsLength={collection.nft_ids.length} />
+                                                    </MenuItem>
+                                                })}
+                                            </>
+                                            : undefined}
+
+                                        {users ?
+                                            <>
+                                                <MenuItem id="title" sx={{ color: theme == 'light' ? '#4d4d4d' : '#999999', bgcolor: theme == 'light' ? '#ffffff' : '#1E0E36', cursor: "context-menu", fontWeight: 600, fontSize: "14px", mt: 1, '&:hover': { bgcolor: theme == 'light' ? '#ffffff' : '#1E0E36', } }}>Account</MenuItem>
+                                                {users.map((user) => {
+                                                    return <MenuItem key={user._id.$oid} id="result" sx={{
+                                                        color: theme == 'light' ? '#808080' : '#f9f9f9', bgcolor: theme == 'light' ? '#ffffff' : '#1E0E36',
+                                                        '&:hover': {
+                                                            bgcolor: theme == 'light' ? `${Colors.gray1}` : `${Colors.dark3}`,
+                                                        }
+                                                    }}
+                                                    ><AccountBrief username={user.username} image={user.avatar_path ? user.avatar_path : undefined} /></MenuItem>
+                                                })}
+                                            </>
+                                            : undefined}
+
+                                        {NFTs ? <>
+                                            <MenuItem id="title" sx={{ color: theme == 'light' ? '#4d4d4d' : '#999999', bgcolor: theme == 'light' ? '#ffffff' : '#1E0E36', cursor: "context-menu", fontWeight: 600, fontSize: "14px", mt: 1, '&:hover': { bgcolor: theme == 'light' ? '#ffffff' : '#1E0E36', } }}>Items</MenuItem>
+                                            {NFTs.map((nft) => {
+                                                return <MenuItem key={nft._id.$oid} id="result" sx={{
+                                                    color: theme == 'light' ? '#808080' : '#f9f9f9', bgcolor: theme == 'light' ? '#ffffff' : '#1E0E36',
+                                                    '&:hover': {
+                                                        bgcolor: theme == 'light' ? `${Colors.gray1}` : `${Colors.dark3}`,
+                                                    }
+                                                }}
+                                                ><ItemBrief wallet={nft.current_owner} id={nft._id.$oid} image={nft.nft_image_path} title={nft.title} collection={nft.collection_name} /></MenuItem>
+                                            })}
+                                        </> : undefined}
+
+                                    </>
+                                    :
                                     <>
-                                        <MenuItem id="title" sx={{ color: theme == 'light' ? '#4d4d4d' : '#999999', bgcolor: theme == 'light' ? '#ffffff' : '#1E0E36', cursor: "context-menu", fontWeight: 600, fontSize: "14px", mt: 1, '&:hover': { bgcolor: theme == 'light' ? '#ffffff' : '#1E0E36', } }}>Account</MenuItem>
-                                        {users.map((user) => {
-                                            return <MenuItem key={user._id.$oid} id="result" sx={{
-                                                color: theme == 'light' ? '#808080' : '#f9f9f9', bgcolor: theme == 'light' ? '#ffffff' : '#1E0E36',
-                                                '&:hover': {
-                                                    bgcolor: theme == 'light' ? `${Colors.gray1}` : `${Colors.dark3}`,
-                                                }
-                                            }}
-                                            ><AccountBrief username={user.username} image={user.avatar_path ? user.avatar_path : undefined} /></MenuItem>
-                                        })}
+                                        {/* <======== other search apis  ========> */}
+
+                                        {collections && searchingWhat == 'collections' ?
+                                            <>
+                                                <MenuItem id="title" sx={{ color: theme == 'light' ? '#4d4d4d' : '#999999', bgcolor: theme == 'light' ? '#ffffff' : '#1E0E36', cursor: "context-menu", fontWeight: 600, fontSize: "14px", '&:hover': { bgcolor: theme == 'light' ? '#ffffff' : '#1E0E36', } }}>Collection</MenuItem>
+                                                {collections.map((collection) => {
+                                                    return <MenuItem key={collection._id.$oid} id="result" sx={{
+                                                        color: theme == 'light' ? '#808080' : '#f9f9f9', bgcolor: theme == 'light' ? '#ffffff' : '#1E0E36',
+                                                        '&:hover': {
+                                                            bgcolor: theme == 'light' ? `${Colors.gray1}` : `${Colors.dark3}`,
+                                                        }
+                                                    }}
+                                                    >
+                                                        <CollectionBrief image={collection.logo_path} id={collection._id.$oid} title={collection.title} price={collection.floor_price} itemsLength={collection.nft_ids.length} />
+                                                    </MenuItem>
+                                                })}
+                                            </>
+                                            : undefined}
+
+                                        {users && searchingWhat == 'users' ?
+                                            <>
+                                                <MenuItem id="title" sx={{ color: theme == 'light' ? '#4d4d4d' : '#999999', bgcolor: theme == 'light' ? '#ffffff' : '#1E0E36', cursor: "context-menu", fontWeight: 600, fontSize: "14px", mt: 1, '&:hover': { bgcolor: theme == 'light' ? '#ffffff' : '#1E0E36', } }}>Account</MenuItem>
+                                                {users.map((user) => {
+                                                    return <MenuItem key={user._id.$oid} id="result" sx={{
+                                                        color: theme == 'light' ? '#808080' : '#f9f9f9', bgcolor: theme == 'light' ? '#ffffff' : '#1E0E36',
+                                                        '&:hover': {
+                                                            bgcolor: theme == 'light' ? `${Colors.gray1}` : `${Colors.dark3}`,
+                                                        }
+                                                    }}
+                                                    ><AccountBrief image={user.avatar_path ? user.avatar_path : undefined} username={user.username} /></MenuItem>
+                                                })}
+                                            </>
+                                            : undefined}
+
+                                        {NFTs && searchingWhat == 'NFTs' ? <>
+                                            <MenuItem id="title" sx={{ color: theme == 'light' ? '#4d4d4d' : '#999999', bgcolor: theme == 'light' ? '#ffffff' : '#1E0E36', cursor: "context-menu", fontWeight: 600, fontSize: "14px", mt: 1, '&:hover': { bgcolor: theme == 'light' ? '#ffffff' : '#1E0E36', } }}>Items</MenuItem>
+                                            {NFTs.map((nft) => {
+                                                return <MenuItem key={nft._id.$oid} id="result" sx={{
+                                                    color: theme == 'light' ? '#808080' : '#f9f9f9', bgcolor: theme == 'light' ? '#ffffff' : '#1E0E36',
+                                                    '&:hover': {
+                                                        bgcolor: theme == 'light' ? `${Colors.gray1}` : `${Colors.dark3}`,
+                                                    }
+                                                }}
+                                                ><ItemBrief wallet={nft.current_owner} id={nft._id.$oid} image={nft.nft_image_path} title={nft.title} collection={nft.collection_name} /></MenuItem>
+                                            })}
+                                        </> : undefined}
                                     </>
-                                    : undefined}
-
-                                {NFTs ? <>
-                                    <MenuItem id="title" sx={{ color: theme == 'light' ? '#4d4d4d' : '#999999', bgcolor: theme == 'light' ? '#ffffff' : '#1E0E36', cursor: "context-menu", fontWeight: 600, fontSize: "14px", mt: 1, '&:hover': { bgcolor: theme == 'light' ? '#ffffff' : '#1E0E36', } }}>Items</MenuItem>
-                                    {NFTs.map((nft) => {
-                                        return <MenuItem key={nft._id.$oid} id="result" sx={{
-                                            color: theme == 'light' ? '#808080' : '#f9f9f9', bgcolor: theme == 'light' ? '#ffffff' : '#1E0E36',
-                                            '&:hover': {
-                                                bgcolor: theme == 'light' ? `${Colors.gray1}` : `${Colors.dark3}`,
-                                            }
-                                        }}
-                                        ><ItemBrief wallet={nft.current_owner} id={nft._id.$oid} image={nft.nft_image_path} title={nft.title} collection={nft.collection_name} /></MenuItem>
-                                    })}
-                                </> : undefined}
-
+                                }
                             </>
-                            :
-                            <>
-                                {/* <======== other search apis  ========> */}
-
-                                {collections && searchingWhat == 'collections' ?
-                                    <>
-                                        <MenuItem id="title" sx={{ color: theme == 'light' ? '#4d4d4d' : '#999999', bgcolor: theme == 'light' ? '#ffffff' : '#1E0E36', cursor: "context-menu", fontWeight: 600, fontSize: "14px", '&:hover': { bgcolor: theme == 'light' ? '#ffffff' : '#1E0E36', } }}>Collection</MenuItem>
-                                        {collections.map((collection) => {
-                                            return <MenuItem key={collection._id.$oid} id="result" sx={{
-                                                color: theme == 'light' ? '#808080' : '#f9f9f9', bgcolor: theme == 'light' ? '#ffffff' : '#1E0E36',
-                                                '&:hover': {
-                                                    bgcolor: theme == 'light' ? `${Colors.gray1}` : `${Colors.dark3}`,
-                                                }
-                                            }}
-                                            >
-                                                <CollectionBrief image={collection.logo_path} id={collection._id.$oid} title={collection.title} price={collection.floor_price} itemsLength={collection.nft_ids.length} />
-                                            </MenuItem>
-                                        })}
-                                    </>
-                                    : undefined}
-
-                                {users && searchingWhat == 'users' ?
-                                    <>
-                                        <MenuItem id="title" sx={{ color: theme == 'light' ? '#4d4d4d' : '#999999', bgcolor: theme == 'light' ? '#ffffff' : '#1E0E36', cursor: "context-menu", fontWeight: 600, fontSize: "14px", mt: 1, '&:hover': { bgcolor: theme == 'light' ? '#ffffff' : '#1E0E36', } }}>Account</MenuItem>
-                                        {users.map((user) => {
-                                            return <MenuItem key={user._id.$oid} id="result" sx={{
-                                                color: theme == 'light' ? '#808080' : '#f9f9f9', bgcolor: theme == 'light' ? '#ffffff' : '#1E0E36',
-                                                '&:hover': {
-                                                    bgcolor: theme == 'light' ? `${Colors.gray1}` : `${Colors.dark3}`,
-                                                }
-                                            }}
-                                            ><AccountBrief image={user.avatar_path ? user.avatar_path : undefined} username={user.username} /></MenuItem>
-                                        })}
-                                    </>
-                                    : undefined}
-
-                                {NFTs && searchingWhat == 'NFTs' ? <>
-                                    <MenuItem id="title" sx={{ color: theme == 'light' ? '#4d4d4d' : '#999999', bgcolor: theme == 'light' ? '#ffffff' : '#1E0E36', cursor: "context-menu", fontWeight: 600, fontSize: "14px", mt: 1, '&:hover': { bgcolor: theme == 'light' ? '#ffffff' : '#1E0E36', } }}>Items</MenuItem>
-                                    {NFTs.map((nft) => {
-                                        return <MenuItem key={nft._id.$oid} id="result" sx={{
-                                            color: theme == 'light' ? '#808080' : '#f9f9f9', bgcolor: theme == 'light' ? '#ffffff' : '#1E0E36',
-                                            '&:hover': {
-                                                bgcolor: theme == 'light' ? `${Colors.gray1}` : `${Colors.dark3}`,
-                                            }
-                                        }}
-                                        ><ItemBrief wallet={nft.current_owner} id={nft._id.$oid} image={nft.nft_image_path} title={nft.title} collection={nft.collection_name} /></MenuItem>
-                                    })}
-                                </> : undefined}
-                            </>
+                            : <MenuItem id="title" sx={{ color: theme == 'light' ? '#4d4d4d' : '#999999', bgcolor: theme == 'light' ? '#ffffff' : '#1E0E36', cursor: "context-menu", fontWeight: 600, fontSize: "14px", '&:hover': { bgcolor: theme == 'light' ? '#ffffff' : '#1E0E36', } }}>no results found</MenuItem>
                         }
-                    </>
-                    : <MenuItem id="title" sx={{ color: theme == 'light' ? '#4d4d4d' : '#999999', bgcolor: theme == 'light' ? '#ffffff' : '#1E0E36', cursor: "context-menu", fontWeight: 600, fontSize: "14px", '&:hover': { bgcolor: theme == 'light' ? '#ffffff' : '#1E0E36', } }}>no results found</MenuItem>
-                }
-                {/* <MenuItem id="title" sx={{ color: theme == 'light' ? '#4d4d4d' : '#999999', bgcolor: theme == 'light' ? '#ffffff' : '#1E0E36', cursor: "context-menu", fontWeight: 600, '&:hover': { bgcolor: theme == 'light' ? '#ffffff' : '#1E0E36', } }}></MenuItem> */}
+                    </>}
 
             </Popper>
         </ClickAwayListener>

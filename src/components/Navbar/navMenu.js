@@ -113,6 +113,7 @@ const NavMenu = ({ state, toggleDrawer, mobOpen, desOpen, anchorEl, handleClose,
   const dispatch = useDispatch();
   const logOut = () => dispatch(logOutUser());
   const [walletConnect, setWalletConnect] = useState(false)
+  const [nextLink, setNextLink] = useState(undefined)
   async function disconnect() {
     try {
       deactivate()
@@ -123,7 +124,6 @@ const NavMenu = ({ state, toggleDrawer, mobOpen, desOpen, anchorEl, handleClose,
       console.log(ex)
     }
   }
-
   const toggleSelected = (event) => {
     if (event.type === 'keydown' && (event.key === 'Tab' || event.key === 'Shift')) {
       return;
@@ -132,7 +132,10 @@ const NavMenu = ({ state, toggleDrawer, mobOpen, desOpen, anchorEl, handleClose,
     setSelected(event.target.id);
     console.log(event.target.id)
   };
-
+  const afterClicking = (nextLink) => {
+    setWalletConnect(!walletConnect)
+    setNextLink(nextLink)
+  }
 
   // tablet & mobile menu 
   const list = (anchor) => (
@@ -206,20 +209,20 @@ const NavMenu = ({ state, toggleDrawer, mobOpen, desOpen, anchorEl, handleClose,
                       <Box className='d-flex align-items-center'><ArrowLeft2 size="18" className='me-1' />Account</Box>
                     </Box>
                     {globalUser.isLoggedIn && active ?
-                      <Link to={'/' + 'profile/' + globalUser.username} style={{ textDecoration: "none", color: "inherit" }}><MenuItem className='p-3'>profile</MenuItem></Link> : <MenuItem className='p-3' onClick={() => { setWalletConnect(!walletConnect) }}>profile</MenuItem>}
+                      <Link to={'/' + 'profile/' + globalUser.username} style={{ textDecoration: "none", color: "inherit" }}><MenuItem className='p-3'>profile</MenuItem></Link> : <MenuItem className='p-3' onClick={() => afterClicking('/' + 'profile/')}>profile</MenuItem>}
                     {globalUser.isLoggedIn && active ?
-                      <Link to={'/' + 'profile/' + globalUser.username + '/#favorited'} style={{ textDecoration: "none", color: "inherit" }}><MenuItem className='p-3'>Favorites</MenuItem></Link> : <MenuItem onClick={() => { setWalletConnect(!walletConnect) }} className='p-3'>Favorites</MenuItem>}
+                      <Link to={'/' + 'profile/' + globalUser.username + '/#favorited'} style={{ textDecoration: "none", color: "inherit" }}><MenuItem className='p-3'>Favorites</MenuItem></Link> : <MenuItem onClick={() => afterClicking('/' + 'profile/')} className='p-3'>Favorites</MenuItem>}
                     {/* <MenuItem className='p-3'><Heart className='me-2' />Favorites</MenuItem> */}
                     {globalUser.isLoggedIn && active ?
-                      <Link to={'/' + 'stats' + '/#watchlist'} style={{ textDecoration: "none", color: "inherit" }}><MenuItem className='p-3'>Watchlist</MenuItem></Link> : <MenuItem onClick={() => { setWalletConnect(!walletConnect) }} className='p-3'>Watchlist</MenuItem>}
+                      <Link to={'/' + 'stats' + '/#watchlist'} style={{ textDecoration: "none", color: "inherit" }}><MenuItem className='p-3'>Watchlist</MenuItem></Link> : <MenuItem onClick={() => afterClicking('/' + 'stats' + '/#watchlist')} className='p-3'>Watchlist</MenuItem>}
                     {globalUser.isLoggedIn && active ?
                       <Link to={'/' + 'my-collections'} style={{ textDecoration: "none", color: "inherit" }}><MenuItem className='p-3'>My Collections</MenuItem></Link>
-                      : <MenuItem onClick={() => { setWalletConnect(!walletConnect) }} className='p-3'>My Collections</MenuItem>}
+                      : <MenuItem onClick={() => afterClicking('/' + 'my-collections')} className='p-3'>My Collections</MenuItem>}
                     {globalUser.isLoggedIn && active ?
                       <Link style={{ textDecoration: "none", color: "inherit" }} to={'/' + 'asset/create'}>
                         <MenuItem className='p-3'>create</MenuItem>
                       </Link> :
-                      <MenuItem className='p-3' onClick={() => { setWalletConnect(!walletConnect) }} >create</MenuItem>
+                      <MenuItem className='p-3' onClick={() => afterClicking('/' + 'asset/create')} >create</MenuItem>
                     }
                     {globalUser.isLoggedIn && active ?
                       <Link style={{ textDecoration: "none", color: "inherit" }}>
@@ -229,7 +232,7 @@ const NavMenu = ({ state, toggleDrawer, mobOpen, desOpen, anchorEl, handleClose,
                         </Box>
                       </Link>
                       :
-                      <MenuItem onClick={() => { setWalletConnect(!walletConnect) }} className='p-3 d-flex justify-content-between'><div className='d-flex'>Account Settings</div></MenuItem>
+                      <MenuItem onClick={() => afterClicking('/' + 'account/setting')} className='p-3 d-flex justify-content-between'><div className='d-flex'>Account Settings</div></MenuItem>
                     }
                   </>
                   :
@@ -347,7 +350,6 @@ const NavMenu = ({ state, toggleDrawer, mobOpen, desOpen, anchorEl, handleClose,
                           <Box className='d-flex align-items-center' onClick={disconnect}><LogoutCurve className='me-2' />Logout</Box>
                         </Box>
                         : undefined}
-
                     </>}
         </>
       </div>
@@ -435,26 +437,26 @@ const NavMenu = ({ state, toggleDrawer, mobOpen, desOpen, anchorEl, handleClose,
               </> :
               <>
                 {globalUser.isLoggedIn && active ?
-                  <Link to={'/' + 'profile/' + globalUser.username} style={{ textDecoration: "none", color: "inherit" }}><MenuItem className='p-3'><Profile className='me-2' />profile</MenuItem></Link> : <MenuItem className='p-3' onClick={() => { setWalletConnect(!walletConnect) }}><Profile className='me-2' />profile</MenuItem>}
+                  <Link to={'/' + 'profile/' + globalUser.username} style={{ textDecoration: "none", color: "inherit" }}><MenuItem className='p-3'><Profile className='me-2' />profile</MenuItem></Link> : <MenuItem className='p-3' onClick={() => afterClicking('/profile/username')}><Profile className='me-2' />profile</MenuItem>}
                 {globalUser.isLoggedIn && active ?
-                  <Link to={'/' + 'profile/' + globalUser.username + '/#favorited'} style={{ textDecoration: "none", color: "inherit" }}><MenuItem className='p-3'><Heart className='me-2' />Favorites</MenuItem></Link> : <MenuItem onClick={() => { setWalletConnect(!walletConnect) }} className='p-3'><Heart className='me-2' />Favorites</MenuItem>}
+                  <Link to={'/' + 'profile/' + globalUser.username + '/#favorited'} style={{ textDecoration: "none", color: "inherit" }}><MenuItem className='p-3'><Heart className='me-2' />Favorites</MenuItem></Link> : <MenuItem onClick={() => afterClicking('/profile/username/#favorited')} className='p-3'><Heart className='me-2' />Favorites</MenuItem>}
                 {/* <MenuItem className='p-3'><Heart className='me-2' />Favorites</MenuItem> */}
                 {globalUser.isLoggedIn && active ?
-                  <Link to={'/' + 'stats' + '/#watchlist'} style={{ textDecoration: "none", color: "inherit" }}><MenuItem className='p-3'><Star1 className='me-2' />Watchlist</MenuItem></Link> : <MenuItem onClick={() => { setWalletConnect(!walletConnect) }} className='p-3'><Star1 className='me-2' />Watchlist</MenuItem>}
+                  <Link to={'/' + 'stats' + '/#watchlist'} style={{ textDecoration: "none", color: "inherit" }}><MenuItem className='p-3'><Star1 className='me-2' />Watchlist</MenuItem></Link> : <MenuItem onClick={() => afterClicking('/stats/#watchlist')} className='p-3'><Star1 className='me-2' />Watchlist</MenuItem>}
                 {globalUser.isLoggedIn && active ?
                   <Link to={'/' + 'my-collections'} style={{ textDecoration: "none", color: "inherit" }}><MenuItem className='p-3'><GlobalSearch className='me-2' />My Collections</MenuItem></Link>
-                  : <MenuItem className='p-3' onClick={() => { setWalletConnect(!walletConnect) }}><GlobalSearch className='me-2' />My Collections</MenuItem>}
+                  : <MenuItem className='p-3' onClick={() => afterClicking('/' + 'my-collections')}><GlobalSearch className='me-2' />My Collections</MenuItem>}
                 {globalUser.isLoggedIn && active ?
                   <Link style={{ textDecoration: "none", color: "inherit" }} to={'/' + 'asset/create'}>
                     <MenuItem className='p-3'><Edit2 className='me-2' />create</MenuItem>
                   </Link> :
-                  <MenuItem className='p-3' onClick={() => { setWalletConnect(!walletConnect) }} ><Edit2 className='me-2' />create</MenuItem>
+                  <MenuItem className='p-3' onClick={() => afterClicking('/' + 'asset/create')} ><Edit2 className='me-2' />create</MenuItem>
                 }
                 {globalUser.isLoggedIn && active ?
                   <Link style={{ textDecoration: "none", color: "inherit" }} to={'/' + 'account/setting'}>
                     <MenuItem className='p-3 d-flex justify-content-between'><div className='d-flex'><Setting5 className='me-2' />Account Settings</div></MenuItem>
                   </Link> :
-                  <MenuItem onClick={() => { setWalletConnect(!walletConnect) }} className='p-3 d-flex justify-content-between'><div className='d-flex'><Setting5 className='me-2' />Account Settings</div></MenuItem>
+                  <MenuItem onClick={() => afterClicking('/' + 'account/setting')} className='p-3 d-flex justify-content-between'><div className='d-flex'><Setting5 className='me-2' />Account Settings</div></MenuItem>
                 }
                 {globalUser.isLoggedIn && active ?
                   <Link style={{ textDecoration: "none", color: "inherit" }} to={'/' + 'notifications'}>
@@ -479,83 +481,8 @@ const NavMenu = ({ state, toggleDrawer, mobOpen, desOpen, anchorEl, handleClose,
                 </Box>
               </>}
           </Box>
-
-
-
-
-
-
-
         </Box>
       </Drawer>
-
-
-      {/* <Popper className="d-none d-lg-flex" open={desOpen} anchorEl={anchorEl} placement={"bottom"} disableScrollLock={true}
-      >
-        <Box sx={{
-          border: theme == 'light' ? "0.2px solid #e6e6e6" : "0.2px solid #332E5F",
-          // transform: 'translate(-32px,30px)',
-          borderRadius: "24px",
-          width: 400,
-          bgcolor: theme == 'light' ? "#ffffff" : "#272448",
-          p: 0,
-          overflow: "hidden",
-          boxShadow: theme == 'light' ? '0px 3px 10px rgba(0, 0, 0, 0.07)' : "unset",
-          animation: `${showUp} 200ms ease`
-        }}
-          className="d-flex flex-column">
-          {selected == 'languages' ?
-            <>
-              <Box sx={{ cursor: "pointer" }} onClick={() => setSelected(undefined)} className='d-flex justify-content-between p-3 align-items-center'>
-                <Box className='d-flex align-items-center'><ArrowLeft2 size="18" className='me-1' />languages</Box>
-              </Box>
-              <Box className='d-flex justify-content-between p-3 align-items-center'>
-                <Box className='d-flex align-items-center'><GlobalSearch size="18" className='me-2' />English</Box>
-                <ArrowRight2 size="18" />
-              </Box>
-              <Box className='d-flex justify-content-between p-3 align-items-center'>
-                <Box className='d-flex align-items-center'><GlobalSearch size="18" className='me-2' />German</Box>
-                <ArrowRight2 size="18" />
-              </Box>
-            </> :
-            <>
-              {globalUser.isLoggedIn && active ?
-                <Link to={'/' + 'profile/' + globalUser.username} style={{ textDecoration: "none", color: "inherit" }}><MenuItem className='p-3'><Profile className='me-2' />profile</MenuItem></Link> : <MenuItem className='p-3' onClick={() => { setWalletConnect(!walletConnect) }}><Profile className='me-2' />profile</MenuItem>}
-              {globalUser.isLoggedIn && active ?
-                <Link to={'/' + 'profile/' + globalUser.username + '/#favorited'} style={{ textDecoration: "none", color: "inherit" }}><MenuItem className='p-3'><Heart className='me-2' />Favorites</MenuItem></Link> : <MenuItem onClick={() => { setWalletConnect(!walletConnect) }} className='p-3'><Heart className='me-2' />Favorites</MenuItem>}
-              {globalUser.isLoggedIn && active ?
-                <Link to={'/' + 'stats' + '/#watchlist'} style={{ textDecoration: "none", color: "inherit" }}><MenuItem className='p-3'><Star1 className='me-2' />Watchlist</MenuItem></Link> : <MenuItem onClick={() => { setWalletConnect(!walletConnect) }} className='p-3'><Star1 className='me-2' />Watchlist</MenuItem>}
-              {globalUser.isLoggedIn && active ?
-                <Link to={'/' + 'my-collections'} style={{ textDecoration: "none", color: "inherit" }}><MenuItem className='p-3'><GlobalSearch className='me-2' />My Collections</MenuItem></Link>
-                : <MenuItem className='p-3' onClick={() => { setWalletConnect(!walletConnect) }}><GlobalSearch className='me-2' />My Collections</MenuItem>}
-              {globalUser.isLoggedIn && active ?
-                <Link style={{ textDecoration: "none", color: "inherit" }} to={'/' + 'asset/create'}>
-                  <MenuItem className='p-3'><Edit2 className='me-2' />create</MenuItem>
-                </Link> :
-                <MenuItem className='p-3' onClick={() => { setWalletConnect(!walletConnect) }} ><Edit2 className='me-2' />create</MenuItem>
-              }
-              {globalUser.isLoggedIn && active ?
-                <Link style={{ textDecoration: "none", color: "inherit" }} to={'/' + 'account/setting'}>
-                  <MenuItem className='p-3 d-flex justify-content-between'><div className='d-flex'><Setting5 className='me-2' />Account Settings</div></MenuItem>
-                </Link> :
-                <MenuItem onClick={() => { setWalletConnect(!walletConnect) }} className='p-3 d-flex justify-content-between'><div className='d-flex'><Setting5 className='me-2' />Account Settings</div></MenuItem>
-              }
-              <MenuItem className='p-3 d-flex justify-content-between' ><div style={{ height: "100%", width: "100%" }} className='d-flex align-items-center' onClick={toggleSelected} id="languages" ><GlobalSearch className='me-2' />Language&nbsp;<span style={{ fontSize: "14px", color: theme == 'light' ? `${Colors.gray6}` : `${Colors.gray4}` }}>(English)</span></div><ArrowRight2 size="18" /></MenuItem>
-              {globalUser.isLoggedIn && active ?
-                <MenuItem className='p-3' onClick={disconnect}><LogoutCurve className='me-2' />Logout</MenuItem> : undefined}
-              <Box className='d-flex justify-content-between align-items-center px-3' sx={{ marginTop: "12px", height: '70px', background: theme == 'light' ? 'linear-gradient(96.14deg, #FFFFFF 19.61%, #E6F1FF 99.09%)' : '#332E5F' }}>
-                <div className='d-flex'>
-                  <p className='m-0 me-1'>{theme == 'light' ? 'light mode' : 'night mode'}</p>
-                  <SwitchS className="switch">
-                    <SwitchInput type="checkbox" checked={theme == 'light' ? true : false} onChange={themeToggler} />
-                    <Slide className="sliderMenu"></Slide>
-                  </SwitchS>
-                </div>
-              </Box>
-            </>}
-        </Box>
-      </Popper> */}
-
 
       {/* mobile menu */}
       <Modal
@@ -597,7 +524,7 @@ const NavMenu = ({ state, toggleDrawer, mobOpen, desOpen, anchorEl, handleClose,
       </Drawer>
 
 
-      <WalletConnectModal open={walletConnect} handleClose={() => setWalletConnect(false)} theme={theme} />
+      <WalletConnectModal nextLink={nextLink} open={walletConnect} handleClose={() => setWalletConnect(false)} theme={theme} />
 
     </>
   );

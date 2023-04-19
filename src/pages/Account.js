@@ -293,7 +293,7 @@ const Account = ({ theme, themeToggler }) => {
                                         <ReadingTitle className="menutab" onClick={handleSelect} id="earning" style={{ background: value == 'earning' && theme == 'light' ? `${Colors.gray1}` : value == 'earning' && theme == 'dark' ? `${Colors.dark4}` : 'inherit' }}><UsdCoin />&nbsp;Earnings</ReadingTitle>
                                     </ProfileMenuTabs>
                                     <InfoContainer className="d-flex flex-column col-12 col-lg-9">
-                                        <h2 style={{ fontWeight: 600 }}>{title}</h2>
+                                        <h2 style={{ fontWeight: 500 }}>{title}</h2>
                                         {value == "profile" ?
                                             <>
                                                 <BannerContainer for="banner" onChange={onBannerChange} style={{ backgroundImage: banner ? banner : `${Colors.gradientPurpleStandard}` }}>

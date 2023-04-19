@@ -25,6 +25,9 @@ width:60%;
   width:100%;
 }
 `;
+const SocialConnectP = styled.p`
+    color:${({ theme }) => theme.socialConnectionProfileColor};
+`;
 
 const ProfileDetails = ({ globalUser, user, setUser, avatar, banner }) => {
     const [loading, setLoading] = useState(true)
@@ -161,8 +164,8 @@ const ProfileDetails = ({ globalUser, user, setUser, avatar, banner }) => {
         <>{loading ?
             <Skeleton variant="rounded" sx={{ width: "100%", height: "100%", borderRadius: "24px" }} /> :
             <>
-                <p className="align-self-start" style={{ fontWeight: "bold" }}>Username</p>
-                <InputBox className="d-flex px-3 py-2 mb-3 justify-content-between">
+                <p className="align-self-start mb-1" style={{ fontWeight: 500 }}>Username</p>
+                <InputBox className="d-flex px-3 py-2 mb-4 justify-content-between">
                     <div className="col-11 p-0">
                         <InputBase
                             name="username"
@@ -174,8 +177,8 @@ const ProfileDetails = ({ globalUser, user, setUser, avatar, banner }) => {
                     </div>
                     <div className="col-1 p-0 text-center d-flex justify-content-end align-items-center"><NotificationBing size="14" /></div>
                 </InputBox>
-                <p className="align-self-start" style={{ fontWeight: "bold" }}>Bio</p>
-                <InputBox className="d-flex px-3 py-2 mb-3 justify-content-between">
+                <p className="align-self-start mb-1" style={{ fontWeight: 500 }}>Bio</p>
+                <InputBox className="d-flex px-3 py-2 mb-4 justify-content-between">
                     <div className="col-11 p-0">
                         <InputBase
                             sx={{ color: "inherit", width: "100%", height: "100%" }}
@@ -187,8 +190,8 @@ const ProfileDetails = ({ globalUser, user, setUser, avatar, banner }) => {
                     </div>
                     <div className="col-1 p-0 text-center d-flex justify-content-end align-items-center"><NotificationBing size="14" /></div>
                 </InputBox>
-                <p className="align-self-start" style={{ fontWeight: "bold" }}>Email Address</p>
-                <InputBox className="d-flex px-3 py-2 mb-3 justify-content-between">
+                <p className="align-self-start mb-1" style={{ fontWeight: 500 }}>Email Address</p>
+                <InputBox className="d-flex px-3 py-2 justify-content-between">
                     <div className="col-11 p-0">
                         <InputBase
                             sx={{ color: "inherit", width: "100%", height: "100%" }}
@@ -200,23 +203,27 @@ const ProfileDetails = ({ globalUser, user, setUser, avatar, banner }) => {
                     </div>
                     <div className="col-1 p-0 text-center d-flex justify-content-end align-items-center"><NotificationBing size="14" /></div>
                 </InputBox>
-                <p className="align-self-start" style={{ fontWeight: "bold" }}>Social Connections</p>
-                <p className="align-self-start" style={{ fontSize: "14px" }}>Help collectors verify your account by connecting social accounts</p>
-                <p className="align-self-start" style={{ fontWeight: "bold" }}>Link</p>
-                <InputBox className="d-flex px-3 py-2 mb-3 justify-content-between">
-                    <div className="col-11 p-0">
-                        <InputBase
-                            sx={{ color: "inherit", width: "100%", height: "100%" }}
-                            name="link"
-                            onChange={AddtoExtras}
-                            placeholder={extras.link ? extras.link : "example.com"}
-                            inputProps={{ 'aria-label': 'enter link' }}
-                        />
-                    </div>
-                    <div className="col-1 p-0 text-center d-flex justify-content-end align-items-center"><NotificationBing size="14" /></div>
-                </InputBox>
-                <p className="align-self-start" style={{ fontWeight: "bold" }}>Wallet Address</p>
-                <InputBox className="d-flex px-3 py-2 mb-3 justify-content-between">
+                {/* social connects */}
+                <div className="my-5">
+                    <SocialConnectP className="align-self-start mb-1" style={{ fontWeight: 500, fontSize: "18px" }}>Social Connections</SocialConnectP>
+                    <p className="align-self-start mb-1" style={{ fontSize: "14px" }}>Help collectors verify your account by connecting social accounts</p>
+                    <p className="align-self-start mb-1 mt-4" style={{ fontWeight: 500 }}>Link</p>
+                    <InputBox className="d-flex px-3 py-2 justify-content-between">
+                        <div className="col-11 p-0">
+                            <InputBase
+                                sx={{ color: "inherit", width: "100%", height: "100%" }}
+                                name="link"
+                                onChange={AddtoExtras}
+                                placeholder={extras.link ? extras.link : "example.com"}
+                                inputProps={{ 'aria-label': 'enter link' }}
+                            />
+                        </div>
+                        <div className="col-1 p-0 text-center d-flex justify-content-end align-items-center"><NotificationBing size="14" /></div>
+                    </InputBox>
+                </div>
+
+                <p className="align-self-start mb-1" style={{ fontWeight: 500 }}>Wallet Address</p>
+                <InputBox className="d-flex px-3 py-2 mb-4 justify-content-between">
                     <div className="col-11 p-0">
                         <InputBase
                             sx={{ color: "inherit", width: "100%", height: "100%" }}

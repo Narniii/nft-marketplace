@@ -177,7 +177,7 @@ const CreateNFT = ({ theme, themeToggler }) => {
     // const { account, mintNFT, setOnTokenMinted } = useNFTMarketplace();
     const { account, mintNFT, owner, tokensOfOwner } = useNFTMarketplace();
     console.log('owner market', owner)
-
+    const [collectionRoyalties, setCollectionRoyalties] = useState(undefined)
 
 
     // const [mintedTokenId, setMintedTokenId] = useState(null);
@@ -217,6 +217,8 @@ const CreateNFT = ({ theme, themeToggler }) => {
         for (var t = 0; t < fetchedCollections.length; t++) {
             if (fetchedCollections[t].title == e.target.id) {
                 console.log('hellllloooooooo?????', fetchedCollections[t].title)
+                console.log('hellllloooooooo?????', fetchedCollections[t].perpetual_royalties)
+                setRoyalties(fetchedCollections[t].perpetual_royalties)
                 var n = { ...nft }
                 n.collection = fetchedCollections[t]._id.$oid
                 setNft(n)
@@ -557,7 +559,7 @@ const CreateNFT = ({ theme, themeToggler }) => {
         // const recipient = owner;
         const tokenURI = tokenURIm ? tokenURIm : ' ';
         // let tx = await mintNFT(recipient, tokenURI, parseInt(id))
-        let tx = await mintNFT(recipient, tokenURI, tokenIn , parseInt(copies))
+        let tx = await mintNFT(recipient, tokenURI, tokenIn, parseInt(copies))
         let tx_hash = tx.tx.hash ? tx.tx.hash : undefined
         let tokenId = tx.tokenId
         console.log(tx_hash)

@@ -68,7 +68,7 @@ export const lightTheme = {
     trendingSectionTitles: Colors.gray7,
     trendingSectionTitlesActive: Colors.primaryDark,
     trendingSectionSubTitles: Colors.gray6,
-
+    socialConnectionProfileColor:Colors.gray8,
 
     arrowDown: arrowDownLight,
 
@@ -174,6 +174,7 @@ export const darkTheme = {
     trendingSectionTitles: Colors.gray1,
     trendingSectionTitlesActive: Colors.primaryLight,
     trendingSectionSubTitles: Colors.gray3,
+    socialConnectionProfileColor:Colors.gray0,
 
     arrowDown: arrowDownDark,
 

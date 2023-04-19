@@ -242,7 +242,7 @@ const NFTSingle = ({ theme, themeToggler }) => {
     const [allPropertiesOpen, setAllPropertiesOpen] = useState(false)
     const [isOnCart, setIsOnCart] = useState(false)
     const dispatch = useDispatch();
-    const add = (item) => {
+    const add = (item, royalties) => {
         console.log(shoppingCart.products)
         var itemInCart = shoppingCart.products.find((i) => i.nft_id === item._id.$oid);
         // console.log(itemInCart)

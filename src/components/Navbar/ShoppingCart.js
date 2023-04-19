@@ -415,29 +415,44 @@ export const Cart = ({ theme, state, toggleDrawer, open, onClose, anchorEl, cart
     );
 
     const completePurchase = async () => {
-        const tokenIds = [14, 15];
-        const quantities = [1, 2];
-        const royaltyRecipients = [
-            ['0xBcd4042DE499D14e55001CcbB24a551F3b954096', '0x70997970C51812dc3A010C7d01b50e0d17dc79C8'],
-            ['0xBcd4042DE499D14e55001CcbB24a551F3b954096'],
-        ];
-        const royaltyAmounts = [
-            [5, 5],
-            [6],
-        ];
-        const totalValue = getTotalPrice(shoppingCart.products).toString(); // The total value in Ether for this transaction (replace with actual value)
-        const bigNumberTokenIds = []
-        for (var i = 0; i < tokenIds.length; i++) {
-            bigNumberTokenIds.push(BigNumber.from(tokenIds[i]))
-        }
-
-        let tx = await buyNFTs(tokenIds, quantities, royaltyRecipients, royaltyAmounts, totalValue);
-        let tx_hash = tx.hash ? tx.hash : undefined
-
-        if (tx_hash) {
-            console.log('yoohoooooo')
+        if (shoppingCart.products.length == 0) {
+            setErr('no item to purchase')
         } else {
-            console.log('ooh oooh ')
+            let tokenIds = []
+            let quantities = []
+            let royaltyRecipients = []
+            let royaltyAmounts = []
+            for (var i = 0; i < shoppingCart.products.length; i++) {
+                tokenIds.push(shoppingCart.products[i].token_id)
+                quantities.push(shoppingCart.products[i].quantity)
+                let rec = []
+                let amounts = []
+                // let _royalties = JSON.parse(shoppingCart.products[i].royalties)
+                let _royalties = shoppingCart.products[i].royalties
+                for (var j = 0; j < _royalties.length; j++) {
+                    rec.push(_royalties[j].wallet_address)
+                    royaltyRecipients.push(rec)
+                    amounts.push(_royalties[j].royalty)
+                    royaltyAmounts.push(amounts)
+                }
+            }
+            const totalValue = getTotalPrice(shoppingCart.products).toString(); // The total value in Ether for this transaction (replace with actual value)
+            const bigNumberTokenIds = []
+            for (var i = 0; i < tokenIds.length; i++) {
+                bigNumberTokenIds.push(BigNumber.from(tokenIds[i]))
+            }
+
+            console.log('bigNumberTokenIds', bigNumberTokenIds, 'quantities', quantities, 'royaltyRecipients', royaltyRecipients, 'royaltyAmounts', royaltyAmounts, 'totalValue', totalValue)
+
+            let tx = await buyNFTs(bigNumberTokenIds, quantities, royaltyRecipients, royaltyAmounts, totalValue);
+            let tx_hash = tx.hash ? tx.hash : undefined
+
+            if (tx_hash) {
+                console.log('yoohoooooo')
+            } else {
+                console.log('ooh oooh ')
+            }
+
         }
     }
     return (

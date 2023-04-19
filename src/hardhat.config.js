@@ -10,8 +10,8 @@ module.exports = {
       allowUnlimitedContractSize: true,
       // url: process.env.REACT_APP_LOCAL_NET,
       chainId: 31337,
-      // gas: 2100000,
-      // gasPrice: 250000000000,
+      gas: 210000000000,
+      gasPrice: 25000000000000000,
    
     },
     ropsten: {

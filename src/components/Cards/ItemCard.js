@@ -145,7 +145,7 @@ height:1px;
 width:100%;
 background-color:#cccccc;
 `
-const ItemCard = ({ theme, name, creator, price, view, itemID, slider, creatorWallet, itemImage, time, owner, item, creatorImg }) => {
+const ItemCard = ({ theme, name, creator, price, view, itemID, slider, creatorWallet, itemImage, time, owner, item, creatorImg , royalties}) => {
     // console.log('view', view)
     const globalUser = useSelector(state => state.userReducer);
     const shoppingCart = useSelector(state => state.cartReducer);

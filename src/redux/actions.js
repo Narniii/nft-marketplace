@@ -87,17 +87,18 @@ export const addItem = (item) => {
     try {
         var tempNfts = []
         var tempObj = {}
+        var tempObjRed = {}
+        var stringifiedRoyalties = JSON.stringify(item.perpetual_royalties)
         tempObj.nft_id = item._id.$oid
         tempObj.media = item.is_freezed ? item.media : item.nft_image_path
         tempObj.title = item.title
         tempObj.description = item.description
         tempObj.copies = item.copies ? item.copies : 0
         tempObj.price = item.price
-        // tempObj.token_index = item.nft_index
+        tempObj.token_id = item.nft_index
+        tempObj.royalties = item.perpetual_royalties
         tempObj.quantity = 1
-
         tempNfts.push(tempObj)
-        console.log(tempNfts)
 
         return async dispatch => {
             if (localStorage.getItem('basket_id')) {
