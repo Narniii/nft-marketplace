@@ -287,10 +287,14 @@ const NavMenu = ({ state, toggleDrawer, mobOpen, desOpen, anchorEl, handleClose,
                               <ArrowRight2 size="18" />
                             </Box>
                           </Link>
-                          <Box onClick={toggleSelected} id="drops" className='d-flex justify-content-between p-3 align-items-center'>
-                            <Box className='d-flex align-items-center'><Calendar size="18" className='me-2' />Drops</Box>
-                            <ArrowRight2 size="18" />
-                          </Box>
+                          <Link to="/drops" style={{ textDecoration: "none", color: "inherit" }}>
+                            <Box
+                              // onClick={toggleSelected}
+                              id="drops" className='d-flex justify-content-between p-3 align-items-center'>
+                              <Box className='d-flex align-items-center'><Calendar size="18" className='me-2' />Drops</Box>
+                              <ArrowRight2 size="18" />
+                            </Box>
+                          </Link>
                           <Box onClick={toggleSelected} id="stats" className='d-flex justify-content-between p-3 align-items-center'>
                             <Box className='d-flex align-items-center'><Chart1 size="18" className='me-2' />Stats</Box>
                             <ArrowRight2 size="18" />
@@ -315,10 +319,14 @@ const NavMenu = ({ state, toggleDrawer, mobOpen, desOpen, anchorEl, handleClose,
                               <ArrowRight2 size="18" />
                             </Box>
                           </Link>
-                          <Box onClick={toggleSelected} id="drops" className='d-flex justify-content-between p-3 align-items-center'>
-                            <Box className='d-flex align-items-center'><Calendar size="18" className='me-2' />Drops</Box>
-                            <ArrowRight2 size="18" />
-                          </Box>
+                          <Link to="/drops" style={{ textDecoration: "none", color: "inherit" }}>
+                            <Box
+                              // onClick={toggleSelected}
+                              id="drops" className='d-flex justify-content-between p-3 align-items-center'>
+                              <Box className='d-flex align-items-center'><Calendar size="18" className='me-2' />Drops</Box>
+                              <ArrowRight2 size="18" />
+                            </Box>
+                          </Link>
                           <Box onClick={toggleSelected} id="stats" className='d-flex justify-content-between p-3 align-items-center'>
                             <Box onClick={toggleSelected} id="stats" className='d-flex align-items-center'><Chart1 size="18" className='me-2' />Stats</Box>
                             <ArrowRight2 onClick={toggleSelected} id="stats" size="18" />

@@ -44,6 +44,7 @@ import Notifications from './pages/Notifications';
 import { Box } from '@mui/system';
 import { NFTMarketplaceProvider } from './NFTMarketplaceContext';
 import DropsTest from './pages/dropsTest';
+import GenerativeCol from './pages/generativeCol';
 
 function getLibrary(provider) {
   return new Web3(provider)
@@ -111,6 +112,7 @@ function App() {
                         <Route exact path="/stats/activity" element={<ActivityStats theme={theme} themeToggler={themeToggler} />} />
                         <Route exact path="/my-collections" element={<MyCollections theme={theme} themeToggler={themeToggler} />} />
                         <Route exact path="/drops" element={<Drops theme={theme} themeToggler={themeToggler} />} />
+                        <Route exact path="/drops/:id/:status" element={<GenerativeCol theme={theme} themeToggler={themeToggler} />} />
                         <Route exact path="/dropsTest" element={<DropsTest theme={theme} themeToggler={themeToggler} />} />
                         <Route exact path="/notifications" element={<Notifications theme={theme} themeToggler={themeToggler} />} />
 
