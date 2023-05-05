@@ -46,7 +46,6 @@ color:${({ theme }) => theme.trendingSectionSubTitles};
 @media screen and (max-width: 768px) {
     font-size:14px;
 }
-
 `
 
 const LevelsTab = ({ levels }) => {
