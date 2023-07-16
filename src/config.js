@@ -1,10 +1,10 @@
 const ISLOCALHOST = false;
 const LOCAL_URL = "http://192.168.1.156";
 export const API_CONFIG = {
-    AUTH_API_URL: ISLOCALHOST ? `${LOCAL_URL}:3434/auth` : 'http://185.239.3.43:8434/auth',
-    MARKET_API_URL: ISLOCALHOST ? `${LOCAL_URL}:3435/market` : 'http://185.239.3.43:8435/market',
-    MARKET_MEDIA_API_URL: ISLOCALHOST ? `${LOCAL_URL}:3435/media` : 'http://185.239.3.43:8435/media/',
-    AUTH_MEDIA_API_URL: ISLOCALHOST ? `${LOCAL_URL}:3434/media` : 'http://185.239.3.43:8434/media/',
+    AUTH_API_URL: ISLOCALHOST ? `${LOCAL_URL}:3434/auth` : 'https://api.auth.youwho.club/auth',
+    MARKET_API_URL: ISLOCALHOST ? `${LOCAL_URL}:3435/market` : 'https://api.market.youwho.club/market',
+    MARKET_MEDIA_API_URL: ISLOCALHOST ? `${LOCAL_URL}:3435/media` : 'https://api.market.youwho.club/media/',
+    AUTH_MEDIA_API_URL: ISLOCALHOST ? `${LOCAL_URL}:3434/media` : 'https://api.auth.youwho.club/media/',
 }
 
 
