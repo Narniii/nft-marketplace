@@ -182,7 +182,6 @@ export const Cart = ({ theme, state, toggleDrawer, open, onClose, anchorEl, cart
     const shoppingCart = useSelector(state => state.cartReducer);
     const { buyNFTs } = useNFTMarketplace();
 
-    console.log(shoppingCart)
     const handleClose = () => setOpenReview(false)
     // const getTotalQuantity = () => {
     //     let total = 0
@@ -266,18 +265,18 @@ export const Cart = ({ theme, state, toggleDrawer, open, onClose, anchorEl, cart
 
     const removeAll = () => dispatch(emptyCart());
 
-    const completePurchases = async () => {
-        console.log('????')
-        let product = { nft_index: 12, royaltyRecs: ['0x70997970C51812dc3A010C7d01b50e0d17dc79C8'], royaltyAmounts: [5], quantity: 1, price: '0.2' }
-        let tx = await completePurchase(product)
-        let tx_hash = tx.hash ? tx.hash : undefined
+    // const completePurchases = async () => {
+    //     console.log('????')
+    //     let product = { nft_index: 12, royaltyRecs: ['0x70997970C51812dc3A010C7d01b50e0d17dc79C8'], royaltyAmounts: [5], quantity: 1, price: '0.2' }
+    //     let tx = await completePurchase(product)
+    //     let tx_hash = tx.hash ? tx.hash : undefined
 
-        if (tx_hash) {
-            console.log(tx_hash)
-        } else {
-            console.log('riiiidiiii')
-        }
-    }
+    //     if (tx_hash) {
+    //         console.log(tx_hash)
+    //     } else {
+    //         console.log('riiiidiiii')
+    //     }
+    // }
 
     const list = (anchor) => (
         <Box
@@ -448,9 +447,9 @@ export const Cart = ({ theme, state, toggleDrawer, open, onClose, anchorEl, cart
             let tx_hash = tx.hash ? tx.hash : undefined
 
             if (tx_hash) {
-                console.log('yoohoooooo')
+                console.log('purchase done')
             } else {
-                console.log('ooh oooh ')
+                console.log('purchase error ')
             }
 
         }

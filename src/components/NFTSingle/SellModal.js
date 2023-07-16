@@ -281,44 +281,44 @@ const SellModal = ({ collection, open, handleClose, theme, id, userWallet, nft }
                 return
             }
 
+            // uncomment the if/else statement and tx definement for using contract method calls ===>
+            // let tx = await listNFT(nft.nft_index, myPrice)
+            // let tx_hash = tx.hash ? tx.hash : undefined
 
-            let tx = await listNFT(nft.nft_index, myPrice)
-            let tx_hash = tx.hash ? tx.hash : undefined
+            // if (tx_hash) {
+            const NFTData = new FormData();
+            NFTData.append('nft_id', nft._id.$oid);
+            NFTData.append('price', myPrice);
+            NFTData.append('owner', userWallet);
 
-            if (tx_hash) {
-                const NFTData = new FormData();
-                NFTData.append('nft_id', nft._id.$oid);
-                NFTData.append('price', myPrice);
-                NFTData.append('owner', userWallet);
+            try {
+                apiCall.current = MARKET_API.request({
+                    path: `/nft/edit/price`,
+                    method: "post",
+                    body: NFTData,
+                    headers: {
+                        'Content-Type': 'multipart/form-data'
+                    }
+                });
+                let resp = await apiCall.current.promise;
+                console.log('submit resp', resp)
 
-                try {
-                    apiCall.current = MARKET_API.request({
-                        path: `/nft/edit/price`,
-                        method: "post",
-                        body: NFTData,
-                        headers: {
-                            'Content-Type': 'multipart/form-data'
-                        }
-                    });
-                    let resp = await apiCall.current.promise;
-                    console.log('submit resp', resp)
-
-                    if (!resp.isSuccess)
-                        throw resp
+                if (!resp.isSuccess)
+                    throw resp
 
 
-                    editAssetActivity('list', myPrice)
-                    setSuccessMesssage('listed successfully')
-                    // setApiLoading(false)
-                }
-                catch (err) {
-                    setErr(err.statusText)
-                    setApiLoading(false)
-                }
-            } else {
-                setErr("something went wrong,please try again later")
+                editAssetActivity('list', myPrice)
+                setSuccessMesssage('listed successfully')
+                // setApiLoading(false)
+            }
+            catch (err) {
+                setErr(err.statusText)
                 setApiLoading(false)
             }
+            // } else {
+            //     setErr("something went wrong,please try again later")
+            //     setApiLoading(false)
+            // }
         }
         else {
             // when setting an auction
@@ -330,41 +330,43 @@ const SellModal = ({ collection, open, handleClose, theme, id, userWallet, nft }
                 setApiLoading(false)
                 return
             }
-            let tx = await createAuction(nft.nft_index, difference)
-            let tx_hash = tx.hash ? tx.hash : undefined
-            if (tx_hash) {
 
-                try {
-                    apiCall.current = MARKET_API.request({
-                        path: `/nft/auc/`,
-                        method: "post",
-                        body: {
-                            from_wallet_address: userWallet,
-                            nft_id: nft._id.$oid,
-                            auction: JSON.stringify([{ nft_id: nft._id.$oid, is_ended: false, start_time: this_time, duration: difference, starting_price: startingPrice, reserve_price: '', include_reserve_price: false, bids: [{}], }])
-                        },
-                    });
-                    let resp = await apiCall.current.promise;
-                    console.log('submit resp', resp)
+            // uncomment the if/else statement and tx definement for using contract method calls ===>
+            // let tx = await createAuction(nft.nft_index, difference)
+            // let tx_hash = tx.hash ? tx.hash : undefined
+            // if (tx_hash) {
 
-                    if (!resp.isSuccess)
-                        throw resp
+            try {
+                apiCall.current = MARKET_API.request({
+                    path: `/nft/auc/`,
+                    method: "post",
+                    body: {
+                        from_wallet_address: userWallet,
+                        nft_id: nft._id.$oid,
+                        auction: JSON.stringify([{ nft_id: nft._id.$oid, is_ended: false, start_time: this_time, duration: difference, starting_price: startingPrice, reserve_price: '', include_reserve_price: false, bids: [{}], }])
+                    },
+                });
+                let resp = await apiCall.current.promise;
+                console.log('submit resp', resp)
+
+                if (!resp.isSuccess)
+                    throw resp
 
 
-                    editAssetActivity('list', startingPrice)
-                    // setSuccessMesssage('auction created successfully')
-                    // setApiLoading(false)
-                }
-                catch (err) {
-                    setErr(err.statusText)
-                    setApiLoading(false)
-                }
+                editAssetActivity('list', startingPrice)
+                // setSuccessMesssage('auction created successfully')
+                // setApiLoading(false)
             }
-            else {
+            catch (err) {
+                setErr(err.statusText)
                 setApiLoading(false)
-                setErr("something went wrong,please try again later")
-
             }
+            // }
+            // else {
+            //     setApiLoading(false)
+            //     setErr("something went wrong,please try again later")
+
+            // }
 
         }
 

@@ -262,14 +262,14 @@ const NotificationSettings = ({ theme }) => {
                     <CheckPut id="owned-item-updates" onClick={handleCheck} style={{ backgroundColor: checked.includes('owned-item-updates') ? '#46C263' : '#f9f9f9' }}><img id="owned-item-updates" src={TickPic} style={{ width: "20px", height: "20px" }} /></CheckPut>
                     <CheckDes className="d-flex flex-column ms-2">
                         <h6 style={{ textTransform: Colors.subtitleFont, margin: 0, fontWeight: 600 }}>owned item updates</h6>
-                        <p className="m-0">When a significant update occurs for one of the items you have purchased on Dorta</p>
+                        <p className="m-0">When a significant update occurs for one of the items you have purchased on YouWho</p>
                     </CheckDes>
                 </div>
                 <div className="d-flex align-items-center my-2">
                     <CheckPut id="successfull-purchase" onClick={handleCheck}><img id="successfull-purchase" src={TickPic} style={{ width: "20px", height: "20px" }} /></CheckPut>
                     <CheckDes className="d-flex flex-column ms-2">
                         <h6 style={{ textTransform: Colors.subtitleFont, margin: 0, fontWeight: 600 }}>successfull purchase</h6>
-                        <p className="m-0">Occasional updates from the Dorta team</p>
+                        <p className="m-0">Occasional updates from the YouWho team</p>
                     </CheckDes>
                 </div>
 

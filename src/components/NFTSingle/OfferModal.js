@@ -151,48 +151,53 @@ const OfferModal = ({ collection, open, handleClose, theme, id, userWallet, nft,
             setApiLoading(false)
             return
         }
-        let dx_hash = undefined
-        let tx_hash = undefined
-        let dx = await depositForOffer(nft.nft_index, myPrice)
-        dx_hash = dx.hash ? dx.hash : undefined
-        if (dx_hash) {
-            let tx = await addOffer(nft.nft_index, myPrice)
-            tx_hash = tx.hash ? tx.hash : undefined
-        }
-        if (tx_hash) {
-            try {
-                apiCall.current = MARKET_API.request({
-                    path: `/nft/offer/`,
-                    method: "post",
-                    body: {
-                        from_wallet_address: userWallet,
-                        nft_id: nft._id.$oid,
-                        offer: JSON.stringify([{ price: myPrice, expiration: expiration ? expiration : defaultExp, date: this_time }])
-                    },
-                    headers: {
-                        'Content-Type': 'multipart/form-data'
-                    }
-                });
-                let resp = await apiCall.current.promise;
-                console.log('submit resp', resp)
-
-                if (!resp.isSuccess)
-                    throw resp
 
 
-                editAssetActivity("offer", myPrice)
-                setSuccessMesssage('offer submited successfully')
-                setHasOffered(true)
-                setApiLoading(false)
-            }
-            catch (err) {
-                setErr(err.statusText)
-                setApiLoading(false)
-            }
-        } else {
-            setErr("something went wrong,please try again later")
+
+        //uncomment these for using contract offer method calls ===>
+
+        // let dx_hash = undefined
+        // let tx_hash = undefined
+        // let dx = await depositForOffer(nft.nft_index, myPrice)
+        // dx_hash = dx.hash ? dx.hash : undefined
+        // if (dx_hash) {
+        //     let tx = await addOffer(nft.nft_index, myPrice)
+        //     tx_hash = tx.hash ? tx.hash : undefined
+        // }
+        // if (tx_hash) {
+        try {
+            apiCall.current = MARKET_API.request({
+                path: `/nft/offer/`,
+                method: "post",
+                body: {
+                    from_wallet_address: userWallet,
+                    nft_id: nft._id.$oid,
+                    offer: JSON.stringify([{ price: myPrice, expiration: expiration ? expiration : defaultExp, date: this_time }])
+                },
+                headers: {
+                    'Content-Type': 'multipart/form-data'
+                }
+            });
+            let resp = await apiCall.current.promise;
+            console.log('submit resp', resp)
+
+            if (!resp.isSuccess)
+                throw resp
+
+
+            editAssetActivity("offer", myPrice)
+            setSuccessMesssage('offer submited successfully')
+            setHasOffered(true)
             setApiLoading(false)
         }
+        catch (err) {
+            setErr(err.statusText)
+            setApiLoading(false)
+        }
+        // } else {
+        //     setErr("something went wrong,please try again later")
+        //     setApiLoading(false)
+        // }
 
 
 

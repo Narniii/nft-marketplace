@@ -162,8 +162,8 @@ const Header = ({ theme, themeToggler }) => {
           <Navbar theme={theme} themeToggler={themeToggler} />
           <div className="d-flex justify-content-between pt-3" style={{ height: "80%" }}>
             <div className="col-6 col-xl-5 d-flex flex-column align-items-start justify-content-center align-self-center">
-              <p className="mb-2" style={{ color: '#F0E4FF' }}>BUY YOUR JRNY NFT AT DORTA</p>
-              <Title >WELCOME TO DORTA CLUB</Title>
+              <p className="mb-2" style={{ color: '#F0E4FF' }}>BUY YOUR JRNY NFT AT YouWho</p>
+              <Title >WELCOME TO YouWho CLUB</Title>
               <p style={{ color: '#f9f9f9', textAlign: "justify", fontSize: "14px" }} className="mb-5 d-none d-lg-block d-xl-none">A membership NFT give you early access to future JRNY NFT sets.exclusive NFT videos ,early access to partner NFT projects and more A membership NFT give you early access to future JRNY NFT sets.exclusive NFT videos ,early access to partner NFT projects and more
               </p>
               <p style={{ color: '#f9f9f9', textAlign: "justify", fontSize: "16px" }} className="mb-5 d-none d-xl-block">A membership NFT give you early access to future JRNY NFT sets.exclusive NFT videos ,early access to partner NFT projects and more A membership NFT give you early access to future JRNY NFT sets.exclusive NFT videos ,early access to partner NFT projects and more
@@ -211,8 +211,8 @@ const Header = ({ theme, themeToggler }) => {
             style={{ padding: "80px 0" }}
           >
             <div className="col-6 row align-items-center align-self-center ">
-              <p className="mb-2" style={{ color: '#F0E4FF' }}>BUY YOUR JRNY NFT AT DORTA</p>
-              <Title>WELCOME TO DORTA CLUB</Title>
+              <p className="mb-2" style={{ color: '#F0E4FF' }}>BUY YOUR JRNY NFT AT YouWho</p>
+              <Title>WELCOME TO YouWho CLUB</Title>
               <p
                 style={{ color: '#f9f9f9', textAlign: "justify", fontSize: "14px" }}
               // onClick={() => add({ price: '0.2', name: 'Number', id: '555' })}
@@ -243,8 +243,8 @@ const Header = ({ theme, themeToggler }) => {
           <Navbar theme={theme} themeToggler={themeToggler} />
           <div style={{ padding: "35px 0" }} className="d-flex justify-content-between">
             <div className="col-12 d-flex flex-column align-items-center align-self-center">
-              <p className="mb-2" style={{ color: '#F0E4FF', fontSize: "14px" }}>BUY YOUR JRNY NFT AT DORTA</p>
-              <Title className="m-0" style={{ fontSize: "20px" }}>WELCOME TO DORTA CLUB</Title>
+              <p className="mb-2" style={{ color: '#F0E4FF', fontSize: "14px" }}>BUY YOUR JRNY NFT AT YouWho</p>
+              <Title className="m-0" style={{ fontSize: "20px" }}>WELCOME TO YouWho CLUB</Title>
               <div className="col-3 p-0 my-4" style={{ height: '120px' }}>
                 <HeaderImg />
               </div>

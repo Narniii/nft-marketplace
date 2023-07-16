@@ -11,7 +11,7 @@ import infoImageWeb3 from '../assets/info-web3.svg'
 // import infoImage11 from '../assets/info-pics11.svg'
 
 function makeID(length) {
-    let result = 'dorta-';
+    let result = 'youwho-';
     const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
     const charactersLength = characters.length;
     let counter = 0;
@@ -193,7 +193,7 @@ export const InformationData = {
             id: '5',
             nextId: '6',
             card_image: infoImageDorta,
-            title: 'who is dorta?',
+            title: 'who is YouWho?',
             description: 'An NFT is a digital asset that can come in the form of art, music, in-game items, videos, and more. They are bought and sold online, frequently with cryptocurrency, and they are generally encoded with the same underlying software as many cryptos.Although they’ve been around since 2014, NFTs are gaining notoriety now because they are becoming an increasingly popular way to buy and sell digital artwork. The market for NFTs was worth a staggering $41 billion in 2021 alone, an amount that is approaching the total value of the entire global fine art market.',
             data: [
                 {
@@ -275,7 +275,7 @@ export const InformationData = {
             id: '7',
             nextId: '8',
             card_image: infoImageCreate,
-            title: 'how to create an NFT on Dorta?',
+            title: 'how to create an NFT on YouWho?',
             description: 'An NFT is a digital asset that can come in the form of art, music, in-game items, videos, and more. They are bought and sold online, frequently with cryptocurrency, and they are generally encoded with the same underlying software as many cryptos.Although they’ve been around since 2014, NFTs are gaining notoriety now because they are becoming an increasingly popular way to buy and sell digital artwork. The market for NFTs was worth a staggering $41 billion in 2021 alone, an amount that is approaching the total value of the entire global fine art market.',
             data: [
                 {

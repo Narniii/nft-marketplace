@@ -174,10 +174,13 @@ const CreateNFT = ({ theme, themeToggler }) => {
     const [unlockableContent, setunlockableContent] = useState(false)
     const [sensetiveContent, setsensetiveContent] = useState(false)
     const [copies, setCopies] = useState(1)
-    // const { account, mintNFT, setOnTokenMinted } = useNFTMarketplace();
-    const { account, mintNFT, owner, tokensOfOwner } = useNFTMarketplace();
-    console.log('owner market', owner)
     const [collectionRoyalties, setCollectionRoyalties] = useState(undefined)
+
+
+
+
+    // for using in contract calls ==>  account of the user ,  mintNFT function , owner of the contract , tokens of user
+    const { account, mintNFT, owner, tokensOfOwner } = useNFTMarketplace();
 
 
     // const [mintedTokenId, setMintedTokenId] = useState(null);
@@ -195,15 +198,17 @@ const CreateNFT = ({ theme, themeToggler }) => {
     //     };
     // }, [setOnTokenMinted]);
 
-    const anToot = async () => {
-        let tx = await tokensOfOwner(globalUser.walletAddress)
-        console.log('toooooooooookeeeeeeeeeeeeeeeeeeeennnnnnnnnnnnnnnnnssssssssssssss', tx)
-    }
 
-    useEffect(() => {
-        anToot()
 
-    }, [])
+    // get tokens of owner ==>
+
+    // const OwnerTokens = async () => {
+    //     let tx = await tokensOfOwner(globalUser.walletAddress)
+    //     console.log(tx)
+    // }
+    // useEffect(() => {
+    //     OwnerTokens()
+    // }, [])
 
 
     const handleChainSelect = (e) => {
@@ -555,67 +560,66 @@ const CreateNFT = ({ theme, themeToggler }) => {
         // setMintedTokenId(null); // Reset tokenId state
 
         { console.log(tokenURIm) }
-        const recipient = account;
-        // const recipient = owner;
+        // const recipient = account;
         const tokenURI = tokenURIm ? tokenURIm : ' ';
-        // let tx = await mintNFT(recipient, tokenURI, parseInt(id))
-        let tx = await mintNFT(recipient, tokenURI, tokenIn, parseInt(copies))
+
+        let tx; //===> just to have a defined tx , for contarct calls remove this line and uncomment the line below
+        // let tx = await mintNFT(recipient, tokenURI, tokenIn, parseInt(copies))
         let tx_hash = tx.tx.hash ? tx.tx.hash : undefined
-        let tokenId = tx.tokenId
-        console.log(tx_hash)
-        console.log(tokenId)
-        console.log(tx)
+        // let tokenId = tx.tokenId
         let this_time = new Date(Date.now())
-        if (tx_hash) {
 
+        // uncomment the if-else statement if you wanted to uncomment the contract calls again ===>
+        // if (tx_hash) {
+        // const waitForTokenId = async () => {
+        //     while (mintedTokenId === null) {
+        //         await new Promise((resolve) => setTimeout(resolve, 100));
+        //     }
+        //     return mintedTokenId;
+        // };
 
-            console.log(tx_hash)
+        // const tokenId = await waitForTokenId();
 
+        // // Use tokenId in your logic
+        // console.log("Token ID from event:", tokenId);
 
-            // const waitForTokenId = async () => {
-            //     while (mintedTokenId === null) {
-            //         await new Promise((resolve) => setTimeout(resolve, 100));
-            //     }
-            //     return mintedTokenId;
-            // };
+        try {
+            apiCall.current = MARKET_API.request({
+                path: `/nft/mint/`,
+                method: "post",
+                body: {
+                    issued_at: this_time,
+                    tx_hash: tx_hash,
+                    nft_id: id,
+                    // owners: [],
+                    // price_history: [],
+                    current_owner: globalUser.walletAddress,
+                },
+                headers: {
+                    'Content-Type': 'multipart/form-data'
+                }
+            });
+            let resp = await apiCall.current.promise;
+            console.log('mint response', resp)
 
-            // const tokenId = await waitForTokenId();
-
-            // // Use tokenId in your logic
-            // console.log("Token ID from event:", tokenId);
-
-
-
-            try {
-                apiCall.current = MARKET_API.request({
-                    path: `/nft/mint/`,
-                    method: "post",
-                    body: {
-                        issued_at: this_time,
-                        tx_hash: tx_hash,
-                        nft_id: id,
-                        // owners: [],
-                        // price_history: [],
-                        current_owner: globalUser.walletAddress,
-                    },
-                    headers: {
-                        'Content-Type': 'multipart/form-data'
-                    }
-                });
-                let resp = await apiCall.current.promise;
-                console.log('mint response', resp)
-
-                if (!resp.isSuccess)
-                    throw resp
-                editAssetActivity('mint', resp.data.copies, resp.data._id.$oid, resp.data, tokenId)
-            }
-            catch (err) {
-                console.log('backend mint error:', err)
-            }
-        } else {
-            console.log('nft is created but not minted')
-            deleteNFT(id)
+            if (!resp.isSuccess)
+                throw resp
+            editAssetActivity('mint', resp.data.copies, resp.data._id.$oid, resp.data, tokenId)
         }
+        catch (err) {
+            console.log('backend mint error:', err)
+            if (err) {
+                deleteNFT(id)
+            }
+            // <========= remove this if statement while readding the contract calls
+        }
+
+
+
+        // } else {
+        //     console.log('nft is created but not minted')
+        //     deleteNFT(id)
+        // }
     }
     const editAssetActivity = async (event, copies, id, nft, tokenId) => {
         var this_time = parseFloat(new Date(Date.now()).getTime()) / 1000
@@ -726,9 +730,7 @@ const CreateNFT = ({ theme, themeToggler }) => {
         }
 
     }
-
     const { active, } = useWeb3React()
-
     const changeIsFreezed = () => {
         if (isFreezed == 0) { setIsFreezed(1) }
         else { setIsFreezed(0) }

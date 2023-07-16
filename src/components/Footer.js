@@ -245,7 +245,7 @@ const Footer = () => {
         <div className="w-100 d-flex flex-column align-items-center justify-content-between text-center">
           <Logo className="mb-2" />
           <h6 className="" style={{ margin: 0, color: "white" }}>
-            Dorta
+            YouWho
           </h6>
           <div className="mt-2" style={{ color: Colors.gray1, textTransform: Colors.body, fontSize: "14px" }}>The world’s first and largest digital marketplace for crypto collectibles and non-fungible tokens (NFTs). Buy, sell, and discover exclusive digital items.</div>
         </div>

@@ -178,41 +178,43 @@ const PlaceBidModal = ({ collection, open, handleClose, theme, id, userWallet, n
             setApiLoading(false)
             return
         }
-        let tx = await placeBid(nft.nft_index, myPrice)
-        let tx_hash = tx.hash ? tx.hash : undefined
-        if (tx_hash) {
-            try {
-                apiCall.current = MARKET_API.request({
-                    path: `/nft/auc/add/bid/`,
-                    method: "post",
-                    body: {
-                        nft_id: nft._id.$oid,
-                        auction_bid: JSON.stringify([{ price: myPrice, from_wallet_address: userWallet }])
-                    },
-                    headers: {
-                        'Content-Type': 'multipart/form-data'
-                    }
-                });
-                let resp = await apiCall.current.promise;
-                console.log('submit resp ------------', resp)
 
-                if (!resp.isSuccess)
-                    throw resp
+        // uncomment the tx method calls and the following if/else statement for using contract method calls after contract deployment ====>
+        // let tx = await placeBid(nft.nft_index, myPrice)
+        // let tx_hash = tx.hash ? tx.hash : undefined
+        // if (tx_hash) {
+        try {
+            apiCall.current = MARKET_API.request({
+                path: `/nft/auc/add/bid/`,
+                method: "post",
+                body: {
+                    nft_id: nft._id.$oid,
+                    auction_bid: JSON.stringify([{ price: myPrice, from_wallet_address: userWallet }])
+                },
+                headers: {
+                    'Content-Type': 'multipart/form-data'
+                }
+            });
+            let resp = await apiCall.current.promise;
+            console.log('submit resp ------------', resp)
 
-                setErr(undefined)
-                editAssetActivity('offer', myPrice)
-                setSuccessMesssage('bid submited successfully')
-                setApiLoading(false)
-            }
-            catch (err) {
-                setErr(err.statusText)
-                setApiLoading(false)
-            }
-        }
-        else {
-            setErr("something went wrong,please try again later")
+            if (!resp.isSuccess)
+                throw resp
+
+            setErr(undefined)
+            editAssetActivity('offer', myPrice)
+            setSuccessMesssage('bid submited successfully')
             setApiLoading(false)
         }
+        catch (err) {
+            setErr(err.statusText)
+            setApiLoading(false)
+        }
+        // }
+        // else {
+        //     setErr("something went wrong,please try again later")
+        //     setApiLoading(false)
+        // }
     }
     const editAssetActivity = async (event, price) => {
         var this_time = parseFloat(new Date(Date.now()).getTime()) / 1000
