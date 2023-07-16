@@ -556,7 +556,7 @@ const CreateNFT = ({ theme, themeToggler }) => {
             setApiLoading(false)
         }
     }
-    const mintNFTFunc = async (id, tokenURIm, tokenIn) => {
+    const mintNFTFunc = async (id, tokenURIm, tokenId) => {
         // setMintedTokenId(null); // Reset tokenId state
 
         { console.log(tokenURIm) }
