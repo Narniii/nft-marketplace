@@ -310,7 +310,7 @@ const CreateNFT = ({ theme, themeToggler }) => {
     }, [globalUser])
 
     function makeCollection(length) {
-        let result = 'dorta-';
+        let result = 'youwho-';
         const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
         const charactersLength = characters.length;
         let counter = 0;
@@ -565,7 +565,8 @@ const CreateNFT = ({ theme, themeToggler }) => {
 
         let tx; //===> just to have a defined tx , for contarct calls remove this line and uncomment the line below
         // let tx = await mintNFT(recipient, tokenURI, tokenIn, parseInt(copies))
-        let tx_hash = tx.tx.hash ? tx.tx.hash : undefined
+        // let tx_hash = tx.tx.hash ? tx.tx.hash : undefined  // main , uncomment this after cntract deloyment
+        let tx_hash = tx ? tx.tx.hash : undefined   //temp
         // let tokenId = tx.tokenId
         let this_time = new Date(Date.now())
 
