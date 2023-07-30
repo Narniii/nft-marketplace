@@ -92,7 +92,7 @@ const NotFound = ({ theme, themeToggler }) => {
                     </SectionContainer>
                 </div>
             </div>
-            <Footer />
+            {/* <Footer /> */}
         </>
     );
 }

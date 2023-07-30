@@ -46,6 +46,7 @@ import { NFTMarketplaceProvider } from './NFTMarketplaceContext';
 import DropsTest from './pages/dropsTest';
 import GenerativeCol from './pages/generativeCol';
 import Footer from './components/Footer';
+import Transfer from './pages/transfer';
 
 function getLibrary(provider) {
   return new Web3(provider)
@@ -121,6 +122,7 @@ function App() {
 
 
                         <Route exact path="/test" element={<TestPage theme={theme} themeToggler={themeToggler} />} />
+                        <Route exact path="/transfer" element={<Transfer theme={theme} themeToggler={themeToggler} />} />
 
 
 
