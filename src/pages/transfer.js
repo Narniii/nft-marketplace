@@ -66,35 +66,17 @@ const ImageRight = styled.div`
     width:50%;
     `;
 
-const NotFound = ({ theme, themeToggler }) => {
+const Transfer = ({ theme, themeToggler }) => {
     return (
         <>
             <div className="pdng">
                 <Navbar theme={theme} themeToggler={themeToggler} />
-                <div className="py-5 px-0">
-                    <SectionContainer >
-                        <Wrapppper className="d-none d-lg-flex align-items-center justify-content-center">
-                            <ImageLeft className="" />
-                            <Wrapper className="py-3 text-center d-flex flex-column justify-content-between">
-                                <Image />
-                                <h2 style={{ fontWeight: "bold" }}>No Results Found</h2>
-                                <p>we couldn’t find what you searched for.
-                                    try searching again</p>
-                            </Wrapper>
-                            <ImageRight className="" />
-                        </Wrapppper>
-                        <Wrapper className="py-3 text-center d-flex d-lg-none flex-column justify-content-center align-items-center">
-                            <Image />
-                            <h2 style={{ fontWeight: "bold" }}>No Results Found</h2>
-                            <p>we couldn’t find what you searched for.
-                                try searching again</p>
-                        </Wrapper>
-                    </SectionContainer>
+                <div className="m-5">
+                    transfer money to your friends and family by minting nft
                 </div>
             </div>
-            {/* <Footer /> */}
         </>
     );
 }
 
-export default NotFound;
+export default Transfer;
