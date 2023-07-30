@@ -17,7 +17,10 @@ const Box = styled.div`
   color:#e6e6e6;
   color: ${({ theme }) => theme.navIcons};
   width:100%;
-  `;
+  &:hover{
+      box-shadow: ${({ theme }) => theme.searchBoxShadowHover} !important;
+    }
+`;
 const InputBox = styled.div`
     width:auto;
     color: ${({ theme }) => theme.inputBox};
@@ -117,7 +120,9 @@ const SearchBox = ({ theme, id, phrase, searchingWhat }) => {
 
     return (
         <>
-            <Box className="d-flex py-2 align-items-center" id={id} style={{ paddingLeft: "12px", boxShadow: theme == 'light' && window.location.pathname !== '/' ? 'inset 0px 0px 4px rgba(0, 0, 0, 0.2)' : "unset", border: theme == 'light' && window.location.pathname !== '/' ? "none" : "1px solid #b3b3b3" }}>
+            <Box className="d-flex py-2 align-items-center" id={id} style={{
+                paddingLeft: "12px", boxShadow: theme == 'light' && window.location.pathname !== '/' ? 'inset 0px 0px 4px rgba(0, 0, 0, 0.2)' : "unset", border: theme == 'light' && window.location.pathname !== '/' ? "none" : "1px solid #b3b3b3",
+            }}>
                 <div className="col-2 p-0 d-flex align-items-center" style={{ height: "max-content", width: "auto", color: theme == 'light' && window.location.pathname !== '/' ? `${Colors.gray6}` : "white" }}>
                     <SearchNormal1
                         size="24"

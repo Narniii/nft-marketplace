@@ -27,7 +27,7 @@ const Home = ({ theme, themeToggler }) => {
             <NotableCollections theme={theme} />
             <BasicsSection theme={theme} />
             <CategorySection theme={theme} />
-            <Footer />
+            {/* <Footer /> */}
         </div>
     );
 }

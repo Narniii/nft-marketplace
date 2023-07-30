@@ -82,6 +82,7 @@ export const lightTheme = {
     searchBoxBorder: window.location.pathname == "/" ? `1px solid ${Colors.gray2}` : "none",
     // searchBoxShadow: window.location.pathname !== '/' ? 'inset 0px 0px 4px rgba(0, 0, 0, 0.2)' : "unset",
     searchBoxShadow: 'inset 0px 0px 4px rgba(0, 0, 0, 0.2)',
+    searchBoxShadowHover:'inset 0px 0px 6px rgba(0, 0, 0, 0.3)',
     inputBox: Colors.gray1,
     navLinkText: window.location.pathname === "/" ? "white" : Colors.gray6,
     categoryDet: Colors.gray5,
@@ -190,6 +191,8 @@ export const darkTheme = {
 
     searchBoxBorder: `solid 1px ${Colors.gray2}`,
     searchBoxShadow: 'unset',
+    searchBoxShadowHover:'inset 0px 0px 10px rgba(0, 0, 0, 0.32) ,  0px 0px 8px rgba(190, 138, 255, 0.32)',
+    // searchBoxShadowHover:'inset 0px 0px 8px rgba(190, 138, 255, 0.32)',
 
     inputBox: Colors.gray4,
     navLinkText: Colors.gray1,
