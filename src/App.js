@@ -45,6 +45,7 @@ import { Box } from '@mui/system';
 import { NFTMarketplaceProvider } from './NFTMarketplaceContext';
 import DropsTest from './pages/dropsTest';
 import GenerativeCol from './pages/generativeCol';
+import Footer from './components/Footer';
 
 function getLibrary(provider) {
   return new Web3(provider)
@@ -128,6 +129,7 @@ function App() {
 
 
                       </Routes>
+                      <Footer />
                     </>
                   </ThemeProvider>
                 </ScrollToTop>

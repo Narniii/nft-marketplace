@@ -17,6 +17,9 @@ const Box = styled.div`
   color:#e6e6e6;
   color: ${({ theme }) => theme.navIcons};
   width:100%;
+  &:hover{
+  box-shadow: ${({ theme }) => theme.searchBoxShadowHover};
+  }
   `;
 const InputBox = styled.div`
     width:auto;
