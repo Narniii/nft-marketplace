@@ -309,10 +309,10 @@ const Navbar = ({ theme, themeToggler }) => {
           </div>
           <div className="d-flex justify-content-between no-gutters">
             {/* <ClickAwayListener onClickAway={() => setWalletDesOpen(false)}> */}
-            <Link onClick={walletDrawer('right', true)} style={{ width: "auto", padding: "0", textDecoration: "none", color: theme == 'light' && window.location.pathname !== '/' ? `${Colors.gray6}` : "white" }}>{walletDesOpen ? <Wallet2 variant="Bold" cursor="pointer" /> : <Wallet2 />}</Link>
+            <Link onClick={walletDrawer('right', true)} style={{ width: "auto", padding: "0", textDecoration: "none", color: theme == 'light' && window.location.pathname !== '/' ? `${Colors.gray6}` : "white" }}>{walletDesOpen ? <Wallet2 variant="Bold" cursor="pointer" /> : <Wallet2 className="navIcH"/>}</Link>
             {/* </ClickAwayListener> */}
             {/* <ClickAwayListener onClickAway={() => setCartDesOpen(false)}> */}
-            <Link onClick={toggleDrawer('right', true)} style={{ marginRight: "32px", marginLeft: "32px", width: "auto", padding: "0", textDecoration: "none", color: theme == 'light' && window.location.pathname !== '/' ? `${Colors.gray6}` : "white" }}>{cartDesOpen ? <Bag2 variant="Bold" cursor="pointer" /> : <Bag2 />}</Link>
+            <Link onClick={toggleDrawer('right', true)} style={{ marginRight: "32px", marginLeft: "32px", width: "auto", padding: "0", textDecoration: "none", color: theme == 'light' && window.location.pathname !== '/' ? `${Colors.gray6}` : "white" }}>{cartDesOpen ? <Bag2 variant="Bold" cursor="pointer" /> : <Bag2 className="navIcH"/>}</Link>
             {/* </ClickAwayListener> */}
             {/* <ClickAwayListener onClickAway={() => setDesOpen(false)}> */}
             <Link id="profile-tab" style={{ width: "auto", padding: "0", textDecoration: "none", color: theme == 'light' && window.location.pathname !== '/' ? `${Colors.gray6}` : "white" }}
@@ -326,7 +326,7 @@ const Navbar = ({ theme, themeToggler }) => {
                 </div>
                 :
                 <div className="p-relative" style={{ width: '24px', height: '24px' }}>
-                  <Profile />
+                  <Profile className="navIcH"/>
                   {notifications && notifications.length > 0 ? <NotifDot /> : undefined}
                 </div>}
             </Link>

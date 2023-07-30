@@ -20,7 +20,9 @@
     height: 14px;
 
 }
-
+.navIcH:hover{
+    color: #9951F4;
+}
 /* temporary ===========>> */
 
 .nav-pills .nav-link.active {
@@ -220,6 +222,7 @@ input:-webkit-autofill:focus,
 input:-webkit-autofill:active {
     -webkit-box-shadow: 0 0 0 0 transparent inset !important;
 }
+
 
 /* Rounded sliders */
 .slider.round {
