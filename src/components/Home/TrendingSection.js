@@ -258,12 +258,7 @@ const TrendingSection = ({ theme }) => {
     return (
 
         <>
-            {console.log(theme)}
             <SectionContainer className="pdng">
-                {/* <div className="d-flex p-1 justify-content-between align-items-center"> */}
-                {/* <div className="d-flex p-0 col-12 col-sm-6 justify-content-start"> */}
-                {/* <div className="d-flex justify-content-between align-items-center p-0"> */}
-
                 <div style={{ transform: 'translateY(75%)' }} className="d-none d-sm-flex col-sm-6 justify-content-end justify-self-end align-self-end">
                     <SSelection id={'trending-landing'} width={'200px'} theme={theme} tabs={tabs} handleSelect={handleTimeSelect} selectValue={timeSelect} />
                 </div>
@@ -271,8 +266,6 @@ const TrendingSection = ({ theme }) => {
                 <div className="d-flex p-0 flex-column col-12">
                     <Tabs
                         defaultActiveKey="Trending"
-                        // id="justify-tab-example"
-                        // justify
                         className="mb-5"
                         style={{ borderBottom: "none", color: theme === 'light' ? "#5D3393" : "#DABDDF", borderColor: theme === 'light' ? "#5D3393" : "#DABDDF" }}
 
@@ -294,7 +287,6 @@ const TrendingSection = ({ theme }) => {
                                         </div>
                                         <div className="d-none d-sm-flex" style={{
                                             display: "flex", flexDirection: "row", justifyContent: "start", alignItems: "center",
-                                            // border: "1px solid blue",
                                             width: "150px"
                                         }}>
                                             Floor Price</div>
@@ -509,7 +501,6 @@ const TrendingSection = ({ theme }) => {
 
                 <Link to="explore" style={{ textDecoration: "none", color: "inherit" }}>
                     <div style={{ cursor: "pointer" }} className="align-self-center text-center p-3"
-                    // style={{ width: "100px", border: "solid 1px white" }}
                     >
                         View All
                         <br />

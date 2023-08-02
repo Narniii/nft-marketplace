@@ -471,7 +471,6 @@ const CreateNFT = ({ theme, themeToggler }) => {
         var ipfsFileCid = undefined
         var ipfsFileUrl = undefined
 
-
         if (isFreezed == 1) {
             var ipfsCid = await ipfsUpload()
             var ipfsUrl = `https://${ipfsCid}.ipfs.dweb.link/`
@@ -567,7 +566,7 @@ const CreateNFT = ({ theme, themeToggler }) => {
         let tx; //===> just to have a defined tx , for contarct calls remove this line and uncomment the line below
         // let tx = await mintNFT(recipient, tokenURI, tokenIn, parseInt(copies))
         // let tx_hash = tx.tx.hash ? tx.tx.hash : undefined  // main , uncomment this after cntract deloyment
-        let tx_hash = ' '   //temp
+        let tx_hash = tx ? ' ' : undefined   //temp
         // let tokenId = tx.tokenId
         let this_time = new Date(Date.now())
 
