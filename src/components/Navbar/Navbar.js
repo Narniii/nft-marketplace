@@ -367,7 +367,7 @@ const Navbar = ({ theme, themeToggler }) => {
       {/* mobile navbar */}
       <Nav className="d-flex d-sm-none justify-content-between align-items-center">
         <div className="d-flex col-6 align-items-center">
-          <Toggle theme={theme} toggleTheme={themeToggler} />
+          <IconButton theme={theme} />
         </div>
         <div className="d-flex col-6 justify-content-end">
           <Link style={{ width: "auto", padding: "0", textDecoration: "none", color: theme == 'light' && window.location.pathname !== '/' ? `${Colors.gray6}` : "white" }}><SearchNormal1 /></Link>
