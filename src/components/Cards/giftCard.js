@@ -88,6 +88,8 @@ const GiftCard = ({ theme, price, priceUnit }) => {
 
     const handleClose = () => {
         setPayLoading(false)
+        setAddData(true)
+        setPayDone(false)
     }
     return (
         <div className="col-12 col-sm-6 col-lg-4 p-0">
@@ -124,11 +126,11 @@ const GiftCard = ({ theme, price, priceUnit }) => {
                 <Box
                     sx={{ width: "300px", height: '300px', display: 'flex', flexDirection: 'column', justifyContent: "space-between", alignItems: 'center', backgroundColor: "white", margin: '100px auto' }}>
                     {addData ?
-                        <div style={{ width: "100%", height: '200px', display: 'flex', justifyContent: 'center', alignItems: 'center',  }}>
+                        <div style={{ width: "100%", height: '200px', display: 'flex', justifyContent: 'center', alignItems: 'center', }}>
                             ثبت اطلاعات
                         </div>
                         :
-                        <div style={{ width: "100%", height: '200px', display: 'flex', justifyContent: 'center', alignItems: 'center',  }}>
+                        <div style={{ width: "100%", height: '200px', display: 'flex', justifyContent: 'center', alignItems: 'center', }}>
                             درگاه پرداخت
                         </div>
                     }
