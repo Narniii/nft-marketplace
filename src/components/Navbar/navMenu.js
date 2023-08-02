@@ -1,7 +1,7 @@
 import Modal from '@mui/material/Modal';
 import React, { useEffect, useRef, useState } from "react";
 import { Box, Button, ClickAwayListener, Divider, Drawer, Hidden, keyframes, List, ListItem, ListItemButton, ListItemIcon, ListItemText, Menu, MenuItem, Popper, Typography } from "@mui/material";
-import { ArrowLeft2, ArrowRight2, ArrowUp2, Bag2, Calendar, CardSend, Chart1, CloseSquare, DocumentText, Edit2, EmojiNormal, GlobalSearch, HambergerMenu, Heart, Logout, LogoutCurve, Notification, Profile, ProfileDelete, SearchNormal1, Setting5, Star1, Trash, Wallet2, Youtube } from "iconsax-react";
+import { ArrowLeft2, ArrowRight2, ArrowUp2, Bag2, Calendar, CardSend, Chart1, CloseSquare, DocumentText, Edit2, EmojiNormal, GlobalSearch, HambergerMenu, Heart, Home2, Logout, LogoutCurve, Notification, Profile, ProfileDelete, SearchNormal1, Setting5, Star1, Trash, Wallet2, Youtube } from "iconsax-react";
 import '../../styles.css'
 import styled from "styled-components";
 import { Colors } from "../design/Colors";
@@ -277,6 +277,12 @@ const NavMenu = ({ state, toggleDrawer, mobOpen, desOpen, anchorEl, handleClose,
                     <>
                       {globalUser.isLoggedIn && active ?
                         <>
+                          <Link to="/" style={{ textDecoration: "none", color: "inherit" }}>
+                            <Box className='d-flex justify-content-between p-3 align-items-center'>
+                              <Box className='d-flex align-items-center'><Home2 size="18" className='me-2' />Home</Box>
+                            </Box>
+                          </Link>
+
                           <Box onClick={toggleSelected} id="account" className='d-flex justify-content-between p-3 align-items-center'>
                             <Box className='d-flex align-items-center'><Profile size="18" className='me-2' />Account</Box>
                             <ArrowRight2 size="18" />
@@ -313,6 +319,12 @@ const NavMenu = ({ state, toggleDrawer, mobOpen, desOpen, anchorEl, handleClose,
                         </>
                         :
                         <>
+                          <Link to="/" style={{ textDecoration: "none", color: "inherit" }}>
+                            <Box className='d-flex justify-content-between p-3 align-items-center'>
+                              <Box className='d-flex align-items-center'><Home2 size="18" className='me-2' />Home</Box>
+                            </Box>
+                          </Link>
+
                           <Link to="/explore" style={{ textDecoration: "none", color: "inherit" }}>
                             <Box className='d-flex justify-content-between p-3 align-items-center'>
                               <Box className='d-flex align-items-center'><GlobalSearch size="18" className='me-2' />Explore</Box>

@@ -18,6 +18,7 @@ import { useWeb3React } from "@web3-react/core";
 import { ListMenus } from "../listMenus";
 import { MARKET_API } from "../../utils/data/market_api";
 import { display } from "@mui/system";
+import IconButton from "../design/logoButton";
 const Nav = styled.div`
   background:transparent;
   color: ${({ theme }) => theme.navIcons};
@@ -293,14 +294,14 @@ const Navbar = ({ theme, themeToggler }) => {
       <Nav className="d-none d-lg-flex justify-content-between no-gutters">
         <div className="d-flex col-lg-6 col-xl-6 align-items-center justify-content-start">
           <div className="me-5 align-items-center">
-            <Toggle theme={theme} toggleTheme={themeToggler} />
+            <IconButton theme={theme} />
           </div>
           <div className="d-flex flex-nowrap justify-content-between no-gutters">
             <NavLink theme={theme} linkText={"Explore"} linkSize={"medium"} link={"/explore"} />
             <NavLink open={handleList} close={closeList} link={'/' + 'stats'} theme={theme} linkText={"Stats"} linkSize={"medium"} />
             <ListMenus close={closeList} open={openList} anchorEl={listAnchor} theme={theme} handleClose={() => setOpenList(false)} tabs={statsOptions} />
             <NavLink theme={theme} linkText={"Create"} linkSize={"medium"} link={"/asset/create"} />
-            <NavLink theme={theme} linkText={"Resources"} linkSize={"medium"} link={"/"} />
+            <NavLink theme={theme} linkText={"Home"} linkSize={"medium"} link={"/"} />
           </div>
         </div>
         <div className="d-flex col-lg-6 col-xl-5 align-items-center justify-content-between no-gutters">
@@ -312,7 +313,7 @@ const Navbar = ({ theme, themeToggler }) => {
             <Link onClick={walletDrawer('right', true)} style={{ width: "auto", padding: "0", textDecoration: "none", color: theme == 'light' && window.location.pathname !== '/' ? `${Colors.gray6}` : "white" }}>{walletDesOpen ? <Wallet2 variant="Bold" cursor="pointer" /> : <Wallet2 className="navIcH" />}</Link>
             {/* </ClickAwayListener> */}
             {/* <ClickAwayListener onClickAway={() => setCartDesOpen(false)}> */}
-            <Link onClick={toggleDrawer('right', true)} style={{ marginRight: "32px", marginLeft: "32px", width: "auto", padding: "0", textDecoration: "none", color: theme == 'light' && window.location.pathname !== '/' ? `${Colors.gray6}` : "white" }}>{cartDesOpen ? <Bag2 variant="Bold" cursor="pointer" /> : <Bag2 className="navIcH"/>}</Link>
+            <Link onClick={toggleDrawer('right', true)} style={{ marginRight: "32px", marginLeft: "32px", width: "auto", padding: "0", textDecoration: "none", color: theme == 'light' && window.location.pathname !== '/' ? `${Colors.gray6}` : "white" }}>{cartDesOpen ? <Bag2 variant="Bold" cursor="pointer" /> : <Bag2 className="navIcH" />}</Link>
             {/* </ClickAwayListener> */}
             {/* <ClickAwayListener onClickAway={() => setDesOpen(false)}> */}
             <Link id="profile-tab" style={{ width: "auto", padding: "0", textDecoration: "none", color: theme == 'light' && window.location.pathname !== '/' ? `${Colors.gray6}` : "white" }}
@@ -326,7 +327,7 @@ const Navbar = ({ theme, themeToggler }) => {
                 </div>
                 :
                 <div className="p-relative" style={{ width: '24px', height: '24px' }}>
-                  <Profile className="navIcH"/>
+                  <Profile className="navIcH" />
                   {notifications && notifications.length > 0 ? <NotifDot /> : undefined}
                 </div>}
             </Link>
@@ -341,7 +342,7 @@ const Navbar = ({ theme, themeToggler }) => {
       <Nav className="d-none d-sm-flex d-lg-none justify-content-between align-items-center">
         <div className="d-flex align-items-center col-6">
           <div className="d-flex align-items-center me-3">
-            <Toggle theme={theme} toggleTheme={themeToggler} />
+            <IconButton theme={theme} />
           </div>
           <div className="d-flex align-items-center justify-content-center w-100">
             <SearchBox theme={theme} id={'navSearchTablet'} />
